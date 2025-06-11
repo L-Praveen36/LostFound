@@ -74,7 +74,6 @@ const ReportForm = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto my-8 p-8 rounded-lg shadow-lg bg-blue-50">
     <div className="min-h-screen bg-blue-50 py-6 px-4 sm:px-6 lg:px-8">
   <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
     <h2 className="text-3xl font-bold text-gray-800 mb-6">📝 Report Lost/Found Item</h2>
@@ -246,7 +245,6 @@ const ReportForm = () => {
           </button>
         </form>
       </div>
-    </div>
     </div>
   );
 };
