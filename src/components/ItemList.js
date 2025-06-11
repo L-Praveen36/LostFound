@@ -29,7 +29,7 @@ const ItemList = () => {
     try {
       const response = await fetch('https://lostfound-api.onrender.com/api/categories');
       const data = await response.json();
-      setCategories(data);
+      
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
