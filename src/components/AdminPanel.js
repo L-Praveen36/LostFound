@@ -72,6 +72,15 @@ const AdminPanel = () => {
     return item.status === filter;
   });
 
+  function formatDateDMY(dateString) {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+
   const getStatusBadge = (status) => {
     const badges = {
       pending: 'bg-yellow-100 text-yellow-800',
@@ -152,7 +161,7 @@ const AdminPanel = () => {
                   <div className="text-sm text-gray-500">
                     <p>Category: {item.category || 'Other'} | Location: {item.location}</p>
                     <p>Contact: {item.contactInfo || item.contact} | Submitted by: {item.submittedBy || 'Anonymous'}</p>
-                    <p>Date: {new Date(item.submittedAt || item.date || Date.now()).toLocaleDateString()}</p>
+                    <p>Date: {formatDateDMY(item.date || item.submittedAt)}</p>
                     {item.moderatedBy && (
                       <p>Moderated by: {item.moderatedBy} on {new Date(item.moderatedAt).toLocaleDateString()}</p>
                     )}
