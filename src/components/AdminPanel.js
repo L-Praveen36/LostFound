@@ -12,7 +12,7 @@ const AdminPanel = () => {
 
   const fetchItems = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/items');
+      const response = await fetch('https://lostfound-api.onrender.com/api/admin/items');
       const data = await response.json();
       // Sort by newest date
       data.sort((a, b) => new Date(b.date || b.submittedAt) - new Date(a.date || a.submittedAt));
@@ -29,7 +29,7 @@ const AdminPanel = () => {
     if (!confirmed) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/items/${itemId}/moderate`, {
+      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/moderate`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status, moderatorName: 'Admin' })
@@ -51,7 +51,7 @@ const AdminPanel = () => {
     if (!confirmed) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/items/${itemId}/resolve`, {
+      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/resolve`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' }
       });
