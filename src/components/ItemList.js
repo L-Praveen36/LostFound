@@ -28,7 +28,7 @@ const ItemList = () => {
   const fetchCategories = async () => {
     try {
       const response = await fetch('https://lostfound-api.onrender.com/api/categories');
-      const data = await response.json();
+      await response.json();
       
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -182,7 +182,7 @@ const ItemList = () => {
     href={
       /\S+@\S+\.\S+/.test(item.contactInfo || item.contact)
         ? `mailto:${item.contactInfo || item.contact}`
-        : `tel:${(item.contactInfo || item.contact || '').replace(/[\s\-]/g, '')}`
+        : `tel:${(item.contactInfo || item.contact || '').replace(/[\s-]/g, '')}`
     }
     className="inline-block w-full text-center py-2 px-4 rounded-lg font-medium bg-blue-500 text-white hover:bg-blue-600 transition-colors"
     style={{ textDecoration: "none" }}
