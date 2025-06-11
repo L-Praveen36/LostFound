@@ -7,8 +7,7 @@ const ItemList = () => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]);
-
+ 
   useEffect(() => {
     fetchItems();
     fetchCategories();
@@ -42,17 +41,6 @@ const ItemList = () => {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
-}
-
-function getContactLink(contact) {
-  if (!contact) return '#';
-  const isEmail = /\S+@\S+\.\S+/.test(contact);
-  if (isEmail) {
-    return `mailto:${contact}`;
-  }
-  // Remove spaces/dashes for tel link
-  const phone = contact.replace(/[\s\-]/g, '');
-  return `tel:${phone}`;
 }
 
 
