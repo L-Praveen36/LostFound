@@ -82,8 +82,6 @@ function HomePage() {
         </div>
       )}
 
-      {/* Item List */}
-      <ItemList filter={filter} search={search} />
     </div>
   );
 }
