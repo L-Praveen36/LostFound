@@ -24,7 +24,7 @@ function App() {
 
 function HomePage() {
   const [showForm, setShowForm] = useState(false);
-  const [search, setSearch] = useState("");     // ✅ ADD THIS
+  const [search] = useState("");     // ✅ ADD THIS
   const [filter] = useState("all");  // ✅ ADD THIS
   const location = useLocation();
 
@@ -64,17 +64,6 @@ function HomePage() {
         <div className="w-40 h-32 bg-white border rounded-lg shadow flex items-center justify-center">Image 1</div>
         <div className="w-40 h-32 bg-white border rounded-lg shadow flex items-center justify-center">Image 2</div>
         <div className="w-40 h-32 bg-white border rounded-lg shadow flex items-center justify-center">Image 3</div>
-      </div>
-
-      {/* Search + Filter Section */}
-      <div className="bg-white p-4 rounded shadow mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <input
-          type="text"
-          placeholder="🔍 Search for items"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-2/3 px-4 py-2 border border-gray-300 rounded"
-        />
       </div>
 
       {/* Items List */}
