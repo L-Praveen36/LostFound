@@ -69,12 +69,6 @@ function HomePage() {
         <div className="w-40 h-32 bg-white border rounded-lg shadow flex items-center justify-center">Image 3</div>
       </div>
 
-      {/* Toggle Form */}
-      {showForm && (
-        <div className="bg-white p-6 rounded-lg shadow mb-6">
-          <ReportForm />
-        </div>
-      )}
 
       {/* Search + Filter */}
       <div className="bg-white p-4 rounded shadow mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -99,19 +93,20 @@ function HomePage() {
           ))}
         </div>
       </div>
+      {/* Modal Form */}
       {showForm && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded shadow-lg max-w-lg w-full relative">
-      <button
-        onClick={() => setShowForm(false)}
-        className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
-      >
-        ✖
-      </button>
-      <ReportForm />
-    </div>
-  </div>
-)}
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg max-w-lg w-full relative max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setShowForm(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+            >
+              ✖
+            </button>
+            <ReportForm showForm={showForm} onClose={() => setShowForm(false)} />
+          </div>
+        </div>
+      )}
 
       {/* Item List */}
       <ItemList filter={filter} search={search} />

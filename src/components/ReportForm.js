@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ReportForm = () => {
+const ReportForm = ({ showForm, onClose }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -19,6 +19,14 @@ const ReportForm = () => {
     'Electronics', 'Clothing', 'Books', 'Accessories', 'Documents',
     'Keys', 'Bags', 'Sports Equipment','Bicycle', 'Jewelry', 'Other'
   ];
+  
+   useEffect(() => {
+    if (showForm) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [showForm]);
 
   const handleChange = (e) => {
     setFormData({
@@ -72,10 +80,18 @@ const ReportForm = () => {
       setLoading(false);
     }
   };
+    
+   if (!showForm) return null;
 
   return (
-    <div className="min-h-screen bg-blue-50 py-6 px-4 sm:px-6 lg:px-8">
-  <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+  <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center px-4">
+      <div className="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6 relative">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-xl font-bold"
+        >
+          &times;
+        </button>
     <h2 className="text-3xl font-bold text-gray-800 mb-6">📝 Report Lost/Found Item</h2>
         
         {message && (

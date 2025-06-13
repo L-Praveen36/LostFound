@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import Zoom from 'react-medium-image-zoom'
 import 'react-medium-image-zoom/dist/styles.css'
 
-const ItemList = ({ filter = 'all', search = '' }) => {
+const ItemList = () => {
 
   const [items, setItems] = useState([]);
 
   const [loading, setLoading] = useState(true);
- 
+  
+  const [filter, setFilter] = useState('all');
+const [search, setSearch] = useState('');
+
   useEffect(() => {
     fetchItems();
     fetchCategories();
@@ -45,12 +48,19 @@ const ItemList = ({ filter = 'all', search = '' }) => {
 
 
   const filteredItems = items.filter(item => {
-    const matchesFilter = filter === 'all' || item.type === filter;
-    const matchesSearch = item.title.toLowerCase().includes(search.toLowerCase()) ||
-                         item.description.toLowerCase().includes(search.toLowerCase()) ||
-                         item.location.toLowerCase().includes(search.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
+  const matchesFilter =
+    filter === 'all' ||
+    item.type === filter ||
+    (filter === 'resolved' && item.resolved);
+
+  const matchesSearch =
+    item.title.toLowerCase().includes(search.toLowerCase()) ||
+    item.description.toLowerCase().includes(search.toLowerCase()) ||
+    item.location.toLowerCase().includes(search.toLowerCase());
+
+  return matchesFilter && matchesSearch;
+});
+
 
   if (loading) {
     return (
@@ -62,9 +72,33 @@ const ItemList = ({ filter = 'all', search = '' }) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-        📱 Lost & Found Items
-      </h2>
+      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">📱 Lost & Found Items</h2>
+
+<div className="bg-white rounded-lg shadow-md p-4 mb-6 flex flex-col md:flex-row md:items-center gap-4">
+  <input
+    type="text"
+    placeholder="🔍 Search for items"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+  />
+
+  <div className="flex flex-wrap gap-2">
+    {['all', 'lost', 'found', 'resolved'].map(type => (
+      <button
+        key={type}
+        onClick={() => setFilter(type)}
+        className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${
+          filter === type
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+        }`}
+      >
+        {type}
+      </button>
+    ))}
+  </div>
+</div>
 
 
       {/* Items Grid */}
