@@ -132,7 +132,16 @@ const filteredItems = items.filter(item => {
 
 
   return (
+    
     <div className="container mx-auto px-4 py-8">
+      <header className="flex justify-between items-center mb-6">
+  <h2 className="text-xl font-bold">🛡️ Admin Panel</h2>
+  <nav className="space-x-4">
+    <a href="/" className="text-blue-500 underline">Home</a>
+    <a href="/admin" className="text-red-500 underline">Admin</a>
+  </nav>
+</header>
+
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">🛡️ Admin Panel</h2>
 

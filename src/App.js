@@ -6,6 +6,8 @@ import ItemList from "./components/ItemList";
 import AdminPanel from "./components/AdminPanel";
 import AdminLogin from './components/AdminLogin';
 
+
+
 import "./App.css";
 
 function App() {
@@ -27,12 +29,12 @@ function HomePage() {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const location = useLocation();
-
+  
   return (
     <div className="max-w-6xl mx-auto p-4">
       {/* Top Nav */}
       <header className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-center w-full">LOST AND FOUND</h1>
+       <h1 className="text-3xl font-bold text-center my-4">LOST AND FOUND</h1>
         <div className="absolute top-6 right-6 space-x-4">
           <Link
             to="/"
@@ -52,11 +54,12 @@ function HomePage() {
       {/* Upload Button */}
       <div className="text-center mb-6">
         <button
-          onClick={() => setShowForm(prev => !prev)}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md"
-        >
-          📤 Upload Lost or Found Item
-        </button>
+  onClick={() => setShowForm(true)}
+  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+>
+  📤 Upload Lost or Found Item
+</button>
+
       </div>
 
       {/* Image Cards */}
@@ -96,6 +99,19 @@ function HomePage() {
           ))}
         </div>
       </div>
+      {showForm && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded shadow-lg max-w-lg w-full relative">
+      <button
+        onClick={() => setShowForm(false)}
+        className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+      >
+        ✖
+      </button>
+      <ReportForm />
+    </div>
+  </div>
+)}
 
       {/* Item List */}
       <ItemList filter={filter} search={search} />
