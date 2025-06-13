@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
 const AdminPanel = () => {
+  const token = localStorage.getItem('adminToken');
+  useEffect(() => {
+    if (!token) {
+      window.location.href = '/admin-login';
+    }
+  }, [token]);
+
+
   const [items, setItems] = useState([]);
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -10,9 +18,15 @@ const AdminPanel = () => {
     fetchItems();
   }, []);
 
+
+
   const fetchItems = async () => {
     try {
-      const response = await fetch('https://lostfound-api.onrender.com/api/admin/items');
+      const response = await fetch('https://lostfound-api.onrender.com/api/admin/items', {
+        headers: {
+          Authorization: `Bearer ${token}` // Optional if backend supports JWT
+        }
+      });
       const data = await response.json();
       // Sort by newest date
       data.sort((a, b) => new Date(b.date || b.submittedAt) - new Date(a.date || a.submittedAt));
@@ -218,6 +232,7 @@ const AdminPanel = () => {
       </div>
     </div>
   );
+
 };
 
 // Small card component for stats
