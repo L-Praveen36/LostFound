@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const ReportForm = ({ showForm, onClose }) => {
   const [formData, setFormData] = useState({
