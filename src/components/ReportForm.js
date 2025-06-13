@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 
 const ReportForm = ({ showForm, onClose }) => {
+  const modalRef = useRef();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -14,32 +15,28 @@ const ReportForm = ({ showForm, onClose }) => {
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const formRef = useRef();
+
   const categories = [
     'Electronics', 'Clothing', 'Books', 'Accessories', 'Documents',
     'Keys', 'Bags', 'Sports Equipment','Bicycle', 'Jewelry', 'Other'
   ];
   
-   useEffect(() => {
-    if (showForm) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-  }, [showForm]);
- 
+   // Close on outside click
   useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (formRef.current && !formRef.current.contains(event.target)) {
-      onClose(); // 👈 trigger close if click is outside the form
+    const handleClickOutside = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onClose();
+      }
+    };
+    if (showForm) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = "hidden"; // prevent background scroll
     }
-  };
-
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [onClose]);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = "auto"; // re-enable scroll
+    };
+  }, [showForm, onClose]);
 
   const handleChange = (e) => {
     setFormData({
@@ -85,10 +82,10 @@ const ReportForm = ({ showForm, onClose }) => {
         });
         setImage(null);
       } else {
-        setMessage('Error submitting item. Please try again.');
+        setMessage("❌ Submission failed: " + (data.message || "Try again."));
       }
-    } catch (error) {
-      setMessage('Error submitting item. Please try again.');
+    } catch (err) {
+      setMessage("❌ Error submitting form.");
     } finally {
       setLoading(false);
     }
@@ -98,7 +95,7 @@ const ReportForm = ({ showForm, onClose }) => {
 
   return (
   <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center px-4">
-      <div ref={formRef} className="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6 relative">
+      <div ref={modalRef} className="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6 relative">
 
         <button
           onClick={onClose}
