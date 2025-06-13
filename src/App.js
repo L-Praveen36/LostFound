@@ -69,30 +69,6 @@ function HomePage() {
         <div className="w-40 h-32 bg-white border rounded-lg shadow flex items-center justify-center">Image 3</div>
       </div>
 
-
-      {/* Search + Filter */}
-      <div className="bg-white p-4 rounded shadow mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <input
-          type="text"
-          placeholder="🔍 Search for items"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="w-full md:w-2/3 px-4 py-2 border border-gray-300 rounded"
-        />
-        <div className="flex gap-2 w-full md:w-1/3 justify-end">
-          {["all", "lost", "found", "resolved"].map((type) => (
-            <button
-              key={type}
-              onClick={() => setFilter(type)}
-              className={`px-3 py-2 rounded ${
-                filter === type ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
-              }`}
-            >
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </button>
-          ))}
-        </div>
-      </div>
       {/* Modal Form */}
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

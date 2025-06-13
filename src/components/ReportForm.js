@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 const ReportForm = ({ showForm, onClose }) => {
   const [formData, setFormData] = useState({
@@ -14,7 +14,7 @@ const ReportForm = ({ showForm, onClose }) => {
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-
+  const formRef = useRef();
   const categories = [
     'Electronics', 'Clothing', 'Books', 'Accessories', 'Documents',
     'Keys', 'Bags', 'Sports Equipment','Bicycle', 'Jewelry', 'Other'
@@ -27,6 +27,19 @@ const ReportForm = ({ showForm, onClose }) => {
       document.body.style.overflow = 'auto';
     }
   }, [showForm]);
+ 
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (formRef.current && !formRef.current.contains(event.target)) {
+      onClose(); // 👈 trigger close if click is outside the form
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [onClose]);
 
   const handleChange = (e) => {
     setFormData({
@@ -85,7 +98,8 @@ const ReportForm = ({ showForm, onClose }) => {
 
   return (
   <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center px-4">
-      <div className="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6 relative">
+      <div ref={formRef} className="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6 relative">
+
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-xl font-bold"
