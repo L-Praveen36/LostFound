@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+
 
 const AdminPanel = () => {
   const token = localStorage.getItem('adminToken');
@@ -38,7 +39,7 @@ const AdminPanel = () => {
   useEffect(() => {
     fetchItems();
   }, [fetchItems]);
-  
+
   const moderateItem = async (itemId, status) => {
     const confirmed = window.confirm(`Are you sure you want to ${status} this item?`);
     if (!confirmed) return;
