@@ -9,7 +9,8 @@ import AdminLogin from './components/AdminLogin'; // ✅ ensure this exists
 
 import "./App.css";
 
-<Route path="/admin-login" element={<AdminLogin />} />
+<Route path="/admin-login" component={AdminLogin} />
+
 function App() {
   return (
     <Router>
