@@ -26,8 +26,6 @@ function App() {
 
 function HomePage() {
   const [showForm, setShowForm] = useState(false);
-  const [filter, setFilter] = useState("all");
-  const [search, setSearch] = useState("");
   const location = useLocation();
   
   return (
