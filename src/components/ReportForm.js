@@ -67,7 +67,7 @@ const ReportForm = ({ showForm, onClose }) => {
         method: 'POST',
         body: submitData
       });
-
+     const data = await response.json(); 
       if (response.ok) {
         setMessage('Item submitted successfully! It will be reviewed by our team.');
         setFormData({
