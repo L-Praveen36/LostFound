@@ -4,9 +4,12 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import ReportForm from "./components/ReportForm";
 import ItemList from "./components/ItemList";
 import AdminPanel from "./components/AdminPanel";
+import AdminLogin from './components/AdminLogin'; // ✅ ensure this exists
+
 
 import "./App.css";
 
+<Route path="/admin-login" element={<AdminLogin />} />
 function App() {
   return (
     <Router>
