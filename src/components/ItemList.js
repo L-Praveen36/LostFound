@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Zoom from 'react-medium-image-zoom'
 import 'react-medium-image-zoom/dist/styles.css'
 
-const ItemList = () => {
+const ItemList = ({ filter = 'all', search = '' }) => {
+
   const [items, setItems] = useState([]);
-  const [filter, setFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+
   const [loading, setLoading] = useState(true);
  
   useEffect(() => {
@@ -46,9 +46,9 @@ const ItemList = () => {
 
   const filteredItems = items.filter(item => {
     const matchesFilter = filter === 'all' || item.type === filter;
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.location.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = item.title.toLowerCase().includes(search.toLowerCase()) ||
+                         item.description.toLowerCase().includes(search.toLowerCase()) ||
+                         item.location.toLowerCase().includes(search.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -66,35 +66,6 @@ const ItemList = () => {
         📱 Lost & Found Items
       </h2>
 
-      {/* Search and Filter Section */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="🔍 Search items..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          <div className="flex gap-2">
-            {['all', 'lost', 'found'].map(type => (
-              <button
-                key={type}
-                onClick={() => setFilter(type)}
-                className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${
-                  filter === type
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {type === 'all' ? '📋 All' : type === 'lost' ? '❌ Lost' : '✅ Found'}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Items Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
