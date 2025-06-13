@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 
 const AdminPanel = () => {
   const token = localStorage.getItem('adminToken');
+
+  const [items, setItems] = useState([]);
+  const [filter, setFilter] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const [highlightedId, setHighlightedId] = useState(null);
+
+  // Redirect if token is missing
   useEffect(() => {
     if (!token) {
       window.location.href = '/admin-login';
@@ -9,26 +16,15 @@ const AdminPanel = () => {
   }, [token]);
 
 
-  const [items, setItems] = useState([]);
-  const [filter, setFilter] = useState('all');
-  const [loading, setLoading] = useState(true);
-  const [highlightedId, setHighlightedId] = useState(null);
-
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
-
-
-  const fetchItems = async () => {
+ // ✅ Define fetchItems using useCallback to satisfy ESLint
+  const fetchItems = useCallback(async () => {
     try {
       const response = await fetch('https://lostfound-api.onrender.com/api/admin/items', {
         headers: {
-          Authorization: `Bearer ${token}` // Optional if backend supports JWT
+          Authorization: `Bearer ${token}`
         }
       });
       const data = await response.json();
-      // Sort by newest date
       data.sort((a, b) => new Date(b.date || b.submittedAt) - new Date(a.date || a.submittedAt));
       setItems(data);
       setLoading(false);
@@ -36,8 +32,13 @@ const AdminPanel = () => {
       console.error('Error fetching items:', error);
       setLoading(false);
     }
-  };
+  }, [token]);
 
+  // 🧠 Call fetchItems once
+  useEffect(() => {
+    fetchItems();
+  }, [fetchItems]);
+  
   const moderateItem = async (itemId, status) => {
     const confirmed = window.confirm(`Are you sure you want to ${status} this item?`);
     if (!confirmed) return;
