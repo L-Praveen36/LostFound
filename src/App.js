@@ -75,18 +75,6 @@ function HomePage() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full md:w-2/3 px-4 py-2 border border-gray-300 rounded"
         />
-        <div className="relative">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="block w-full px-4 py-2 border rounded bg-gray-100 text-gray-700"
-          >
-            <option value="all">📋 All</option>
-            <option value="lost">❌ Lost</option>
-            <option value="found">✅ Found</option>
-            <option value="resolved">🔒 Resolved</option>
-          </select>
-        </div>
       </div>
 
       {/* Items List */}
