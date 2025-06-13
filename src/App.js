@@ -4,37 +4,35 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import ReportForm from "./components/ReportForm";
 import ItemList from "./components/ItemList";
 import AdminPanel from "./components/AdminPanel";
-import AdminLogin from './components/AdminLogin'; // ✅ ensure this exists
-
+import AdminLogin from './components/AdminLogin';  // ✅ Must exist and be imported
 
 import "./App.css";
-
-<Route path="/admin-login" component={AdminLogin} />
 
 function App() {
   return (
     <Router>
-       <div className="min-h-screen bg-cyan-100">
-      <div className="App" style={{ padding: "2rem" }}>
-        <header className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Lost & Found Portal</h1>
-          <nav className="space-x-4">
-            <Link to="/" className="text-blue-500 underline">Home</Link>
-            <Link to="/admin" className="text-red-500 underline">Admin</Link>
-          </nav>
-        </header>
+      <div className="min-h-screen bg-cyan-100">
+        <div className="App" style={{ padding: "2rem" }}>
+          <header className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">Lost & Found Portal</h1>
+            <nav className="space-x-4">
+              <Link to="/" className="text-blue-500 underline">Home</Link>
+              <Link to="/admin" className="text-red-500 underline">Admin</Link>
+            </nav>
+          </header>
 
-        <Routes>
-          <Route path="/" element={
-            <>
-              <ReportForm />
-              <hr className="my-4" />
-              <ItemList />
-            </>
-          } />
-          <Route path="/admin" element={<AdminPanel />} />
-        </Routes>
-      </div>
+          <Routes>
+            <Route path="/" element={
+              <>
+                <ReportForm />
+                <hr className="my-4" />
+                <ItemList />
+              </>
+            } />
+            <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/admin-login" element={<AdminLogin />} /> {/* ✅ FIXED */}
+          </Routes>
+        </div>
       </div>
     </Router>
   );
