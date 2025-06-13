@@ -125,6 +125,11 @@ const AdminPanel = () => {
       </div>
     );
   }
+const filteredItems = items.filter(item => {
+  if (filter === 'all') return true;
+  return item.status === filter;
+});
+
 
   return (
     <div className="container mx-auto px-4 py-8">
