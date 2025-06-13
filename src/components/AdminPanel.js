@@ -41,52 +41,64 @@ const AdminPanel = () => {
   }, [fetchItems]);
 
   const moderateItem = async (itemId, status) => {
-    const confirmed = window.confirm(`Are you sure you want to ${status} this item?`);
-    if (!confirmed) return;
+  const confirmed = window.confirm(`Are you sure you want to ${status} this item?`);
+  if (!confirmed) return;
 
-    try {
-      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/moderate`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, moderatorName: 'Admin' })
-      });
+  try {
+    const token = localStorage.getItem('adminToken'); // ✅ get token again here
+    const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/moderate`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}` // ✅ pass token here
+      },
+      body: JSON.stringify({ status, moderatorName: 'Admin' })
+    });
 
-      if (response.ok) {
-        alert(`Item ${status}`);
-        setHighlightedId(itemId);
-        fetchItems();
-        setTimeout(() => setHighlightedId(null), 3000);
-      }
-    } catch (error) {
-      console.error('Error moderating item:', error);
+    if (response.ok) {
+      alert(`Item ${status}`);
+      setHighlightedId(itemId);
+      fetchItems();
+      setTimeout(() => setHighlightedId(null), 3000);
+    } else {
+      const errData = await response.json();
+      console.error('Failed to moderate:', errData);
+      alert('Moderation failed: ' + (errData.message || 'Unknown error'));
     }
-  };
+  } catch (error) {
+    console.error('Error moderating item:', error);
+  }
+};
+
 
   const resolveItem = async (itemId) => {
-    const confirmed = window.confirm('Mark this item as resolved?');
-    if (!confirmed) return;
+  const confirmed = window.confirm('Mark this item as resolved?');
+  if (!confirmed) return;
 
-    try {
-      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/resolve`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (response.ok) {
-        alert("Item marked as resolved");
-        setHighlightedId(itemId);
-        fetchItems();
-        setTimeout(() => setHighlightedId(null), 3000);
+  try {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/resolve`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}` // ✅ Add this line
       }
-    } catch (error) {
-      console.error('Error resolving item:', error);
-    }
-  };
+    });
 
-  const filteredItems = items.filter(item => {
-    if (filter === 'all') return true;
-    return item.status === filter;
-  });
+    if (response.ok) {
+      alert("Item marked as resolved");
+      setHighlightedId(itemId);
+      fetchItems();
+      setTimeout(() => setHighlightedId(null), 3000);
+    } else {
+      const err = await response.json();
+      console.error('Failed to resolve item:', err);
+      alert('Failed to resolve: ' + (err.message || 'Unknown error'));
+    }
+  } catch (error) {
+    console.error('Error resolving item:', error);
+  }
+};
 
   function formatDateDMY(dateString) {
   const date = new Date(dateString);
