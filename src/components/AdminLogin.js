@@ -19,7 +19,7 @@ const AdminLogin = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      localStorage.setItem('adminToken', data.token);
+      sessionStorage.setItem('adminToken', data.token);
       window.location.href = '/admin'; // redirect
     } catch (err) {
       setError(err.message || 'Login failed');

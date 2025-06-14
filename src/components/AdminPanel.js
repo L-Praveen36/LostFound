@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 
 const AdminPanel = () => {
-  const token = localStorage.getItem('adminToken');
+ const token = sessionStorage.getItem('adminToken');
 
   const [items, setItems] = useState([]);
   const [filter, setFilter] = useState('all');
@@ -45,7 +45,7 @@ const AdminPanel = () => {
   if (!confirmed) return;
 
   try {
-    const token = localStorage.getItem('adminToken'); // ✅ get token again here
+    const token = sessionStorage.getItem('adminToken'); // ✅ get token again here
     const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/moderate`, {
       method: 'PUT',
       headers: {
@@ -60,10 +60,13 @@ const AdminPanel = () => {
       setHighlightedId(itemId);
       fetchItems();
       setTimeout(() => setHighlightedId(null), 3000);
-    } else {
-      const errData = await response.json();
-      console.error('Failed to moderate:', errData);
-      alert('Moderation failed: ' + (errData.message || 'Unknown error'));
+    } else if (response.status === 401) {
+  alert("Session expired. Please log in again.");
+  sessionStorage.removeItem("adminToken");
+  window.location.href = "/admin-login";
+    }else {
+      const err = await response.json();
+      alert('Moderation failed: ' + (err.message || 'Unknown error'));
     }
   } catch (error) {
     console.error('Error moderating item:', error);
@@ -76,7 +79,7 @@ const AdminPanel = () => {
   if (!confirmed) return;
 
   try {
-    const token = localStorage.getItem('adminToken');
+    const token = sessionStorage.getItem('adminToken');
     const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/resolve`, {
       method: 'PUT',
       headers: {
@@ -86,15 +89,19 @@ const AdminPanel = () => {
     });
 
     if (response.ok) {
-      alert("Item marked as resolved");
-      setHighlightedId(itemId);
-      fetchItems();
-      setTimeout(() => setHighlightedId(null), 3000);
-    } else {
-      const err = await response.json();
-      console.error('Failed to resolve item:', err);
-      alert('Failed to resolve: ' + (err.message || 'Unknown error'));
-    }
+  alert("Item marked as resolved");
+  setHighlightedId(itemId);
+  fetchItems();
+  setTimeout(() => setHighlightedId(null), 3000);
+} else if (response.status === 401) {
+  alert("Session expired. Please log in again.");
+  sessionStorage.removeItem("adminToken");
+  window.location.href = "/admin-login";
+} else {
+  const err = await response.json();
+  alert("Failed to resolve: " + (err.message || "Unknown error"));
+}
+
   } catch (error) {
     console.error('Error resolving item:', error);
   }
