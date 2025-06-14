@@ -1,23 +1,28 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
 
 import ReportForm from "./components/ReportForm";
 import AdminPanel from "./components/AdminPanel";
 import AdminLogin from "./components/AdminLogin";
 import ItemList from "./components/ItemList"; // ✅ Make sure this is imported
-
+import ProtectedRoute from "./components/ProtectedRoute"; // ✅ Import it
 import "./App.css";
 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-cyan-100">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/admin" element={<AdminPanel />} />
-          <Route path="/admin-login" element={<AdminLogin />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPanel />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
     </Router>
   );
 }
