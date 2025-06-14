@@ -143,15 +143,27 @@ const filteredItems = items.filter(item => {
     <div className="container mx-auto px-4 py-8">
       <header className="flex justify-between items-center mb-6">
   <h2 className="text-xl font-bold">🛡️ Admin Panel</h2>
-  <nav className="space-x-4">
+  <div className="space-x-4 flex items-center">
     <a href="/" className="text-blue-500 underline">Home</a>
     <a href="/admin" className="text-red-500 underline">Admin</a>
-  </nav>
+    <button
+  onClick={() => {
+    const confirmLogout = window.confirm("Are you sure you want to logout?");
+    if (confirmLogout) {
+      sessionStorage.removeItem('adminToken');
+      window.location.href = '/admin-login';
+    }
+  }}
+  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+>
+  Logout
+</button>
+
+  </div>
 </header>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">🛡️ Admin Panel</h2>
 
+      <div className="bg-white rounded-lg shadow-md p-6">
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <StatCard title="Total Items" count={items.length} color="blue" />
