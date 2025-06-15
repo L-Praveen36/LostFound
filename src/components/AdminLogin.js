@@ -50,12 +50,14 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="absolute top-6 right-6 space-x-4">
       <Link
     to="/"
     className="text-blue-600 underline hover:text-blue-800 text-sm"
   >
     🏠 Home
   </Link>
+  </div>
       <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
         <div className="flex justify-between items-center mb-4">
   <h2 className="text-2xl font-bold">🔐 Admin Login</h2>
