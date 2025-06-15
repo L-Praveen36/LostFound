@@ -30,7 +30,7 @@ useEffect(() => {
   return () => {
     window.removeEventListener("pageshow", handlePageShow);
   };
-}, []);
+}, [navigate]);
 
 
 
