@@ -50,15 +50,15 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
-        <div className="flex justify-between items-center mb-4">
-  <h2 className="text-2xl font-bold">🔐 Admin Login</h2>
-  <Link
+      <Link
     to="/"
     className="text-blue-600 underline hover:text-blue-800 text-sm"
   >
     🏠 Home
   </Link>
+      <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
+        <div className="flex justify-between items-center mb-4">
+  <h2 className="text-2xl font-bold">🔐 Admin Login</h2>
 </div>
 
         {error && <div className="text-red-600 mb-2">{error}</div>}
