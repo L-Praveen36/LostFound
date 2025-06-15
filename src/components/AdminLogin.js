@@ -13,6 +13,7 @@ const AdminLogin = () => {
   const clearCredentials = () => {
     setUsername('');
     setPassword('');
+    sessionStorage.removeItem('adminToken'); // ✅ Clear session on load
   };
 
   clearCredentials(); // On mount
@@ -44,7 +45,7 @@ const AdminLogin = () => {
       if (!res.ok) throw new Error(data.message);
 
       sessionStorage.setItem('adminToken', data.token);
-      navigate('/admin-login'); // redirect
+      navigate('/admin', { replace: true }); // redirect
     } catch (err) {
       setError(err.message || 'Login failed');
     }
