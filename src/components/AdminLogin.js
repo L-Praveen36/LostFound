@@ -13,7 +13,6 @@ const AdminLogin = () => {
   const clearCredentials = () => {
     setUsername('');
     setPassword('');
-    sessionStorage.removeItem('adminToken'); // ✅ Clear session on load
   };
 
   clearCredentials(); // On mount
