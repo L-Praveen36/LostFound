@@ -11,10 +11,17 @@ const AdminPanel = () => {
 
   // Redirect if token is missing
   useEffect(() => {
-    if (!token) {
-      window.location.href = '/admin-login';
-    }
-  }, [token]);
+  if (!sessionStorage.getItem('adminToken')) {
+    window.location.href = "/admin-login";
+  }
+
+  // Prevent back nav from showing cached page
+  window.history.pushState(null, "", window.location.href);
+  window.onpopstate = () => {
+    window.history.pushState(null, "", window.location.href);
+  };
+}, []);
+
 
 
  // ✅ Define fetchItems using useCallback to satisfy ESLint

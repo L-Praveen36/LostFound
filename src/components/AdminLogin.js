@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // 👁️ Control visibility
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setUsername('');
+    setPassword('');
+    sessionStorage.removeItem('adminToken');
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();

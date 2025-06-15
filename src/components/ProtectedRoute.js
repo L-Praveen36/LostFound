@@ -1,6 +1,4 @@
-// components/ProtectedRoute.js
-import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
   const token = sessionStorage.getItem("adminToken");
@@ -13,3 +11,4 @@ const ProtectedRoute = ({ children }) => {
 };
 
 export default ProtectedRoute;
+
