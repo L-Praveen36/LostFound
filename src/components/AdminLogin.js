@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 const navigate = useNavigate();
 
 const AdminLogin = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // 👁️ Control visibility
