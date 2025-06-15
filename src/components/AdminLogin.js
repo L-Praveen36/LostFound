@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
@@ -50,7 +51,16 @@ const AdminLogin = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4">🔐 Admin Login</h2>
+        <div className="flex justify-between items-center mb-4">
+  <h2 className="text-2xl font-bold">🔐 Admin Login</h2>
+  <Link
+    to="/"
+    className="text-blue-600 underline hover:text-blue-800 text-sm"
+  >
+    🏠 Home
+  </Link>
+</div>
+
         {error && <div className="text-red-600 mb-2">{error}</div>}
 
         <input
