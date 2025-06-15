@@ -7,10 +7,25 @@ const AdminLogin = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+  const clearCredentials = () => {
     setUsername('');
     setPassword('');
-    sessionStorage.removeItem('adminToken');
-  }, []);
+  };
+
+  clearCredentials(); // On mount
+
+  const handlePageShow = (e) => {
+    if (e.persisted || performance.getEntriesByType("navigation")[0]?.type === "back_forward") {
+      clearCredentials(); // On back-forward navigation
+    }
+  };
+
+  window.addEventListener("pageshow", handlePageShow);
+  return () => {
+    window.removeEventListener("pageshow", handlePageShow);
+  };
+}, []);
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -40,6 +55,7 @@ const AdminLogin = () => {
 
         <input
           type="text"
+          autoComplete="off"
           placeholder="Username"
           value={username}
           onChange={e => setUsername(e.target.value)}
