@@ -9,18 +9,27 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const [highlightedId, setHighlightedId] = useState(null);
 
+useEffect(() => {
   // Redirect if token is missing
-  useEffect(() => {
   if (!sessionStorage.getItem('adminToken')) {
-    window.location.href = "/admin-login";
+    window.location.href = '/admin-login';
   }
 
-  // Prevent back nav from showing cached page
-  window.history.pushState(null, "", window.location.href);
-  window.onpopstate = () => {
-    window.history.pushState(null, "", window.location.href);
+  // 🔒 Prevent bfcache from restoring Admin Panel after logout
+  const handlePageShow = (e) => {
+    if (e.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+      if (!sessionStorage.getItem("adminToken")) {
+        window.location.href = "/admin-login";
+      }
+    }
+  };
+
+  window.addEventListener("pageshow", handlePageShow);
+  return () => {
+    window.removeEventListener("pageshow", handlePageShow);
   };
 }, []);
+
 
 
 
