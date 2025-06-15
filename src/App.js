@@ -69,17 +69,17 @@ function HomePage() {
           >
             🏠 Home
           </Link>
-          <Link
-            to="/admin-login"
-            className={`text-lg ${
-              location.pathname === "/admin" ||
-              location.pathname === "/admin-login"
-                ? "underline font-semibold"
-                : ""
-            } text-red-500`}
-          >
-            Admin
-          </Link>
+          <button
+  onClick={handleAdminClick}
+  className={`text-lg text-red-500 ${
+    location.pathname === "/admin" || location.pathname === "/admin-login"
+      ? "underline font-semibold"
+      : ""
+  }`}
+>
+  Admin
+</button>
+
         </div>
       </header>
 
