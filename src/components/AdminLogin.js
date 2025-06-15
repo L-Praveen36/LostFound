@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+const navigate = useNavigate();
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
@@ -42,7 +43,7 @@ const AdminLogin = () => {
       if (!res.ok) throw new Error(data.message);
 
       sessionStorage.setItem('adminToken', data.token);
-      window.location.href = '/admin'; // redirect
+      navigate('/admin-login'); // redirect
     } catch (err) {
       setError(err.message || 'Login failed');
     }

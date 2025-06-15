@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-
-
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+const navigate = useNavigate();
 const AdminPanel = () => {
  const token = sessionStorage.getItem('adminToken');
-
+ 
   const [items, setItems] = useState([]);
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -12,7 +13,7 @@ const AdminPanel = () => {
 useEffect(() => {
   const checkAuth = () => {
     if (!sessionStorage.getItem("adminToken")) {
-      window.location.replace("/admin-login"); // ⛔ Avoid history entry
+      navigate('/admin-login'); // ⛔ Avoid history entry
     }
   };
 
@@ -80,7 +81,7 @@ useEffect(() => {
     } else if (response.status === 401) {
   alert("Session expired. Please log in again.");
   sessionStorage.removeItem("adminToken");
-  window.location.href = "/admin-login";
+  navigate('/admin-login');
     }else {
       const err = await response.json();
       alert('Moderation failed: ' + (err.message || 'Unknown error'));
@@ -113,7 +114,7 @@ useEffect(() => {
 } else if (response.status === 401) {
   alert("Session expired. Please log in again.");
   sessionStorage.removeItem("adminToken");
-  window.location.href = "/admin-login";
+  navigate('/admin-login');
 } else {
   const err = await response.json();
   alert("Failed to resolve: " + (err.message || "Unknown error"));
@@ -161,14 +162,14 @@ const filteredItems = items.filter(item => {
       <header className="flex justify-between items-center mb-6">
   <h2 className="text-xl font-bold">🛡️ Admin Panel</h2>
   <div className="space-x-4 flex items-center">
-    <a href="/" className="text-blue-500 underline">Home</a>
-    <a href="/admin" className="text-red-500 underline">Admin</a>
+    <Link to="/" className="text-blue-500 underline">🏠Home</Link>
+    <Link to="/admin" className="text-red-500 underline">Admin</Link>
     <button
   onClick={() => {
     const confirmLogout = window.confirm("Are you sure you want to logout?");
     if (confirmLogout) {
       sessionStorage.removeItem('adminToken');
-      window.location.href = '/admin-login';
+      navigate('/admin-login');
     }
   }}
   className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
