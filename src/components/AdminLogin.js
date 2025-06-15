@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-const navigate = useNavigate();
+import { Link , useNavigate } from 'react-router-dom';
+
 
 const AdminLogin = () => {
-  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // 👁️ Control visibility
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
   const clearCredentials = () => {
