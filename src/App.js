@@ -39,6 +39,18 @@ function HomePage() {
   const [search] = useState("");
   const [filter] = useState("all");
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  
+  // Redirect to correct admin route based on login state
+  const handleAdminClick = () => {
+    const token = sessionStorage.getItem("adminToken");
+    if (token) {
+      navigate("/admin");
+    } else {
+      navigate("/admin-login");
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto p-4 relative">
@@ -59,6 +71,7 @@ function HomePage() {
           <Link
             to="/admin-login"
             className={`text-lg ${
+              location.pathname === "/admin" ||
               location.pathname === "/admin-login"
                 ? "underline font-semibold"
                 : ""
