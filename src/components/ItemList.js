@@ -65,22 +65,20 @@ const [search, setSearch] = useState('');
 });
 
 
-  {loading ? (
-  Array(4).fill().map((_, i) => (
-    <div key={i} className="p-4 border rounded-lg shadow">
-      <Skeleton height={20} width="40%" className="mb-2" />
-      <Skeleton height={15} count={2} />
+  if (loading) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-8">
+      {Array(6).fill().map((_, i) => (
+        <div key={i} className="p-6 bg-white rounded-lg shadow">
+          <Skeleton height={180} className="mb-4" />
+          <Skeleton height={20} width="60%" className="mb-2" />
+          <Skeleton count={3} height={15} className="mb-1" />
+          <Skeleton height={36} className="mt-4" />
+        </div>
+      ))}
     </div>
-  ))
-) : (
-  items.map(item => (
-    <div key={item._id} className="p-4 border rounded-lg shadow">
-      <h3 className="text-lg font-semibold">{item.title}</h3>
-      <p>{item.description}</p>
-    </div>
-  ))
-)}
-
+  );
+}
 
   return (
     <div className="container mx-auto px-4 py-8">
