@@ -1,49 +1,48 @@
-// File: src/components/ModelCarousel.js
-import React, { useState } from 'react';
-import ModelViewer from './ModelViewer';
+// src/components/ModelCarousel.js
+import React, { useState } from "react";
+import ModelViewer from "./ModelViewer";
 
-const modelPaths = [
-  '/models/book.glb',
-  '/models/cycle.glb',
-  '/models/umbrella.glb',
+const models = [
+  "/models/book.glb",
+  "/models/cycle.glb",
+  "/models/phone.glb"
 ];
 
 const ModelCarousel = () => {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  const next = () => setIndex((prev) => (prev + 1) % modelPaths.length);
-  const prev = () => setIndex((prev) => (prev - 1 + modelPaths.length) % modelPaths.length);
+  const handlePrev = () => {
+    setIndex((prev) => (prev - 1 + models.length) % models.length);
+  };
+
+  const handleNext = () => {
+    setIndex((prev) => (prev + 1) % models.length);
+  };
 
   return (
-    <div className="relative">
-      <ModelViewer modelPath={modelPaths[index]} paused={paused} />
+    <div className="relative w-full max-w-2xl mx-auto h-[500px]">
+      <ModelViewer modelPath={models[index]} paused={paused} />
 
-      <div className="absolute top-1/2 left-2 transform -translate-y-1/2 z-10">
+      {/* Controls */}
+      <div className="absolute inset-0 flex justify-between items-center px-4 pointer-events-none">
         <button
-          onClick={prev}
-          className="bg-white bg-opacity-20 text-white rounded-full p-2 hover:bg-opacity-40 transition"
+          onClick={handlePrev}
+          onMouseDown={() => setPaused(true)}
+          onMouseUp={() => setPaused(false)}
+          className="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center shadow pointer-events-auto"
         >
-          ⬅
+          ◀
+        </button>
+        <button
+          onClick={handleNext}
+          onMouseDown={() => setPaused(true)}
+          onMouseUp={() => setPaused(false)}
+          className="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center shadow pointer-events-auto"
+        >
+          ▶
         </button>
       </div>
-
-      <div className="absolute top-1/2 right-2 transform -translate-y-1/2 z-10">
-        <button
-          onClick={next}
-          className="bg-white bg-opacity-20 text-white rounded-full p-2 hover:bg-opacity-40 transition"
-        >
-          ➡
-        </button>
-      </div>
-
-      <div
-        className="absolute inset-0 z-0"
-        onMouseDown={() => setPaused(true)}
-        onMouseUp={() => setPaused(false)}
-        onTouchStart={() => setPaused(true)}
-        onTouchEnd={() => setPaused(false)}
-      ></div>
     </div>
   );
 };
