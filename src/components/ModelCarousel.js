@@ -2,7 +2,7 @@
 import React, { useState, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
-import * as THREE from "three";
+
 
 // List of model paths
 const models = ["/models/book.glb", "/models/bike.glb", "/models/phone.glb"];
