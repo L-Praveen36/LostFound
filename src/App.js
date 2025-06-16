@@ -56,31 +56,25 @@ function HomePage() {
   return (
     <div className="max-w-6xl mx-auto p-4 relative">
       {/* Top Nav */}
-      <header className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-center my-4 mx-auto">
-          LOST AND FOUND
-        </h1> </header>
-        <div className="absolute top-6 right-6 space-x-4">
-          <Link
-            to="/"
-            className={`text-lg ${
-              location.pathname === "/" ? "underline font-semibold" : ""
-            }`}
-          >
-            🏠 Home
-          </Link>
-          <button
-  onClick={handleAdminClick}
-  className={`text-lg text-red-500 ${
-    location.pathname === "/admin" || location.pathname === "/admin-login"
-      ? "underline font-semibold"
-      : ""
-  }`}
->
-  Admin
-</button>
+      <header className="flex flex-col md:flex-row justify-between items-center mb-6 relative">
+  <h1 className="text-3xl font-bold text-center md:text-left">LOST AND FOUND</h1>
 
-        </div>
+  <div className="mt-4 md:mt-0 md:absolute md:top-6 md:right-6 space-x-4">
+    <Link
+      to="/"
+      className={`text-lg ${location.pathname === "/" ? "underline font-semibold" : ""}`}
+    >
+      🏠 Home
+    </Link>
+    <Link
+      to="/admin-login"
+      className={`text-lg ${location.pathname === "/admin-login" ? "underline font-semibold" : ""} text-red-500`}
+    >
+      Admin
+    </Link>
+  </div>
+</header>
+
 
       {/* Upload Button */}
       <div className="text-center mb-6">
