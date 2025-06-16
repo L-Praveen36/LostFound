@@ -1,4 +1,7 @@
 import { useState } from "react";
+import ModelCarousel from "./components/ModelCarousel";
+import ModelViewer from "./components/ModelViewer";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -90,6 +93,10 @@ function HomePage() {
           📤 Upload Lost or Found Item
         </button>
       </div>
+      {/* 3D Model Carousel */}
+<div className="w-full max-w-md h-[400px] mx-auto mb-8">
+  <ModelCarousel />
+</div>
 
       {/* Image Cards */}
       <div className="flex justify-center items-center space-x-4 mb-6">
