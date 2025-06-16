@@ -2,47 +2,54 @@
 import React, { useState } from "react";
 import ModelViewer from "./ModelViewer";
 
-const models = [
+const modelList = [
   "/models/book.glb",
-  "/models/cycle.glb",
-  "/models/phone.glb"
+  "/models/bicycle.glb",
+//   "/models/idcard.glb",
+  "/models/phone.glb",
+  "/models/umbrella.glb",
 ];
 
 const ModelCarousel = () => {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  const handlePrev = () => {
-    setIndex((prev) => (prev - 1 + models.length) % models.length);
+  const handleNext = () => {
+    setIndex((prev) => (prev + 1) % modelList.length);
   };
 
-  const handleNext = () => {
-    setIndex((prev) => (prev + 1) % models.length);
+  const handlePrev = () => {
+    setIndex((prev) => (prev - 1 + modelList.length) % modelList.length);
   };
 
   return (
-    <div className="relative w-full max-w-2xl mx-auto h-[500px]">
-      <ModelViewer modelPath={models[index]} paused={paused} />
+    <div className="relative w-full max-w-md h-[500px] mx-auto">
+      <ModelViewer modelPath={modelList[index]} paused={paused} />
 
-      {/* Controls */}
-      <div className="absolute inset-0 flex justify-between items-center px-4 pointer-events-none">
-        <button
-          onClick={handlePrev}
-          onMouseDown={() => setPaused(true)}
-          onMouseUp={() => setPaused(false)}
-          className="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center shadow pointer-events-auto"
-        >
-          ◀
-        </button>
-        <button
-          onClick={handleNext}
-          onMouseDown={() => setPaused(true)}
-          onMouseUp={() => setPaused(false)}
-          className="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center shadow pointer-events-auto"
-        >
-          ▶
-        </button>
-      </div>
+      {/* Navigation Buttons */}
+      <button
+        onClick={handlePrev}
+        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white shadow p-2 rounded-full hover:bg-gray-200"
+        aria-label="Previous"
+        onMouseDown={() => setPaused(true)}
+        onMouseUp={() => setPaused(false)}
+        onTouchStart={() => setPaused(true)}
+        onTouchEnd={() => setPaused(false)}
+      >
+        ⬅️
+      </button>
+
+      <button
+        onClick={handleNext}
+        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white shadow p-2 rounded-full hover:bg-gray-200"
+        aria-label="Next"
+        onMouseDown={() => setPaused(true)}
+        onMouseUp={() => setPaused(false)}
+        onTouchStart={() => setPaused(true)}
+        onTouchEnd={() => setPaused(false)}
+      >
+        ➡️
+      </button>
     </div>
   );
 };
