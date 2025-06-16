@@ -5,20 +5,25 @@ import { useGLTF, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
 
-const RotatingModel = ({ modelPath, paused }) => {
+const RotatingModel = ({ modelPath }) => {
+  const groupRef = useRef();
   const { scene } = useGLTF(modelPath);
-  const ref = useRef();
 
+  // Center and scale the model
   useEffect(() => {
-    // Center the model based on bounding box
     const box = new THREE.Box3().setFromObject(scene);
-    const center = box.getCenter(new THREE.Vector3());
-    scene.position.sub(center); // shift to origin
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    scene.position.sub(center); // Center it
+    const size = box.getSize(new THREE.Vector3()).length();
+    const scaleFactor = 2.5 / size;
+    scene.scale.setScalar(scaleFactor);
   }, [scene]);
 
+  // Rotation animation
   useFrame(() => {
-    if (ref.current && !paused) {
-      ref.current.rotation.y += 0.01;
+    if (groupRef.current) {
+      groupRef.current.rotation.y += 0.01;
     }
   });
 
@@ -31,14 +36,15 @@ const RotatingModel = ({ modelPath, paused }) => {
 
 const ModelViewer = ({ modelPath, paused }) => {
   return (
-    <div className="w-full h-[500px]">
-      <Canvas camera={{ position: [0, 1.5, 4], fov: 45 }}>
-        <ambientLight intensity={1.5} />
-        <directionalLight position={[3, 5, 5]} intensity={1.2} />
-        <RotatingModel modelPath={modelPath} paused={paused} />
-        <OrbitControls enableZoom={false} enablePan={false} />
-      </Canvas>
-    </div>
+    <div className="w-screen h-screen">
+  <Canvas camera={{ position: [0, 1, 5], fov: 35 }}>
+    <ambientLight intensity={1.2} />
+    <directionalLight position={[2, 2, 2]} intensity={1} />
+    <RotatingModel modelPath={modelPath} />
+    <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
+  </Canvas>
+</div>
+
   );
 };
 
