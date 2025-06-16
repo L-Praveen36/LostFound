@@ -98,18 +98,6 @@ function HomePage() {
   <ModelCarousel />
 </div>
 
-      {/* Image Cards */}
-      <div className="flex justify-center items-center space-x-4 mb-6">
-        <div className="w-40 h-32 bg-white border rounded-lg shadow flex items-center justify-center">
-          Image 1
-        </div>
-        <div className="w-40 h-32 bg-white border rounded-lg shadow flex items-center justify-center">
-          Image 2
-        </div>
-        <div className="w-40 h-32 bg-white border rounded-lg shadow flex items-center justify-center">
-          Image 3
-        </div>
-      </div>
 
       {/* Items List */}
       <ItemList filter={filter} search={search} />
