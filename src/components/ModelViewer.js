@@ -1,14 +1,17 @@
 // src/components/ModelViewer.js
-import React, { useRef,  useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import React, { useRef, useMemo } from "react";
+import { Canvas, useFrame, extend } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Stage } from "@react-three/drei";
 import * as THREE from "three";
+import { CircleGeometry } from "three";
+
+// 🧩 Register circleGeometry so <circleGeometry /> works
+extend({ CircleGeometry });
 
 const RotatingModel = ({ modelPath }) => {
   const { scene } = useGLTF(modelPath);
   const ref = useRef();
 
-  // Rotation animation
   useFrame(() => {
     if (ref.current) {
       ref.current.rotation.y += 0.01;
@@ -27,18 +30,18 @@ const RotatingModel = ({ modelPath }) => {
 
 const GlowingBase = () => {
   const glowMaterial = useMemo(() => {
-    const material = new THREE.MeshBasicMaterial({
+    return new THREE.MeshBasicMaterial({
       color: new THREE.Color("#00ffff"),
       transparent: true,
       opacity: 0.3,
+      toneMapped: false,
     });
-    return material;
   }, []);
 
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-      <circleBufferGeometry args={[2.5, 64]} />
-      <primitive object={glowMaterial} attach="material" />
+      <circleGeometry args={[2.5, 64]} />
+      <primitive attach="material" object={glowMaterial} />
     </mesh>
   );
 };
