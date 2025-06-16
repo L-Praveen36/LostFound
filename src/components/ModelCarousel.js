@@ -1,71 +1,63 @@
-import React, { useState, useEffect, useRef } from 'react';
-import ModelViewer from './ModelViewer';
+// ModelCarousel.js
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ModelViewer from './ModelViewer';
 
 const models = [
-  '/models/book.glb',
-  '/models/bicycle.glb',
-  //'/models/idcard.glb',
-  '/models/phone.glb',
-  '/models/umbrella.glb'
+  { path: '/models/book.glb', name: 'Book' },
+  { path: '/models/bicycle.glb', name: 'Bicycle' },
+  { path: '/models/phone.glb', name: 'Smartphone' },
 ];
 
 const ModelCarousel = () => {
   const [index, setIndex] = useState(0);
-  const timeoutRef = useRef(null);
-
-  const next = () => setIndex((prev) => (prev + 1) % models.length);
-  const prev = () => setIndex((prev) => (prev - 1 + models.length) % models.length);
 
   useEffect(() => {
-    const tick = () => {
-      timeoutRef.current = setTimeout(() => {
-        next();
-      }, 7000);
-    };
-    tick();
-    return () => clearTimeout(timeoutRef.current);
-  }, [index]);
-
-  // Preload all models
-  useEffect(() => {
-    models.forEach((path) => {
-      const loader = document.createElement('link');
-      loader.rel = 'preload';
-      loader.as = 'fetch';
-      loader.href = path;
-      document.head.appendChild(loader);
-    });
+    const interval = setInterval(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % models.length);
+    }, 7000); // Change model every 7 seconds
+    return () => clearInterval(interval);
   }, []);
 
+  const prevModel = () => {
+    setIndex((prev) => (prev - 1 + models.length) % models.length);
+  };
+
+  const nextModel = () => {
+    setIndex((prev) => (prev + 1) % models.length);
+  };
+
   return (
-    <div className="relative w-full max-w-xl h-[400px] mx-auto mb-10">
+    <div className="relative w-full max-w-md h-[450px] mx-auto my-8">
+      <div className="absolute top-1/2 left-2 z-10 -translate-y-1/2">
+        <button onClick={prevModel} className="bg-white shadow p-2 rounded-full hover:bg-gray-100">
+          ◀
+        </button>
+      </div>
+
+      <div className="absolute top-1/2 right-2 z-10 -translate-y-1/2">
+        <button onClick={nextModel} className="bg-white shadow p-2 rounded-full hover:bg-gray-100">
+          ▶
+        </button>
+      </div>
+
       <AnimatePresence mode="wait">
         <motion.div
-          key={index}
-          initial={{ opacity: 0, x: 100 }}
+          key={models[index].path}
+          className="absolute w-full h-full"
+          initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -100 }}
-          transition={{ duration: 0.7 }}
-          className="absolute inset-0"
+          exit={{ opacity: 0, x: -50 }}
+          transition={{ duration: 1 }}
         >
-          <ModelViewer modelPath={models[index]} />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full">
+            <ModelViewer modelPath={models[index].path} />
+          </div>
         </motion.div>
       </AnimatePresence>
 
-      {/* Navigation Buttons */}
-      <button
-        onClick={prev}
-        className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-white shadow rounded-full p-2 text-gray-800 hover:bg-gray-100"
-      >
-        ◀
-      </button>
-      <button
-        onClick={next}
-        className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-white shadow rounded-full p-2 text-gray-800 hover:bg-gray-100"
-      >
-        ▶
-      </button>
+      {/* Glowing stand */}
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-40 h-4 bg-blue-500 rounded-full blur-2xl opacity-50"></div>
     </div>
   );
 };
