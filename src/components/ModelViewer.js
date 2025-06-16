@@ -1,43 +1,62 @@
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Float, useGLTF, Html } from "@react-three/drei";
-import { Suspense } from "react";
+// src/components/ModelViewer.js
+import React, { useRef, useEffect, useMemo } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, useGLTF, Stage } from "@react-three/drei";
+import * as THREE from "three";
 
-// Load and display the 3D model
-function Model({ path }) {
-  const { scene } = useGLTF(path);
-  return <primitive object={scene} scale={1.5} />;
-}
+const RotatingModel = ({ modelPath }) => {
+  const { scene } = useGLTF(modelPath);
+  const ref = useRef();
 
-// Render a glowing circular base under the model
-function Base() {
+  // Rotation animation
+  useFrame(() => {
+    if (ref.current) {
+      ref.current.rotation.y += 0.01;
+    }
+  });
+
   return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.1, 0]}>
-      <cylinderGeometry args={[1.8, 1.8, 0.1, 64]} />
-      <meshStandardMaterial color="#4f46e5" emissive="#6366f1" metalness={0.3} roughness={0.4} />
+    <primitive
+      ref={ref}
+      object={scene}
+      position={[0, 0.6, 0]}
+      scale={[1.5, 1.5, 1.5]}
+    />
+  );
+};
+
+const GlowingBase = () => {
+  const glowMaterial = useMemo(() => {
+    const material = new THREE.MeshBasicMaterial({
+      color: new THREE.Color("#00ffff"),
+      transparent: true,
+      opacity: 0.3,
+    });
+    return material;
+  }, []);
+
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+      <circleBufferGeometry args={[2.5, 64]} />
+      <primitive object={glowMaterial} attach="material" />
     </mesh>
   );
-}
+};
 
-export default function ModelViewer({ modelPath }) {
+const ModelViewer = ({ modelPath }) => {
   return (
-    <div className="w-full h-full bg-transparent">
-      <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[5, 5, 5]} intensity={0.6} />
-        <Suspense
-          fallback={
-            <Html center>
-              <span className="text-gray-600">Loading...</span>
-            </Html>
-          }
-        >
-          <Float speed={2} rotationIntensity={1.5} floatIntensity={1}>
-            <Model path={modelPath} />
-          </Float>
-          <Base />
-          <OrbitControls autoRotate enableZoom={false} />
-        </Suspense>
+    <div className="w-full h-[400px] relative">
+      <Canvas camera={{ position: [0, 2, 5], fov: 35 }}>
+        <ambientLight intensity={1.5} />
+        <directionalLight position={[5, 5, 5]} intensity={1.5} />
+        <Stage environment="city" intensity={0.6}>
+          <GlowingBase />
+          <RotatingModel modelPath={modelPath} />
+        </Stage>
+        <OrbitControls enableZoom={false} enablePan={false} />
       </Canvas>
     </div>
   );
-}
+};
+
+export default ModelViewer;
