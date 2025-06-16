@@ -94,7 +94,7 @@ function HomePage() {
         </button>
       </div>
       {/* 3D Model Carousel */}
-<div className="p-0 m-0 w-full overflow-hidden">
+<div className="w-full max-w-md h-[400px] mx-auto mb-8">
   <ModelCarousel />
 </div>
 
