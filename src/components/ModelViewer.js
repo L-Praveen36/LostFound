@@ -1,5 +1,5 @@
 // File: src/components/ModelViewer.js
-import React, { useRef,  useMemo } from 'react';
+import React, { useRef, Suspense, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment, Center, useGLTF, Html } from '@react-three/drei';
 import * as THREE from 'three';
