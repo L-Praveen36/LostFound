@@ -1,5 +1,5 @@
 // src/components/ModelViewer.js
-import React, { ref,useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
@@ -8,6 +8,7 @@ import * as THREE from "three";
 const RotatingModel = ({ modelPath }) => {
   const groupRef = useRef();
   const { scene } = useGLTF(modelPath);
+  const ref = useRef();
 
   // Center and scale the model
   useEffect(() => {
