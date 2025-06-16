@@ -59,7 +59,7 @@ function HomePage() {
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-center my-4 mx-auto">
           LOST AND FOUND
-        </h1>
+        </h1> </header>
         <div className="absolute top-6 right-6 space-x-4">
           <Link
             to="/"
@@ -81,7 +81,6 @@ function HomePage() {
 </button>
 
         </div>
-      </header>
 
       {/* Upload Button */}
       <div className="text-center mb-6">
