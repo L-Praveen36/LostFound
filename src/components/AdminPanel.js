@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link , useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 
 const AdminPanel = () => {
@@ -147,12 +149,20 @@ useEffect(() => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="space-y-4">
+        {Array(4).fill().map((_, i) => (
+          <div key={i} className="p-4 border rounded-lg shadow">
+            <Skeleton height={25} width="40%" className="mb-2" />
+            <Skeleton height={15} count={3} />
+          </div>
+        ))}
       </div>
-    );
-  }
+    </div>
+  );
+}
+
 const filteredItems = items.filter(item => {
   if (filter === 'all') return true;
   return item.status === filter;
@@ -251,15 +261,16 @@ const filteredItems = items.filter(item => {
                   </div>
                 </div>
 
-                {(item.imageUrl || item.image) && (
-                  <div className="mt-3 md:mt-0 md:ml-4">
-                    <img
-                      src={item.imageUrl || item.image}
-                      alt={item.title}
-                      className="w-20 h-20 object-cover rounded-lg"
-                    />
-                  </div>
-                )}
+                {(item.imageUrl || item.image) ? (
+  <img
+    src={item.imageUrl || item.image}
+    alt={item.title}
+    className="w-20 h-20 object-cover rounded-lg"
+  />
+) : (
+  <Skeleton height={80} width={80} />
+)}
+
               </div>
 
               {/* Action Buttons */}

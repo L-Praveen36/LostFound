@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Zoom from 'react-medium-image-zoom'
 import 'react-medium-image-zoom/dist/styles.css'
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 
 const ItemList = () => {
 
@@ -62,13 +65,22 @@ const [search, setSearch] = useState('');
 });
 
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+  {loading ? (
+  Array(4).fill().map((_, i) => (
+    <div key={i} className="p-4 border rounded-lg shadow">
+      <Skeleton height={20} width="40%" className="mb-2" />
+      <Skeleton height={15} count={2} />
+    </div>
+  ))
+) : (
+  items.map(item => (
+    <div key={item._id} className="p-4 border rounded-lg shadow">
+      <h3 className="text-lg font-semibold">{item.title}</h3>
+      <p>{item.description}</p>
+    </div>
+  ))
+)}
+
 
   return (
     <div className="container mx-auto px-4 py-8">
