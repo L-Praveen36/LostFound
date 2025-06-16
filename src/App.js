@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ModelCarousel from "./components/ModelCarousel";
-import ModelViewer from "./components/ModelViewer";
+
 
 import {
   BrowserRouter as Router,
