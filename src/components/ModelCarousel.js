@@ -23,7 +23,7 @@ const ModelCarousel = () => {
   };
 
   return (
-    <div className="relative w-full max-w-md h-[500px] mx-auto">
+    <div className="container mx-auto px-4 py-8">
       <ModelViewer modelPath={modelList[index]} paused={paused} />
 
       {/* Navigation Buttons */}

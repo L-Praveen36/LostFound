@@ -31,7 +31,7 @@ const RotatingModel = ({ modelPath, paused }) => {
 
 const ModelViewer = ({ modelPath, paused }) => {
   return (
-    <div className="w-full h-[500px]">
+    <div className="-full h-[500pxw]">
       <Canvas camera={{ position: [0, 1.5, 4], fov: 45 }}>
         <ambientLight intensity={1.5} />
         <directionalLight position={[3, 5, 5]} intensity={1.2} />
