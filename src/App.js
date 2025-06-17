@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ModelCarousel from "./components/ModelCarousel";
+import ImageSlider from "./components/ImageSlider";
 
 
 import {
@@ -95,7 +95,7 @@ function HomePage() {
       </div>
       {/* 3D Model Carousel */}
 <div className="w-full max-w-md h-[400px] mx-auto mb-8">
-  <ModelCarousel />
+  <ImageSlider />
 </div>
 
 
