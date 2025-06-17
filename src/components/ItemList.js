@@ -103,7 +103,7 @@ const ItemList = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 pt-2 pb-8">
+    <div className="container mx-auto px-4 pt-2 pb-4">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
         📱 Lost & Found Items
       </h2>

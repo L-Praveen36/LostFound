@@ -168,10 +168,8 @@ const filteredItems = items.filter(item => {
 
   if (filter === 'resolved') return item.resolved === true;
 
-  if (filter === 'pending') return item.status === 'pending';
-
-  if (filter === 'approved') return item.status === 'approved' && !item.resolved;
-
+  if (filter === 'pending') return item.status === 'approved' && !item.resolved; // FIXED: Pending = approved but not resolved
+  if (filter === 'approved') return item.status === 'approved';
   if (filter === 'rejected') return item.status === 'rejected';
 
   return true;
@@ -211,7 +209,7 @@ const filteredItems = items.filter(item => {
           <StatCard title="Total Items" count={items.length} color="blue" />
 <StatCard
   title="Pending"
-  count={items.filter(i => i.status === 'pending').length}
+  count={items.filter(i => i.status === 'approved' && !i.resolved).length}
   color="yellow"
 />
 <StatCard
