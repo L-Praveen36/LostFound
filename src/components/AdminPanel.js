@@ -6,7 +6,8 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 const AdminPanel = () => {
  const token = sessionStorage.getItem('adminToken');
- 
+  const [search, setSearch] = useState('');
+
   const [items, setItems] = useState([]);
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -164,16 +165,21 @@ useEffect(() => {
 }
 
 const filteredItems = items.filter(item => {
-  if (filter === 'all') return true;
+    const matchFilter =
+      filter === 'all' ||
+      (filter === 'pending' && item.status === 'approved' && !item.resolved) ||
+      (filter === 'approved' && item.status === 'approved') ||
+      (filter === 'rejected' && item.status === 'rejected') ||
+      (filter === 'resolved' && item.resolved);
 
-  if (filter === 'resolved') return item.resolved === true;
+    const matchSearch =
+      item.title.toLowerCase().includes(search.toLowerCase()) ||
+      item.description.toLowerCase().includes(search.toLowerCase()) ||
+      item.location.toLowerCase().includes(search.toLowerCase());
 
-  if (filter === 'pending') return item.status === 'approved' && !item.resolved; // FIXED: Pending = approved but not resolved
-  if (filter === 'approved') return item.status === 'approved';
-  if (filter === 'rejected') return item.status === 'rejected';
+    return matchFilter && matchSearch;
+  });
 
-  return true;
-});
 
 
 
@@ -229,10 +235,20 @@ const filteredItems = items.filter(item => {
 />
 
         </div>
+        {/* Search */}
+        <div className="mb-4">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="🔍 Search by title, description, location"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
         {/* Filter */}
         <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
+       <div className="flex flex-wrap gap-2">
             {['all', 'pending', 'approved', 'rejected', 'resolved'].map(status => (
   <button
     key={status}

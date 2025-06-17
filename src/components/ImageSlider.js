@@ -11,14 +11,13 @@ const images = [
   },
   {
     src: "/images/umbrella.jpg",
-    caption: "umbrella dropped in cafeteria"
+    caption: "🌂 Umbrella dropped in cafeteria"
   }
 ];
 
 const ImageSlider = () => {
   const [current, setCurrent] = useState(0);
 
-  // Auto-slide every 4 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
@@ -30,32 +29,34 @@ const ImageSlider = () => {
     setCurrent(index);
   };
 
-  const next = () => setCurrent((prev) => (prev + 1) % images.length);
-  const prev = () => setCurrent((prev) => (prev - 1 + images.length) % images.length);
+  const next = () =>
+    setCurrent((prev) => (prev + 1) % images.length);
+  const prev = () =>
+    setCurrent((prev) => (prev - 1 + images.length) % images.length);
 
   return (
-    <div className="relative w-full max-w-5xl h-[300px] md:h-[400px] mx-auto mb-10 overflow-hidden">
+    <div className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] lg:h-[450px] xl:h-[500px] overflow-hidden rounded-lg shadow-lg">
       <img
         src={images[current].src}
         alt={`Slide ${current + 1}`}
-        className="w-full h-full object-cover rounded-lg shadow transition-all duration-700"
+        className="w-full h-full object-cover transition-all duration-700"
       />
 
       {/* Caption */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-4 py-2 rounded">
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-4 py-2 rounded text-sm sm:text-base">
         {images[current].caption}
       </div>
 
-      {/* Navigation buttons */}
+      {/* Navigation Buttons */}
       <button
         onClick={prev}
-        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 px-3 py-2 rounded-full shadow"
+        className="absolute left-3 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-90 text-xl px-3 py-1 rounded-full shadow"
       >
         ◀
       </button>
       <button
         onClick={next}
-        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 px-3 py-2 rounded-full shadow"
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-90 text-xl px-3 py-1 rounded-full shadow"
       >
         ▶
       </button>
@@ -65,10 +66,10 @@ const ImageSlider = () => {
         {images.map((_, i) => (
           <button
             key={i}
-            className={`w-3 h-3 rounded-full ${
-              i === current ? "bg-blue-500" : "bg-gray-300"
-            }`}
             onClick={() => goToSlide(i)}
+            className={`w-3 h-3 rounded-full ${
+              current === i ? "bg-blue-500" : "bg-gray-300"
+            }`}
           ></button>
         ))}
       </div>
