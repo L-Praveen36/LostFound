@@ -94,7 +94,7 @@ function HomePage() {
         </button>
       </div>
       {/* 3D Model Carousel */}
-<div className="w-full max-w-md h-[400px] mx-auto mb-8">
+<div className="w-full max-w-5xl mx-auto mb-4">
   <ImageSlider />
 </div>
 

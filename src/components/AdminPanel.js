@@ -165,8 +165,18 @@ useEffect(() => {
 
 const filteredItems = items.filter(item => {
   if (filter === 'all') return true;
-  return item.status === filter;
+
+  if (filter === 'resolved') return item.resolved === true;
+
+  if (filter === 'pending') return item.status === 'pending';
+
+  if (filter === 'approved') return item.status === 'approved' && !item.resolved;
+
+  if (filter === 'rejected') return item.status === 'rejected';
+
+  return true;
 });
+
 
 
   return (
@@ -199,27 +209,46 @@ const filteredItems = items.filter(item => {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <StatCard title="Total Items" count={items.length} color="blue" />
-          <StatCard title="Pending" count={items.filter(i => i.status === 'pending').length} color="yellow" />
-          <StatCard title="Approved" count={items.filter(i => i.status === 'approved').length} color="green" />
-          <StatCard title="Rejected" count={items.filter(i => i.status === 'rejected').length} color="red" />
+<StatCard
+  title="Pending"
+  count={items.filter(i => i.status === 'pending').length}
+  color="yellow"
+/>
+<StatCard
+  title="Approved"
+  count={items.filter(i => i.status === 'approved' && !i.resolved).length}
+  color="green"
+/>
+<StatCard
+  title="Rejected"
+  count={items.filter(i => i.status === 'rejected').length}
+  color="red"
+/>
+<StatCard
+  title="Resolved"
+  count={items.filter(i => i.resolved).length}
+  color="purple"
+/>
+
         </div>
 
         {/* Filter */}
         <div className="mb-6">
           <div className="flex flex-wrap gap-2">
-            {['all', 'pending', 'approved', 'rejected'].map(status => (
-              <button
-                key={status}
-                onClick={() => setFilter(status)}
-                className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${
-                  filter === status
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {status}
-              </button>
-            ))}
+            {['all', 'pending', 'approved', 'rejected', 'resolved'].map(status => (
+  <button
+    key={status}
+    onClick={() => setFilter(status)}
+    className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${
+      filter === status
+        ? 'bg-blue-500 text-white'
+        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+    }`}
+  >
+    {status}
+  </button>
+))}
+
           </div>
         </div>
 
