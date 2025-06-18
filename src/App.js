@@ -2,6 +2,7 @@ import { useState } from "react";
 import ImageSlider from "./components/ImageSlider";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
+import { useAuth } from "./AuthContext"; // make sure this is imported
 
 
 import {
@@ -48,8 +49,16 @@ function HomePage() {
   const [filter] = useState("all");
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();      
   
-  
+  const handleUploadClick = () => {
+  if (!user) {
+    alert("Please login to upload an item.");
+    navigate("/login");
+  } else {
+    setShowForm(true);
+  }
+};
   // Redirect to correct admin route based on login state
   const handleAdminClick = () => {
     const token = sessionStorage.getItem("adminToken");
