@@ -1,7 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useAuth } from "../AuthContext";
 
 const ReportForm = ({ showForm, onClose }) => {
   const modalRef = useRef();
+  const { user } = useAuth();
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -50,7 +53,11 @@ const ReportForm = ({ showForm, onClose }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
+  if (!user) {
+    setMessage("❌ Please log in to submit an item.");
+    return;
+  }
     setLoading(true);
     setMessage('');
 
@@ -58,6 +65,8 @@ const ReportForm = ({ showForm, onClose }) => {
     Object.keys(formData).forEach(key => {
       submitData.append(key, formData[key]);
     });
+    submitData.append('userId', user.uid);
+  submitData.append('userEmail', user.email);
     if (image) {
       submitData.append('image', image);
     }
@@ -92,6 +101,22 @@ const ReportForm = ({ showForm, onClose }) => {
   };
     
    if (!showForm) return null;
+   if (!user) {
+  return (
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center px-4">
+      <div className="bg-white rounded-lg shadow-lg p-6 max-w-md text-center">
+        <p className="text-red-600 text-lg font-medium mb-4">Please login to report a lost or found item.</p>
+        <button
+          onClick={onClose}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
 
   return (
   <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center px-4">

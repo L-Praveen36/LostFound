@@ -1,5 +1,7 @@
 import { useState } from "react";
 import ImageSlider from "./components/ImageSlider";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
 
 
 import {
@@ -33,6 +35,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </Router>
   );
