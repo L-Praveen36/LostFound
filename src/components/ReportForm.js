@@ -26,11 +26,14 @@ const ReportForm = ({ showForm, onClose }) => {
   
    // Close on outside click
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
-        onClose();
-      }
-    };
+    const handleUploadClick = () => {
+  if (!user) {
+    alert("Please login to upload an item.");
+    navigate("/login");
+  } else {
+    setShowForm(true);
+  }
+};
     if (showForm) {
       document.addEventListener("mousedown", handleClickOutside);
       document.body.style.overflow = "hidden"; // prevent background scroll

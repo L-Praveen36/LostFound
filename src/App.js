@@ -91,7 +91,7 @@ function HomePage() {
       {/* Upload Button */}
       <div className="text-center mb-6">
         <button
-          onClick={() => setShowForm(true)}
+          onClick={handleUploadClick}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           📤 Upload Lost or Found Item
