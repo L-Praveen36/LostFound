@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useAuth } from "../AuthContext";
-import { useNavigate } from 'react-router-dom'; // ✅
+
 
 const ReportForm = ({ showForm, onClose }) => {
   const modalRef = useRef();
   const { user } = useAuth();
-  const navigate = useNavigate(); // ✅
+  
 
   const [formData, setFormData] = useState({
     title: '',
@@ -25,13 +25,14 @@ const ReportForm = ({ showForm, onClose }) => {
     'Electronics', 'Clothing', 'Books', 'Accessories', 'Documents',
     'Keys', 'Bags', 'Sports Equipment','Bicycle', 'Jewelry', 'Other'
   ];
-  const handleClickOutside = (e) => {
+ // ✅ Move this above useEffect
+   // Close on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
   if (modalRef.current && !modalRef.current.contains(e.target)) {
     onClose();
   }
-}; // ✅ Move this above useEffect
-   // Close on outside click
-  useEffect(() => {
+}; 
     if (showForm) {
       document.addEventListener("mousedown", handleClickOutside);
       document.body.style.overflow = "hidden"; // prevent background scroll
