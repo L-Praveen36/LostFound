@@ -3,22 +3,29 @@ import { auth, googleProvider } from "../firebase";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-const Login = ({ onClose }) => {
+const Login = ({showForm, onClose }) => {
   const modalRef = useRef();
+ 
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
-        onClose(); // Dismiss when clicking outside
+      const handleClickOutside = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      onClose();
+    }
+  }; 
+      if (showForm) {
+        document.addEventListener("mousedown", handleClickOutside);
+        document.body.style.overflow = "hidden"; // prevent background scroll
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose]);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.body.style.overflow = "auto"; // re-enable scroll
+      };
+    }, [showForm, onClose]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
