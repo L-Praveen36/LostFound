@@ -1,22 +1,33 @@
-// src/components/Login.js
-import React, { useRef } from 'react';
-import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider } from '../firebase';
-//import { useNavigate } from 'react-router-dom';
+import React, { useRef, useEffect, useState } from "react";
+import { auth, googleProvider } from "../firebase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const Login = ({ onClose }) => {
-  //const navigate = useNavigate();
-  const emailRef = useRef();
-  const passwordRef = useRef();
   const modalRef = useRef();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onClose(); // Dismiss when clicking outside
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [onClose]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      await signInWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
+      await signInWithEmailAndPassword(auth, email, password);
       onClose();
-    } catch (error) {
-      alert(error.message);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -24,40 +35,30 @@ const Login = ({ onClose }) => {
     try {
       await signInWithPopup(auth, googleProvider);
       onClose();
-    } catch (error) {
-      alert(error.message);
-    }
-  };
-
-  const handleOutsideClick = (e) => {
-    if (modalRef.current && !modalRef.current.contains(e.target)) {
-      onClose();
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-40 z-50 flex justify-center items-center px-4"
-      onClick={handleOutsideClick}
-    >
-      <div
-        ref={modalRef}
-        className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full"
-      >
-        <h2 className="text-2xl font-bold mb-4 text-center">Sign In</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex justify-center items-center px-4">
+      <div ref={modalRef} className="bg-white max-w-sm w-full p-6 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold text-center mb-4">🔐 Login</h2>
+        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+
         <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="email"
             placeholder="Email"
-            ref={emailRef}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full px-4 py-2 border rounded"
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
           <input
             type="password"
             placeholder="Password"
-            ref={passwordRef}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full px-4 py-2 border rounded"
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
           <button
@@ -76,6 +77,19 @@ const Login = ({ onClose }) => {
         >
           Sign in with Google
         </button>
+
+        <p className="text-sm mt-4 text-center">
+          Don't have an account?{' '}
+          <span
+            className="text-blue-500 underline cursor-pointer"
+            onClick={() => {
+              onClose(); // close modal
+              navigate("/signup"); // go to signup page
+            }}
+          >
+            Sign up
+          </span>
+        </p>
       </div>
     </div>
   );

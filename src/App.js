@@ -50,7 +50,8 @@ function HomePage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();      
-  
+  const [showLogin, setShowLogin] = useState(false);
+
   const handleUploadClick = () => {
   if (!user) {
     alert("Please login to upload an item.");
@@ -94,6 +95,12 @@ function HomePage() {
       Admin
     </button>
   </div>
+  <button
+  onClick={() => setShowLogin(true)}
+  className="text-lg text-blue-600"
+>
+  Login
+</button>
 </header>
 
 
@@ -121,6 +128,8 @@ function HomePage() {
       {showForm && (
         <ReportForm showForm={showForm} onClose={() => setShowForm(false)} />
       )}
+      {showLogin && <Login onClose={() => setShowLogin(false)} />}
+
     </div>
   );
 }
