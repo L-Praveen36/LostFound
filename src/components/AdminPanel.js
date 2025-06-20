@@ -196,11 +196,11 @@ const filteredItems = items.filter(item => {
       (filter === 'resolved' && item.resolved);
 
     const matchSearch =
-      item.title.toLowerCase().includes(search.toLowerCase()) ||
-      item.description.toLowerCase().includes(search.toLowerCase()) ||
-      item.location.toLowerCase().includes(search.toLowerCase()) || 
-      item.userEmail && item.userEmail.toLowerCase().includes(search.toLowerCase()) || 
-      item.date && formatDateDMY(item.date).includes(search)
+  item.title.toLowerCase().includes(search.toLowerCase()) ||
+  item.description.toLowerCase().includes(search.toLowerCase()) ||
+  item.location.toLowerCase().includes(search.toLowerCase()) || 
+  (item.userEmail && item.userEmail.toLowerCase().includes(search.toLowerCase())) || 
+  (item.date && formatDateDMY(item.date).includes(search));
 
     return matchFilter && matchSearch;
   });
