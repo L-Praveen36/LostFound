@@ -3,7 +3,7 @@ import ImageSlider from "./components/ImageSlider";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import { useAuth } from "./AuthContext"; // make sure this is imported
-
+import LoginWarning from "./components/LoginWarning";
 
 import {
   BrowserRouter as Router,
@@ -49,62 +49,54 @@ function HomePage() {
   const [filter] = useState("all");
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();      
-  const [showLogin, setShowLogin] = useState(false);
+  const { user } = useAuth();
+  const [showWarning, setShowWarning] = useState(false);
 
   const handleUploadClick = () => {
-  if (!user) {
-    alert("Please login to upload an item.");
-    navigate("/login");
-  } else {
-    setShowForm(true);
-  }
-};
-  // Redirect to correct admin route based on login state
+    if (!user) {
+      setShowWarning(true);
+    } else {
+      setShowForm(true);
+    }
+  };
+
   const handleAdminClick = () => {
     const token = sessionStorage.getItem("adminToken");
-    if (token) {
-      navigate("/admin");
-    } else {
-      navigate("/admin-login");
-    }
+    navigate(token ? "/admin" : "/admin-login");
   };
 
   return (
     <div className="max-w-6xl mx-auto p-4 relative">
       {/* Top Nav */}
       <header className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-2 md:space-y-0">
-  <h1 className="text-3xl font-bold text-center md:text-left">LOST AND FOUND</h1>
-  <div className="space-x-4">
-    <Link
-      to="/"
-      className={`text-lg ${
-        location.pathname === "/" ? "underline font-semibold" : ""
-      }`}
-    >
-      🏠 Home
-    </Link>
-    <button
-      onClick={handleAdminClick}
-      className={`text-lg text-red-500 ${
-        location.pathname === "/admin" || location.pathname === "/admin-login"
-          ? "underline font-semibold"
-          : ""
-      }`}
-    >
-      Admin
-    </button>
-  </div>
-  <button
-  onClick={() => setShowLogin(true)}
-  className="text-lg text-blue-600"
->
-  Login
-</button>
-</header>
-
-
-
+        <h1 className="text-3xl font-bold text-center md:text-left">LOST AND FOUND</h1>
+        <div className="space-x-4">
+          <Link
+            to="/"
+            className={`text-lg ${
+              location.pathname === "/" ? "underline font-semibold" : ""
+            }`}
+          >
+            🏠 Home
+          </Link>
+          <button
+            onClick={handleAdminClick}
+            className={`text-lg text-red-500 ${
+              location.pathname === "/admin" || location.pathname === "/admin-login"
+                ? "underline font-semibold"
+                : ""
+            }`}
+          >
+            Admin
+          </button>
+          <button
+            onClick={() => navigate("/login")}
+            className="text-lg text-blue-600"
+          >
+            Login
+          </button>
+        </div>
+      </header>
 
       {/* Upload Button */}
       <div className="text-center mb-6">
@@ -115,23 +107,28 @@ function HomePage() {
           📤 Upload Lost or Found Item
         </button>
       </div>
-      {/* 3D Model Carousel */}
-<div className="w-full max-w-5xl mx-auto mb-6">
-  <ImageSlider />
-</div>
 
+      {/* Image Slider */}
+      <div className="w-full max-w-5xl mx-auto mb-6">
+        <ImageSlider />
+      </div>
 
       {/* Items List */}
       <ItemList filter={filter} search={search} />
 
-      {/* Modal Report Form */}
+      {/* Report Form */}
       {showForm && (
         <ReportForm showForm={showForm} onClose={() => setShowForm(false)} />
       )}
-      {showLogin && <Login onClose={() => setShowLogin(false)} />}
 
+      {/* Login Warning Modal */}
+      {showWarning && (
+        <LoginWarning
+          onClose={() => setShowWarning(false)}
+          onLogin={() => navigate("/login")}
+          onSignup={() => navigate("/signup")}
+        />
+      )}
     </div>
   );
 }
-
-export default App;
