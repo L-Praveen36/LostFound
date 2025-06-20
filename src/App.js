@@ -96,7 +96,7 @@ function HomePage() {
   </div>
 </header>
 
-{showLogin && <Login onClose={() => setShowLogin(false)} />}
+
 
 
       {/* Upload Button */}
