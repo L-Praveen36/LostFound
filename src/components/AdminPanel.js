@@ -95,6 +95,30 @@ useEffect(() => {
     console.error('Error moderating item:', error);
   }
 };
+  const deleteItem = async (itemId) => {
+  const confirmed = window.confirm("Are you sure you want to delete this item?");
+  if (!confirmed) return;
+
+  try {
+    const token = sessionStorage.getItem("adminToken");
+    const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (response.ok) {
+      alert("✅ Item deleted successfully.");
+      fetchItems(); // reload updated list
+    } else {
+      const err = await response.json();
+      alert("❌ Failed to delete: " + (err.message || "Unknown error"));
+    }
+  } catch (error) {
+    console.error("Error deleting item:", error);
+  }
+};
 
 
   const resolveItem = async (itemId) => {
@@ -345,13 +369,23 @@ const filteredItems = items.filter(item => {
                   </>
                 )}
                 {item.status === 'approved' && !item.resolved && (
-                  <button
-                    onClick={() => resolveItem(item._id)}
-                    className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-                  >
-                    Mark as Resolved
-                  </button>
-                )}
+  <>
+    <button
+      onClick={() => resolveItem(item._id)}
+      className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+    >
+      Mark as Resolved
+    </button>
+    <button
+      onClick={() => deleteItem(item._id)}
+      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+    >
+      🗑️ Delete
+    </button>
+  </>
+)}
+
+                
               </div>
             </div>
           ))}

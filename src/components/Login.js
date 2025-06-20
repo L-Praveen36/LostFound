@@ -10,16 +10,17 @@ const Login = () => {
   const navigate = useNavigate();
 
 const handleLogin = async (e) => {
-  e.preventDefault();
+  e.preventDefault(); // ✅ this should come first
   setError('');
   try {
-    await setPersistence(auth, browserSessionPersistence); // session-only
+    await setPersistence(auth, browserSessionPersistence);
     await signInWithEmailAndPassword(auth, email, password);
     navigate('/');
   } catch (err) {
     setError(err.message);
   }
 };
+
 
 
   const handleGoogleLogin = async () => {
