@@ -9,22 +9,18 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+const handleLogin = async (e) => {
   e.preventDefault();
   setError('');
-
   try {
-    // Ensure session-based login
-    await setPersistence(auth, browserSessionPersistence);
-
-    // Then login
+    await setPersistence(auth, browserSessionPersistence); // session-only
     await signInWithEmailAndPassword(auth, email, password);
-
     navigate('/');
   } catch (err) {
     setError(err.message);
   }
 };
+
 
   const handleGoogleLogin = async () => {
     try {
