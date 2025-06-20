@@ -95,28 +95,26 @@ useEffect(() => {
     console.error('Error moderating item:', error);
   }
 };
-  const deleteItem = async (itemId) => {
+  const handleDelete = async (itemId) => {
   const confirmed = window.confirm("Are you sure you want to delete this item?");
   if (!confirmed) return;
 
   try {
     const token = sessionStorage.getItem("adminToken");
     const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (response.ok) {
-      alert("✅ Item deleted successfully.");
-      fetchItems(); // reload updated list
+      alert("Item deleted successfully.");
+      fetchItems();
     } else {
       const err = await response.json();
-      alert("❌ Failed to delete: " + (err.message || "Unknown error"));
+      alert("Failed to delete: " + (err.message || "Unknown error"));
     }
   } catch (error) {
-    console.error("Error deleting item:", error);
+    console.error("Delete error:", error);
   }
 };
 
@@ -200,7 +198,9 @@ const filteredItems = items.filter(item => {
     const matchSearch =
       item.title.toLowerCase().includes(search.toLowerCase()) ||
       item.description.toLowerCase().includes(search.toLowerCase()) ||
-      item.location.toLowerCase().includes(search.toLowerCase());
+      item.location.toLowerCase().includes(search.toLowerCase()) || 
+      item.userEmail && item.userEmail.toLowerCase().includes(search.toLowerCase()) || 
+      item.date && formatDateDMY(item.date).includes(search)
 
     return matchFilter && matchSearch;
   });
@@ -266,7 +266,7 @@ const filteredItems = items.filter(item => {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="🔍 Search by title, description, location"
+            placeholder="🔍 Search by title, description, location,Date ,email id"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -330,10 +330,12 @@ const filteredItems = items.filter(item => {
                     )}
 
                     {item.moderatedBy && (
-  <p>
-    Moderated by: {item.moderatedBy} on {formatDateDMY(item.moderatedAt)}
-  </p>
-)}
+                   <p>
+                    Moderated by: {item.moderatedBy} on {formatDateDMY(item.moderatedAt)}
+                  </p>
+                    )}
+                   <p>Email: {item.userEmail || 'Not provided'}</p>
+
 
                   </div>
                 </div>
@@ -376,14 +378,14 @@ const filteredItems = items.filter(item => {
     >
       Mark as Resolved
     </button>
-    <button
-      onClick={() => deleteItem(item._id)}
-      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-    >
-      🗑️ Delete
-    </button>
   </>
-)}
+)}<button
+  onClick={() => handleDelete(item._id)}
+  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+>
+  Delete
+</button>
+
 
                 
               </div>
