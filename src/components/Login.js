@@ -1,52 +1,82 @@
-import React, { useState } from 'react';
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+// src/components/Login.js
+import React, { useRef } from 'react';
+import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../firebase';
+//import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+const Login = ({ onClose }) => {
+  //const navigate = useNavigate();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const modalRef = useRef();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate('/');
-    } catch (err) {
-      setError(err.message);
+      await signInWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
+      onClose();
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      onClose();
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const handleOutsideClick = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      onClose();
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow">
-      <h2 className="text-2xl font-bold text-center mb-4">🔐 Login</h2>
-      {error && <p className="text-red-500 mb-2">{error}</p>}
-      <form onSubmit={handleLogin} className="space-y-4">
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full px-4 py-2 border rounded"
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full px-4 py-2 border rounded"
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-          Login
+    <div
+      className="fixed inset-0 bg-black bg-opacity-40 z-50 flex justify-center items-center px-4"
+      onClick={handleOutsideClick}
+    >
+      <div
+        ref={modalRef}
+        className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full"
+      >
+        <h2 className="text-2xl font-bold mb-4 text-center">Sign In</h2>
+        <form onSubmit={handleLogin} className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email"
+            ref={emailRef}
+            className="w-full border px-3 py-2 rounded"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            ref={passwordRef}
+            className="w-full border px-3 py-2 rounded"
+            required
+          />
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+          >
+            Login
+          </button>
+        </form>
+
+        <div className="my-4 text-center text-gray-500">or</div>
+
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
+        >
+          Sign in with Google
         </button>
-      </form>
-      <p className="text-sm mt-4 text-center">
-        Don’t have an account?{' '}
-        <a href="/signup" className="text-blue-500 underline">Sign up</a>
-      </p>
+      </div>
     </div>
   );
 };
