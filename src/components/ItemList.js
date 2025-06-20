@@ -11,7 +11,7 @@ const ItemList = () => {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const { user } = useAuth();
-  const currentUser = sessionStorage.getItem("userName");
+  //const currentUser = sessionStorage.getItem("userName");
   const isAdmin = !!sessionStorage.getItem("adminToken");
 
   useEffect(() => {
