@@ -132,3 +132,6 @@ function HomePage() {
     </div>
   );
 }
+
+
+export default App;
