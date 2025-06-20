@@ -129,6 +129,7 @@ useEffect(() => {
   } catch (error) {
     console.error('Error resolving item:', error);
   }
+
 };
 
   function formatDateDMY(dateString) {
@@ -298,6 +299,12 @@ const filteredItems = items.filter(item => {
                     <p>Category: {item.category || 'Other'} | Location: {item.location}</p>
                     <p>Contact: {item.contactInfo || item.contact} | Submitted by: {item.submittedBy || 'Anonymous'}</p>
                     <p>Date: {formatDateDMY(item.date || item.submittedAt)}</p>
+                    {item.resolved && (
+                    <p className="mt-1 text-sm text-purple-700">
+                         ✅ Resolved by: <strong>{item.resolvedBy || "Unknown"}</strong>
+                   </p>
+                    )}
+
                     {item.moderatedBy && (
                       <p>Moderated by: {item.moderatedBy} on {new Date(item.moderatedAt).toLocaleDateString()}</p>
                     )}

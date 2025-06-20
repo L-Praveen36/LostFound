@@ -40,30 +40,39 @@ const ItemList = () => {
   };
 
   const resolveItem = async (itemId) => {
-    const confirmed = window.confirm("Mark this item as resolved?");
-    if (!confirmed) return;
+  const confirmed = window.confirm("Mark this item as resolved?");
+  if (!confirmed) return;
 
-    try {
-      const token = sessionStorage.getItem('adminToken');
-      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/resolve`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        }
-      });
+  const isAdmin = !!sessionStorage.getItem('adminToken');
+  const token = isAdmin
+    ? sessionStorage.getItem('adminToken')
+    : sessionStorage.getItem('userToken'); // ensure you store this on login
 
-      if (response.ok) {
-        alert("Item marked as resolved");
-        fetchItems();
-      } else {
-        const err = await response.json();
-        alert("Failed to resolve: " + (err.message || "Unknown error"));
-      }
-    } catch (error) {
-      console.error('Error resolving item:', error);
+  const url = isAdmin
+    ? `https://lostfound-api.onrender.com/api/admin/items/${itemId}/resolve`
+    : `https://lostfound-api.onrender.com/api/items/${itemId}/resolve`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      alert("Item marked as resolved");
+      fetchItems(); // reload items
+    } else {
+      const err = await response.json();
+      alert("Failed to resolve: " + (err.message || "Unknown error"));
     }
-  };
+  } catch (error) {
+    console.error('Error resolving item:', error);
+  }
+};
+
 
   function formatDateDMY(dateString) {
     const date = new Date(dateString);
