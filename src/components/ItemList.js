@@ -3,13 +3,14 @@ import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { useAuth } from "../AuthContext"; 
 
 const ItemList = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
-
+  const { user } = useAuth();
   const currentUser = sessionStorage.getItem("userName");
   const isAdmin = !!sessionStorage.getItem("adminToken");
 
@@ -39,14 +40,14 @@ const ItemList = () => {
     }
   };
 
-  const resolveItem = async (itemId) => {
+  const resolveItem = async (itemId, userEmail) => {
   const confirmed = window.confirm("Mark this item as resolved?");
   if (!confirmed) return;
 
   const isAdmin = !!sessionStorage.getItem('adminToken');
   const token = isAdmin
     ? sessionStorage.getItem('adminToken')
-    : sessionStorage.getItem('userToken'); // ensure you store this on login
+    : sessionStorage.getItem('userToken'); // optional if you secure user routes
 
   const url = isAdmin
     ? `https://lostfound-api.onrender.com/api/admin/items/${itemId}/resolve`
@@ -57,19 +58,21 @@ const ItemList = () => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        ...(isAdmin && { Authorization: `Bearer ${token}` }) // Only add token if admin
       },
+      body: isAdmin ? null : JSON.stringify({ email: userEmail }) // 🔧 send user email if not admin
     });
 
+    const data = await response.json();
+
     if (response.ok) {
-      alert("Item marked as resolved");
-      fetchItems(); // reload items
+      alert("✅ Item marked as resolved");
+      fetchItems();
     } else {
-      const err = await response.json();
-      alert("Failed to resolve: " + (err.message || "Unknown error"));
+      alert("❌ Failed to resolve: " + (data.message || "Unknown error"));
     }
   } catch (error) {
-    console.error('Error resolving item:', error);
+    console.error("Error resolving item:", error);
   }
 };
 
@@ -221,13 +224,13 @@ const ItemList = () => {
                         : `📞 Call: ${item.contactInfo || item.contact}`}
                     </a>
 
-                    {(isAdmin || currentUser === item.submittedBy) && (
-                      <button
-                        onClick={() => resolveItem(item._id)}
-                        className="w-full text-center py-2 px-4 rounded-lg font-medium bg-purple-500 text-white hover:bg-purple-600 transition"
-                      >
-                        ✅ Mark as Resolved
-                      </button>
+                    {(isAdmin || (user && user.email === item.userEmail)) && !item.resolved && (
+                     <button
+                        onClick={() => resolveItem(item._id, user?.email)}
+                         className="w-full text-center py-2 px-4 rounded-lg font-medium bg-purple-500 text-white hover:bg-purple-600 transition"
+                           >
+                         ✅ Mark as Resolved
+                     </button>
                     )}
                   </>
                 ) : (

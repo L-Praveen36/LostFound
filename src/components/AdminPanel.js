@@ -301,13 +301,16 @@ const filteredItems = items.filter(item => {
                     <p>Date: {formatDateDMY(item.date || item.submittedAt)}</p>
                     {item.resolved && (
                     <p className="mt-1 text-sm text-purple-700">
-                         ✅ Resolved by: <strong>{item.resolvedBy || "Unknown"}</strong>
+                         ✅ Resolved by: <strong>{item.resolvedBy || "admin"}</strong>
                    </p>
                     )}
 
                     {item.moderatedBy && (
-                      <p>Moderated by: {item.moderatedBy} on {new Date(item.moderatedAt).toLocaleDateString()}</p>
-                    )}
+  <p>
+    Moderated by: {item.moderatedBy} on {formatDateDMY(item.moderatedAt)}
+  </p>
+)}
+
                   </div>
                 </div>
 
