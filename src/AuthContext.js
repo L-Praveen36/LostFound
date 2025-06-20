@@ -11,11 +11,19 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-    return () => unsub();
-  }, []);
+  const unsub = onAuthStateChanged(auth, (firebaseUser) => {
+    setUser(firebaseUser);
+    if (firebaseUser) {
+      sessionStorage.setItem("userToken", firebaseUser.accessToken); // optional
+      sessionStorage.setItem("userEmail", firebaseUser.email);
+    } else {
+      sessionStorage.removeItem("userToken");
+      sessionStorage.removeItem("userEmail");
+    }
+  });
+  return () => unsub();
+}, []);
+
 
   return (
     <AuthContext.Provider value={{ user }}>

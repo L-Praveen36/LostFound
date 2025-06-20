@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { auth, googleProvider } from '../firebase';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-
+import { setPersistence, browserSessionPersistence } from "firebase/auth";
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -10,15 +10,21 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate('/');
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+  e.preventDefault();
+  setError('');
+
+  try {
+    // Ensure session-based login
+    await setPersistence(auth, browserSessionPersistence);
+
+    // Then login
+    await signInWithEmailAndPassword(auth, email, password);
+
+    navigate('/');
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   const handleGoogleLogin = async () => {
     try {
