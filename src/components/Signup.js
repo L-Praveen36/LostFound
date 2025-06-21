@@ -31,6 +31,14 @@ const Signup = () => {
 
   return (
     <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow">
+      <div className="absolute top-6 right-6 space-x-4">
+      <Link
+    to="/"
+    className="text-blue-600 underline hover:text-blue-800 text-sm"
+  >
+    🏠 Home
+  </Link>
+  </div>
       <h2 className="text-2xl font-bold text-center mb-4">📝 Sign Up</h2>
       {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
