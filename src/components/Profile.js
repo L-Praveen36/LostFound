@@ -7,7 +7,8 @@ const Profile = () => {
 
   useEffect(() => {
     if (user) {
-      fetch(`https://lostfound-api.onrender.com/api/items?userId=${user.uid}`)
+      fetch(`https://lostfound-api.onrender.com/api/items?userEmail=${encodeURIComponent(user.email)}`)
+
         .then(res => res.json())
         .then(data => setMyItems(data));
     }
