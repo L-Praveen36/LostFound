@@ -2,18 +2,19 @@ import { useState } from "react";
 import { useAuth } from "./AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "./firebase";
-import ImageSlider from "./components/ImageSlider";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import LoginWarning from "./components/LoginWarning";
+import { Menu } from "@headlessui/react";
+import { Bars3Icon } from "@heroicons/react/24/outline";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link,
-  useLocation,
   useNavigate,
 } from "react-router-dom";
+
+import ImageSlider from "./components/ImageSlider";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import LoginWarning from "./components/LoginWarning";
 import ReportForm from "./components/ReportForm";
 import AdminPanel from "./components/AdminPanel";
 import AdminLogin from "./components/AdminLogin";
@@ -21,10 +22,9 @@ import ItemList from "./components/ItemList";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./components/Profile";
 
-import { Menu } from "@headlessui/react"; // ✅ Install with: npm i @headlessui/react
-
 import "./App.css";
 
+// App Wrapper
 function App() {
   return (
     <Router>
@@ -47,14 +47,14 @@ function App() {
   );
 }
 
+// Home Page Component
 function HomePage() {
   const [showForm, setShowForm] = useState(false);
   const [search] = useState("");
   const [filter] = useState("all");
-  const location = useLocation();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [showWarning, setShowWarning] = useState(false);
+  const navigate = useNavigate();
 
   const handleUploadClick = () => {
     if (!user) {
@@ -72,31 +72,71 @@ function HomePage() {
   return (
     <div className="max-w-6xl mx-auto p-4 relative">
       {/* Header */}
-      <header className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-2 md:space-y-0">
-        <h1 className="text-3xl font-bold text-center md:text-left">
+      <header className="flex justify-between items-center mb-6 px-2">
+        {/* Left: Hamburger */}
+        <Menu as="div" className="relative">
+          <Menu.Button className="p-2 rounded hover:bg-gray-100">
+            <Bars3Icon className="h-6 w-6 text-gray-800" />
+          </Menu.Button>
+          <Menu.Items className="absolute left-0 mt-2 w-40 bg-white border rounded-md shadow-md z-50">
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  onClick={() => navigate("/")}
+                  className={`w-full px-4 py-2 text-left text-sm ${
+                    active ? "bg-gray-100" : ""
+                  }`}
+                >
+                  🏠 Home
+                </button>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  onClick={handleAdminClick}
+                  className={`w-full px-4 py-2 text-left text-sm text-red-600 ${
+                    active ? "bg-gray-100" : ""
+                  }`}
+                >
+                  🛡️ Admin
+                </button>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  onClick={() => navigate("/profile")}
+                  className={`w-full px-4 py-2 text-left text-sm ${
+                    active ? "bg-gray-100" : ""
+                  }`}
+                >
+                  👤 Profile
+                </button>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  onClick={() => alert("Help section coming soon!")}
+                  className={`w-full px-4 py-2 text-left text-sm ${
+                    active ? "bg-gray-100" : ""
+                  }`}
+                >
+                  ❓ Help
+                </button>
+              )}
+            </Menu.Item>
+          </Menu.Items>
+        </Menu>
+
+        {/* Center: Title */}
+        <h1 className="text-3xl font-bold flex-1 text-center md:text-center">
           LOST AND FOUND
         </h1>
-        <div className="flex items-center space-x-4">
-          <Link
-            to="/"
-            className={`text-lg ${
-              location.pathname === "/" ? "underline font-semibold" : ""
-            }`}
-          >
-            🏠 Home
-          </Link>
-          <button
-            onClick={handleAdminClick}
-            className={`text-lg text-red-500 ${
-              location.pathname === "/admin" ||
-              location.pathname === "/admin-login"
-                ? "underline font-semibold"
-                : ""
-            }`}
-          >
-            Admin
-          </button>
 
+        {/* Right: Login/Profile */}
+        <div className="flex items-center">
           {!user ? (
             <button
               onClick={() => navigate("/login")}
@@ -199,15 +239,15 @@ function HomePage() {
         <ImageSlider />
       </div>
 
-      {/* Items List */}
+      {/* Items */}
       <ItemList filter={filter} search={search} />
 
-      {/* Report Form */}
+      {/* Report Form Modal */}
       {showForm && (
         <ReportForm showForm={showForm} onClose={() => setShowForm(false)} />
       )}
 
-      {/* Login Warning */}
+      {/* Login Required Popup */}
       {showWarning && (
         <LoginWarning
           onClose={() => setShowWarning(false)}
