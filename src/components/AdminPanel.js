@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link , useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 
 const AdminPanel = () => {
- const token = sessionStorage.getItem('adminToken');
+  const token = sessionStorage.getItem('adminToken');
   const [search, setSearch] = useState('');
 
   const [items, setItems] = useState([]);
@@ -14,32 +14,32 @@ const AdminPanel = () => {
   const [highlightedId, setHighlightedId] = useState(null);
   const navigate = useNavigate();
 
-useEffect(() => {
-  const checkAuth = () => {
-    if (!sessionStorage.getItem("adminToken")) {
-     navigate('/admin-login', { replace: true }); // ⛔ Avoid history entry
-    }
-  };
+  useEffect(() => {
+    const checkAuth = () => {
+      if (!sessionStorage.getItem("adminToken")) {
+        navigate('/admin-login', { replace: true }); // ⛔ Avoid history entry
+      }
+    };
 
-  checkAuth(); // On load
+    checkAuth(); // On load
 
-  const handlePageShow = (e) => {
-    if (e.persisted || performance.getEntriesByType("navigation")[0]?.type === "back_forward") {
-      checkAuth(); // Prevent showing cached admin panel after logout
-    }
-  };
+    const handlePageShow = (e) => {
+      if (e.persisted || performance.getEntriesByType("navigation")[0]?.type === "back_forward") {
+        checkAuth(); // Prevent showing cached admin panel after logout
+      }
+    };
 
-  window.addEventListener("pageshow", handlePageShow);
-  return () => {
-    window.removeEventListener("pageshow", handlePageShow);
-  };
-}, [navigate]);
-
-
+    window.addEventListener("pageshow", handlePageShow);
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, [navigate]);
 
 
 
- // ✅ Define fetchItems using useCallback to satisfy ESLint
+
+
+  // ✅ Define fetchItems using useCallback to satisfy ESLint
   const fetchItems = useCallback(async () => {
     try {
       const response = await fetch('https://lostfound-api.onrender.com/api/admin/items', {
@@ -63,104 +63,104 @@ useEffect(() => {
   }, [fetchItems]);
 
   const moderateItem = async (itemId, status) => {
-  const confirmed = window.confirm(`Are you sure you want to ${status} this item?`);
-  if (!confirmed) return;
+    const confirmed = window.confirm(`Are you sure you want to ${status} this item?`);
+    if (!confirmed) return;
 
-  try {
-    const token = sessionStorage.getItem('adminToken'); // ✅ get token again here
-    const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/moderate`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}` // ✅ pass token here
-      },
-      body: JSON.stringify({ status, moderatorName: 'Admin' })
-    });
+    try {
+      const token = sessionStorage.getItem('adminToken'); // ✅ get token again here
+      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/moderate`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` // ✅ pass token here
+        },
+        body: JSON.stringify({ status, moderatorName: 'Admin' })
+      });
 
-    if (response.ok) {
-      alert(`Item ${status}`);
-      setHighlightedId(itemId);
-      fetchItems();
-      setTimeout(() => setHighlightedId(null), 3000);
-    } else if (response.status === 401) {
-  alert("Session expired. Please log in again.");
-  sessionStorage.removeItem("adminToken");
-  navigate('/admin-login', { replace: true });
+      if (response.ok) {
+        alert(`Item ${status}`);
+        setHighlightedId(itemId);
+        fetchItems();
+        setTimeout(() => setHighlightedId(null), 3000);
+      } else if (response.status === 401) {
+        alert("Session expired. Please log in again.");
+        sessionStorage.removeItem("adminToken");
+        navigate('/admin-login', { replace: true });
 
-    }else {
-      const err = await response.json();
-      alert('Moderation failed: ' + (err.message || 'Unknown error'));
+      } else {
+        const err = await response.json();
+        alert('Moderation failed: ' + (err.message || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error moderating item:', error);
     }
-  } catch (error) {
-    console.error('Error moderating item:', error);
-  }
-};
+  };
   const handleDelete = async (itemId) => {
-  const confirmed = window.confirm("Are you sure you want to delete this item?");
-  if (!confirmed) return;
+    const confirmed = window.confirm("Are you sure you want to delete this item?");
+    if (!confirmed) return;
 
-  try {
-    const token = sessionStorage.getItem("adminToken");
-    const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    try {
+      const token = sessionStorage.getItem("adminToken");
+      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    if (response.ok) {
-      alert("Item deleted successfully.");
-      fetchItems();
-    } else {
-      const err = await response.json();
-      alert("Failed to delete: " + (err.message || "Unknown error"));
+      if (response.ok) {
+        alert("Item deleted successfully.");
+        fetchItems();
+      } else {
+        const err = await response.json();
+        alert("Failed to delete: " + (err.message || "Unknown error"));
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
     }
-  } catch (error) {
-    console.error("Delete error:", error);
-  }
-};
+  };
 
 
   const resolveItem = async (itemId) => {
-  const confirmed = window.confirm('Mark this item as resolved?');
-  if (!confirmed) return;
+    const confirmed = window.confirm('Mark this item as resolved?');
+    if (!confirmed) return;
 
-  try {
-    const token = sessionStorage.getItem('adminToken');
-    const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/resolve`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}` // ✅ Add this line
+    try {
+      const token = sessionStorage.getItem('adminToken');
+      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${itemId}/resolve`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` // ✅ Add this line
+        }
+      });
+
+      if (response.ok) {
+        alert("Item marked as resolved");
+        setHighlightedId(itemId);
+        fetchItems();
+        setTimeout(() => setHighlightedId(null), 3000);
+      } else if (response.status === 401) {
+        alert("Session expired. Please log in again.");
+        sessionStorage.removeItem("adminToken");
+        navigate('/admin-login', { replace: true });
+
+      } else {
+        const err = await response.json();
+        alert("Failed to resolve: " + (err.message || "Unknown error"));
       }
-    });
 
-    if (response.ok) {
-  alert("Item marked as resolved");
-  setHighlightedId(itemId);
-  fetchItems();
-  setTimeout(() => setHighlightedId(null), 3000);
-} else if (response.status === 401) {
-  alert("Session expired. Please log in again.");
-  sessionStorage.removeItem("adminToken");
-  navigate('/admin-login', { replace: true });
+    } catch (error) {
+      console.error('Error resolving item:', error);
+    }
 
-} else {
-  const err = await response.json();
-  alert("Failed to resolve: " + (err.message || "Unknown error"));
-}
-
-  } catch (error) {
-    console.error('Error resolving item:', error);
-  }
-
-};
+  };
 
   function formatDateDMY(dateString) {
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-}
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
 
 
   const getStatusBadge = (status) => {
@@ -173,21 +173,21 @@ useEffect(() => {
   };
 
   if (loading) {
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="space-y-4">
-        {Array(4).fill().map((_, i) => (
-          <div key={i} className="p-4 border rounded-lg shadow">
-            <Skeleton height={25} width="40%" className="mb-2" />
-            <Skeleton height={15} count={3} />
-          </div>
-        ))}
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="space-y-4">
+          {Array(4).fill().map((_, i) => (
+            <div key={i} className="p-4 border rounded-lg shadow">
+              <Skeleton height={25} width="40%" className="mb-2" />
+              <Skeleton height={15} count={3} />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-const filteredItems = items.filter(item => {
+  const filteredItems = items.filter(item => {
     const matchFilter =
       filter === 'all' ||
       (filter === 'pending' && item.status === 'approved' && !item.resolved) ||
@@ -196,11 +196,11 @@ const filteredItems = items.filter(item => {
       (filter === 'resolved' && item.resolved);
 
     const matchSearch =
-  item.title.toLowerCase().includes(search.toLowerCase()) ||
-  item.description.toLowerCase().includes(search.toLowerCase()) ||
-  item.location.toLowerCase().includes(search.toLowerCase()) || 
-  (item.userEmail && item.userEmail.toLowerCase().includes(search.toLowerCase())) || 
-  (item.date && formatDateDMY(item.date).includes(search));
+      item.title.toLowerCase().includes(search.toLowerCase()) ||
+      item.description.toLowerCase().includes(search.toLowerCase()) ||
+      item.location.toLowerCase().includes(search.toLowerCase()) ||
+      (item.userEmail && item.userEmail.toLowerCase().includes(search.toLowerCase())) ||
+      (item.date && formatDateDMY(item.date).includes(search));
 
     return matchFilter && matchSearch;
   });
@@ -209,55 +209,55 @@ const filteredItems = items.filter(item => {
 
 
   return (
-    
+
     <div className="container mx-auto px-4 py-8">
       <header className="flex justify-between items-center mb-6">
-  <h2 className="text-xl font-bold">🛡️ Admin Panel</h2>
-  <div className="space-x-4 flex items-center">
-     <Link to="/" className="text-blue-500 underline">🏠Home</Link>
-    <span className="text-red-300 cursor-default">Admin</span>
-    <button
-  onClick={() => {
-    const confirmLogout = window.confirm("Are you sure you want to logout?");
-    if (confirmLogout) {
-      sessionStorage.removeItem('adminToken');
-      navigate('/admin-login', { replace: true });
-     // window.location.reload();
-    }
-  }}
-  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
->
-  Logout
-</button>
+        <h2 className="text-xl font-bold">🛡️ Admin Panel</h2>
+        <div className="space-x-4 flex items-center">
+          <Link to="/" className="text-blue-500 underline">🏠Home</Link>
+          <span className="text-red-300 cursor-default">Admin</span>
+          <button
+            onClick={() => {
+              const confirmLogout = window.confirm("Are you sure you want to logout?");
+              if (confirmLogout) {
+                sessionStorage.removeItem('adminToken');
+                navigate('/admin-login', { replace: true });
+                // window.location.reload();
+              }
+            }}
+            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+          >
+            Logout
+          </button>
 
-  </div>
-</header>
+        </div>
+      </header>
 
 
       <div className="bg-white rounded-lg shadow-md p-6">
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <StatCard title="Total Items" count={items.length} color="blue" />
-<StatCard
-  title="Pending"
-  count={items.filter(i => i.status === 'approved' && !i.resolved).length}
-  color="yellow"
-/>
-<StatCard
-  title="Approved"
-  count={items.filter(i => i.status === 'approved' && !i.resolved).length}
-  color="green"
-/>
-<StatCard
-  title="Rejected"
-  count={items.filter(i => i.status === 'rejected').length}
-  color="red"
-/>
-<StatCard
-  title="Resolved"
-  count={items.filter(i => i.resolved).length}
-  color="purple"
-/>
+          <StatCard
+            title="Pending"
+            count={items.filter(i => i.status === 'approved' && !i.resolved).length}
+            color="yellow"
+          />
+          <StatCard
+            title="Approved"
+            count={items.filter(i => i.status === 'approved' && !i.resolved).length}
+            color="green"
+          />
+          <StatCard
+            title="Rejected"
+            count={items.filter(i => i.status === 'rejected').length}
+            color="red"
+          />
+          <StatCard
+            title="Resolved"
+            count={items.filter(i => i.resolved).length}
+            color="purple"
+          />
 
         </div>
         {/* Search */}
@@ -273,20 +273,19 @@ const filteredItems = items.filter(item => {
 
         {/* Filter */}
         <div className="mb-6">
-       <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2">
             {['all', 'pending', 'approved', 'rejected', 'resolved'].map(status => (
-  <button
-    key={status}
-    onClick={() => setFilter(status)}
-    className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${
-      filter === status
-        ? 'bg-blue-500 text-white'
-        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-    }`}
-  >
-    {status}
-  </button>
-))}
+              <button
+                key={status}
+                onClick={() => setFilter(status)}
+                className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${filter === status
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+              >
+                {status}
+              </button>
+            ))}
 
           </div>
         </div>
@@ -296,9 +295,8 @@ const filteredItems = items.filter(item => {
           {filteredItems.map(item => (
             <div
               key={item._id}
-              className={`border rounded-lg p-4 transition-shadow ${
-                highlightedId === item._id ? 'ring-2 ring-blue-400' : 'hover:shadow-md'
-              }`}
+              className={`border rounded-lg p-4 transition-shadow ${highlightedId === item._id ? 'ring-2 ring-blue-400' : 'hover:shadow-md'
+                }`}
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between">
                 <div className="flex-1">
@@ -307,9 +305,8 @@ const filteredItems = items.filter(item => {
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(item.status)}`}>
                       {item.status}
                     </span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      item.type === 'lost' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
-                    }`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.type === 'lost' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                      }`}>
                       {item.type}
                     </span>
                     {item.resolved && (
@@ -324,31 +321,31 @@ const filteredItems = items.filter(item => {
                     <p>Contact: {item.contactInfo || item.contact} | Submitted by: {item.submittedBy || 'Anonymous'}</p>
                     <p>Date: {formatDateDMY(item.date || item.submittedAt)}</p>
                     {item.resolved && (
-                    <p className="mt-1 text-sm text-purple-700">
-                         ✅ Resolved by: <strong>{item.resolvedBy || "admin"}</strong>
-                   </p>
+                      <p className="mt-1 text-sm text-purple-700">
+                        ✅ Resolved by: <strong>{item.resolvedBy || "admin"}</strong>
+                      </p>
                     )}
 
                     {item.moderatedBy && (
-                   <p>
-                    Moderated by: {item.moderatedBy} on {formatDateDMY(item.moderatedAt)}
-                  </p>
+                      <p>
+                        Moderated by: {item.moderatedBy} on {formatDateDMY(item.moderatedAt)}
+                      </p>
                     )}
-                   <p>Email: {item.userEmail || 'Not provided'}</p>
+                    <p>Email: {item.userEmail || 'Not provided'}</p>
 
 
                   </div>
                 </div>
 
                 {(item.imageUrl || item.image) ? (
-  <img
-    src={item.imageUrl || item.image}
-    alt={item.title}
-    className="w-20 h-20 object-cover rounded-lg"
-  />
-) : (
-  <Skeleton height={80} width={80} />
-)}
+                  <img
+                    src={item.imageUrl || item.image}
+                    alt={item.title}
+                    className="w-20 h-20 object-cover rounded-lg"
+                  />
+                ) : (
+                  <Skeleton height={80} width={80} />
+                )}
 
               </div>
 
@@ -371,23 +368,23 @@ const filteredItems = items.filter(item => {
                   </>
                 )}
                 {item.status === 'approved' && !item.resolved && (
-  <>
-    <button
-      onClick={() => resolveItem(item._id)}
-      className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-    >
-      Mark as Resolved
-    </button>
-  </>
-)}<button
-  onClick={() => handleDelete(item._id)}
-  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
->
-  Delete
-</button>
+                  <>
+                    <button
+                      onClick={() => resolveItem(item._id)}
+                      className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+                    >
+                      Mark as Resolved
+                    </button>
+                  </>
+                )}<button
+                  onClick={() => handleDelete(item._id)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Delete
+                </button>
 
 
-                
+
               </div>
             </div>
           ))}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link , useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const AdminLogin = () => {
@@ -10,24 +10,24 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-  const clearCredentials = () => {
-    setUsername('');
-    setPassword('');
-  };
+    const clearCredentials = () => {
+      setUsername('');
+      setPassword('');
+    };
 
-  clearCredentials(); // On mount
+    clearCredentials(); // On mount
 
-  const handlePageShow = (e) => {
-    if (e.persisted || performance.getEntriesByType("navigation")[0]?.type === "back_forward") {
-      clearCredentials(); // On back-forward navigation
-    }
-  };
+    const handlePageShow = (e) => {
+      if (e.persisted || performance.getEntriesByType("navigation")[0]?.type === "back_forward") {
+        clearCredentials(); // On back-forward navigation
+      }
+    };
 
-  window.addEventListener("pageshow", handlePageShow);
-  return () => {
-    window.removeEventListener("pageshow", handlePageShow);
-  };
-}, []);
+    window.addEventListener("pageshow", handlePageShow);
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, []);
 
 
   const handleLogin = async (e) => {
@@ -53,17 +53,17 @@ const AdminLogin = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="absolute top-6 right-6 space-x-4">
-      <Link
-    to="/"
-    className="text-blue-600 underline hover:text-blue-800 text-sm"
-  >
-    🏠 Home
-  </Link>
-  </div>
+        <Link
+          to="/"
+          className="text-blue-600 underline hover:text-blue-800 text-sm"
+        >
+          🏠 Home
+        </Link>
+      </div>
       <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
         <div className="flex justify-between items-center mb-4">
-  <h2 className="text-2xl font-bold">🔐 Admin Login</h2>
-</div>
+          <h2 className="text-2xl font-bold">🔐 Admin Login</h2>
+        </div>
 
         {error && <div className="text-red-600 mb-2">{error}</div>}
 
@@ -78,21 +78,21 @@ const AdminLogin = () => {
         />
 
         <div className="relative mb-3">
-  <input
-    type={showPassword ? 'text' : 'password'}
-    placeholder="Password"
-    value={password}
-    onChange={e => setPassword(e.target.value)}
-    required
-    className="w-full p-2 border rounded pr-10"
-  />
-  <img
-    src={showPassword ? "/eyeopen.png" : "/eyeclosed.png"}
-    alt="Toggle visibility"
-    onClick={() => setShowPassword(prev => !prev)}
-    className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 cursor-pointer"
-  />
-</div>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+            className="w-full p-2 border rounded pr-10"
+          />
+          <img
+            src={showPassword ? "/eyeopen.png" : "/eyeclosed.png"}
+            alt="Toggle visibility"
+            onClick={() => setShowPassword(prev => !prev)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 cursor-pointer"
+          />
+        </div>
 
         <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
           Login

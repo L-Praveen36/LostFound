@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
 import { useAuth } from "./AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "./firebase";
@@ -11,38 +11,42 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import ImageSlider from "./components/ImageSlider";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import LoginWarning from "./components/LoginWarning";
-import ReportForm from "./components/ReportForm";
-import AdminPanel from "./components/AdminPanel";
-import AdminLogin from "./components/AdminLogin";
-import ItemList from "./components/ItemList";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Profile from "./components/Profile";
-
 import "./App.css";
+
+const ImageSlider = lazy(() => import("./components/ImageSlider"));
+const Login = lazy(() => import("./components/Login"));
+const Signup = lazy(() => import("./components/Signup"));
+const LoginWarning = lazy(() => import("./components/LoginWarning"));
+const ReportForm = lazy(() => import("./components/ReportForm"));
+const AdminPanel = lazy(() => import("./components/AdminPanel"));
+const AdminLogin = lazy(() => import("./components/AdminLogin"));
+const ItemList = lazy(() => import("./components/ItemList"));
+const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
+const Profile = lazy(() => import("./components/Profile"));
+
+
 
 // App Wrapper
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <AdminPanel />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
+      <Suspense fallback={<div className="text-center mt-20">⏳ Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminPanel />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 }
@@ -235,31 +239,39 @@ function HomePage() {
       </div>
 
       {/* Image Slider */}
-      <div className="w-full max-w-5xl mx-auto mb-6">
-        <ImageSlider />
+       <div className="w-full max-w-5xl mx-auto mb-6">
+        <Suspense fallback={<div>Loading slider...</div>}>
+          <ImageSlider />
+        </Suspense>
       </div>
 
       {/* Items */}
-      <ItemList filter={filter} search={search} />
+      <Suspense fallback={<div>Loading items...</div>}>
+        <ItemList filter={filter} search={search} />
+      </Suspense>
 
       {/* Report Form Modal */}
-      {showForm && (
-        <ReportForm showForm={showForm} onClose={() => setShowForm(false)} />
+       {showForm && (
+        <Suspense fallback={<div>Loading form...</div>}>
+          <ReportForm showForm={showForm} onClose={() => setShowForm(false)} />
+        </Suspense>
       )}
 
       {/* Login Required Popup */}
       {showWarning && (
-        <LoginWarning
-          onClose={() => setShowWarning(false)}
-          onLogin={() => {
-            setShowWarning(false);
-            navigate("/login");
-          }}
-          onSignup={() => {
-            setShowWarning(false);
-            navigate("/signup");
-          }}
-        />
+        <Suspense fallback={<div>Loading login warning...</div>}>
+          <LoginWarning
+            onClose={() => setShowWarning(false)}
+            onLogin={() => {
+              setShowWarning(false);
+              navigate("/login");
+            }}
+            onSignup={() => {
+              setShowWarning(false);
+              navigate("/signup");
+            }}
+          />
+        </Suspense>
       )}
     </div>
   );

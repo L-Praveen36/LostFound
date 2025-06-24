@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 
 const images = [
   {
-    src: "/images/bicycle.jpg",
+    src: "/images/bicycle.webp",
     caption: "🚲 Bicycle found near parking"
   },
   {
-    src: "/images/book.jpg",
+    src: "/images/book.webp",
     caption: "📚 Lost book: 'React Made Easy'"
   },
   {
-    src: "/images/umbrella.jpg",
+    src: "/images/umbrella.webp",
     caption: "🌂 Umbrella dropped in cafeteria"
   }
 ];
@@ -38,16 +38,15 @@ const ImageSlider = () => {
     <div className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] lg:h-[450px] xl:h-[500px] overflow-hidden rounded-lg shadow-lg">
       <img
         src={images[current].src}
+        loading="lazy"
         alt={`Slide ${current + 1}`}
         className="w-full h-full object-cover transition-all duration-700"
       />
 
-      {/* Caption */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-4 py-2 rounded text-sm sm:text-base">
         {images[current].caption}
       </div>
 
-      {/* Navigation Buttons */}
       <button
         onClick={prev}
         className="absolute left-3 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-90 text-xl px-3 py-1 rounded-full shadow"
@@ -61,7 +60,6 @@ const ImageSlider = () => {
         ▶
       </button>
 
-      {/* Dots */}
       <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
         {images.map((_, i) => (
           <button
