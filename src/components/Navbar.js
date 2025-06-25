@@ -1,6 +1,6 @@
 // components/Navbar.js
 import React, { useState } from 'react';
-import '@lottiefiles/lottie-player';
+
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
