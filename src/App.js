@@ -1,34 +1,31 @@
-// App.js
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import Stats from './components/Stats';
+import HowItWorks from './components/HowItWorks';
 import Listings from './components/Listings';
 import ReportForm from './components/ReportForm';
+import Future from './components/Future';
 import Footer from './components/Footer';
-import AdminDashboard from './components/AdminDashboard';
+import ClaimModal from './components/Modals/ClaimModal';
+import ContactModal from './components/Modals/ContactModal';
+import AdminPanel from './components/Modals/AdminPanel';
 
 function App() {
   return (
-    <Router>
-      <div className="font-sans bg-gray-50 text-gray-800">
-        <Navbar />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Hero />
-                <Listings />
-                <ReportForm />
-                <Footer />
-              </>
-            }
-          />
-          <Route path="/admin" element={<AdminDashboard />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="font-sans bg-gray-50 text-gray-800">
+      <Navbar />
+      <Hero />
+      <Stats />
+      <HowItWorks />
+      <Listings />
+      <ReportForm />
+      <Future />
+      <Footer />
+      <ClaimModal />
+      <ContactModal />
+      <AdminPanel />
+    </div>
   );
 }
 

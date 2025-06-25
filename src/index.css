@@ -1,4 +1,31 @@
+// index.css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Add utility classes for floating, glass-card, etc. */
+.glass-card {
+  @apply bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-lg;
+}
+
+.neumorphic-btn {
+  @apply bg-white shadow-md hover:shadow-lg transition duration-300;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.floating {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.category-chip {
+  @apply px-3 py-1 rounded-full text-sm transition-transform hover:scale-105;
+}

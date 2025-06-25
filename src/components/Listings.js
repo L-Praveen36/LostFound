@@ -1,4 +1,4 @@
-// components/Listings.js
+// Listings.js
 import React, { useEffect, useState } from 'react';
 
 function Listings() {
@@ -38,7 +38,7 @@ function Listings() {
               <div key={item._id} className="item-card glass-card rounded-2xl overflow-hidden">
                 <div className="relative h-48 bg-gray-200">
                   <img src={item.image || 'https://via.placeholder.com/500'} alt={item.title} className="w-full h-full object-cover" />
-                  <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${item.type === 'lost' ? 'bg-yellow-500' : 'bg-green-100 text-green-800'}`}>
+                  <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${item.type === 'lost' ? 'bg-yellow-500 text-white' : 'bg-white text-black'}`}>
                     {item.type}
                   </div>
                 </div>
@@ -49,13 +49,10 @@ function Listings() {
                   </div>
                   <p className="text-gray-600 mb-4">{item.description}</p>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {Array.isArray(item.category) ? item.category.map((cat, index) => (
-                      <span key={index} className="category-chip bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">{cat}</span>
-                    )) : (
-                      <span className="category-chip bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">{item.category}</span>
-                    )}
+                    <span className="category-chip bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">{item.category}</span>
+                    <span className="category-chip bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">{item.location}</span>
                   </div>
-                  <button className="w-full neumorphic-btn py-2 rounded-full font-medium">
+                  <button onClick={() => window.openContactModal()} className="w-full neumorphic-btn py-2 rounded-full font-medium">
                     {item.type === 'lost' ? 'Contact Finder' : 'Claim This Item'}
                   </button>
                 </div>

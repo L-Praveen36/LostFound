@@ -1,18 +1,9 @@
-// components/ReportForm.js
+// ReportForm.js
 import React, { useState } from 'react';
 
 function ReportForm() {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: '',
-    type: '',
-    location: '',
-    date: '',
-    contactInfo: '',
-    submittedBy: '',
-    userEmail: '',
-    image: null
+    title: '', description: '', category: '', type: '', location: '', date: '', contactInfo: '', submittedBy: '', userEmail: '', image: null
   });
 
   const [status, setStatus] = useState(null);
@@ -38,10 +29,7 @@ function ReportForm() {
       });
       if (!res.ok) throw new Error('Failed to submit');
       setStatus('success');
-      setFormData({
-        title: '', description: '', category: '', type: '', location: '', date: '',
-        contactInfo: '', submittedBy: '', userEmail: '', image: null
-      });
+      setFormData({ title: '', description: '', category: '', type: '', location: '', date: '', contactInfo: '', submittedBy: '', userEmail: '', image: null });
     } catch (err) {
       console.error(err);
       setStatus('error');
@@ -52,11 +40,9 @@ function ReportForm() {
     <section id="report" className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Report Lost or Found Item</h2>
-
         <div className="glass-card max-w-3xl mx-auto p-8 rounded-2xl">
           {status === 'success' && <p className="text-green-600 text-center mb-4">Item submitted successfully!</p>}
           {status === 'error' && <p className="text-red-600 text-center mb-4">Submission failed. Please try again.</p>}
-
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <input name="title" value={formData.title} onChange={handleChange} className="input" placeholder="Item Title" required />
