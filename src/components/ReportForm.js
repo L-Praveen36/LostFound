@@ -1,307 +1,108 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useAuth } from "../AuthContext";
+// components/ReportForm.js
+import React, { useState } from 'react';
 
-
-const ReportForm = ({ showForm, onClose }) => {
-  const modalRef = useRef();
-  const { user } = useAuth();
-  
-
+function ReportForm() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     category: '',
-    type: 'lost',
+    type: '',
     location: '',
     date: '',
     contactInfo: '',
-    submittedBy: ''
+    submittedBy: '',
+    userEmail: '',
+    image: null
   });
-  const [image, setImage] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
 
-  const categories = [
-    'Electronics', 'Clothing', 'Books', 'Accessories', 'Documents',
-    'Keys', 'Bags', 'Sports Equipment','Bicycle', 'Jewelry', 'Other'
-  ];
- // ✅ Move this above useEffect
-   // Close on outside click
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-  if (modalRef.current && !modalRef.current.contains(e.target)) {
-    onClose();
-  }
-}; 
-    if (showForm) {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = "hidden"; // prevent background scroll
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = "auto"; // re-enable scroll
-    };
-  }, [showForm, onClose]);
+  const [status, setStatus] = useState(null);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    const { name, value, type, files } = e.target;
+    if (type === 'file') {
+      setFormData({ ...formData, [name]: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!user) {
-    setMessage("❌ Please log in to submit an item.");
-    return;
-  }
-    setLoading(true);
-    setMessage('');
-
-    const submitData = new FormData();
-    Object.keys(formData).forEach(key => {
-      submitData.append(key, formData[key]);
-    });
-    submitData.append('userId', user.uid);
-  submitData.append('userEmail', user.email);
-    if (image) {
-      submitData.append('image', image);
-    }
+    e.preventDefault();
+    const form = new FormData();
+    Object.keys(formData).forEach(key => form.append(key, formData[key]));
 
     try {
-      const response = await fetch('https://lostfound-api.onrender.com/api/items', {
+      const res = await fetch('https://lostfound-api.netlify.app/api/items', {
         method: 'POST',
-        body: submitData
+        body: form
       });
-     const data = await response.json(); 
-      if (response.ok) {
-        setMessage('Item submitted successfully! It will be reviewed by our team.');
-        setFormData({
-          title: '',
-          description: '',
-          category: '',
-          type: 'lost',
-          location: '',
-          date: '',
-          contactInfo: '',
-          submittedBy: ''
-        });
-        setImage(null);
-      } else {
-        setMessage("❌ Submission failed: " + (data.message || "Try again."));
-      }
+      if (!res.ok) throw new Error('Failed to submit');
+      setStatus('success');
+      setFormData({
+        title: '', description: '', category: '', type: '', location: '', date: '',
+        contactInfo: '', submittedBy: '', userEmail: '', image: null
+      });
     } catch (err) {
-      setMessage("❌ Error submitting form.");
-    } finally {
-      setLoading(false);
+      console.error(err);
+      setStatus('error');
     }
   };
-    
-   if (!showForm) return null;
-   if (!user) {
+
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center px-4">
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-md text-center">
-        <p className="text-red-600 text-lg font-medium mb-4">Please login to report a lost or found item.</p>
-        <button
-          onClick={onClose}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Close
-        </button>
+    <section id="report" className="py-20 bg-gray-50">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Report Lost or Found Item</h2>
+
+        <div className="glass-card max-w-3xl mx-auto p-8 rounded-2xl">
+          {status === 'success' && <p className="text-green-600 text-center mb-4">Item submitted successfully!</p>}
+          {status === 'error' && <p className="text-red-600 text-center mb-4">Submission failed. Please try again.</p>}
+
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <input name="title" value={formData.title} onChange={handleChange} className="input" placeholder="Item Title" required />
+              <select name="category" value={formData.category} onChange={handleChange} className="input" required>
+                <option value="">Select Category</option>
+                <option>Electronics</option>
+                <option>Accessories</option>
+                <option>Books</option>
+                <option>Clothing</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <input name="location" value={formData.location} onChange={handleChange} className="input" placeholder="Location" required />
+              <input name="date" type="date" value={formData.date} onChange={handleChange} className="input" required />
+            </div>
+
+            <textarea name="description" value={formData.description} onChange={handleChange} rows="4" className="input mb-6" placeholder="Description" required></textarea>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <input name="submittedBy" value={formData.submittedBy} onChange={handleChange} className="input" placeholder="Your Name" required />
+              <input name="userEmail" type="email" value={formData.userEmail} onChange={handleChange} className="input" placeholder="Your Email" required />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <input name="contactInfo" value={formData.contactInfo} onChange={handleChange} className="input" placeholder="Contact Info (Phone/Email)" required />
+              <select name="type" value={formData.type} onChange={handleChange} className="input" required>
+                <option value="">Lost or Found?</option>
+                <option value="lost">Lost</option>
+                <option value="found">Found</option>
+              </select>
+            </div>
+
+            <div className="mb-6">
+              <input name="image" type="file" accept="image/*" onChange={handleChange} className="input" />
+            </div>
+
+            <div className="text-center">
+              <button type="submit" className="neumorphic-btn px-8 py-3 rounded-full font-medium text-purple-700">Submit Report</button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
-
-
-  return (
-  <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center px-4">
-      <div ref={modalRef} className="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6 relative">
-
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-xl font-bold"
-        >
-          &times;
-        </button>
-    <h2 className="text-3xl font-bold text-gray-800 mb-6">📝 Report Lost/Found Item</h2>
-        
-        {message && (
-          <div className={`mb-4 p-4 rounded-lg ${
-            message.includes('successfully') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-          }`}>
-            {message}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Item Title *
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g., iPhone 12, Blue Backpack"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Type *
-            </label>
-            <div className="flex gap-4">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="type"
-                  value="lost"
-                  checked={formData.type === 'lost'}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                ❌ Lost
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="type"
-                  value="found"
-                  checked={formData.type === 'found'}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                ✅ Found
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Category *
-            </label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select a category</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description *
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              rows="4"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="Provide detailed description..."
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Location *
-            </label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g., Library, Computer Lab, Cafeteria"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Date *
-            </label>
-            <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              required
-              max={new Date().toISOString().split("T")[0]}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Contact Information *
-            </label>
-            <input
-              type="text"
-              name="contactInfo"
-              value={formData.contactInfo}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="Email or phone number"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Your Name *
-            </label>
-            <input
-              type="text"
-              name="submittedBy"
-              value={formData.submittedBy}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="Your name"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Image (Optional)
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-600 transition-colors font-medium disabled:opacity-50"
-          >
-            {loading ? 'Submitting...' : 'Submit Report'}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-};
 
 export default ReportForm;
