@@ -13,7 +13,7 @@ import {
 
 import "./App.css";
 
-const ImageSlider = lazy(() => import("./components/ImageSlider"));
+
 const Login = lazy(() => import("./components/Login"));
 const Signup = lazy(() => import("./components/Signup"));
 const LoginWarning = lazy(() => import("./components/LoginWarning"));
