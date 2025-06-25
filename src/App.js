@@ -238,12 +238,7 @@ function HomePage() {
         </button>
       </div>
 
-      {/* Image Slider */}
-       <div className="w-full max-w-5xl mx-auto mb-6">
-        <Suspense fallback={<div>Loading slider...</div>}>
-          <ImageSlider />
-        </Suspense>
-      </div>
+      
 
       {/* Items */}
       <Suspense fallback={<div>Loading items...</div>}>
