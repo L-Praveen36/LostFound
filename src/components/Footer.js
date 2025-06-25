@@ -1,3 +1,4 @@
+
 // components/Footer.js
 import React from 'react';
 
