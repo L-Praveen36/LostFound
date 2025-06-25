@@ -40,7 +40,7 @@ function Hero() {
   }, []);
 
   return (
-    <section id="home" className="relative gradient-bg text-white overflow-hidden min-h-screen flex items-center">
+    <section id="home" className="bg-gray-100 py-24 md:py-32 text-gray-900">
       <div id="canvas-container" className="absolute top-0 left-0 w-full h-full z-0"></div>
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="flex flex-col md:flex-row items-center">
