@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import SignInModal from './components/SignInModal';
 import Hero from './components/Hero';
