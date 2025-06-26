@@ -10,8 +10,8 @@ import Footer from './components/Footer';
 import ClaimModal from './components/Modals/ClaimModal';
 import ContactModal from './components/Modals/ContactModal';
 import AdminPanel from './components/Modals/AdminPanel';
-import SignInModal from './SignInModal';
-import AdminSignInModal from './AdminSignInModal';
+import SignInModal from './components/SignInModal';
+import AdminSignInModal from './components/AdminSignInModal';
 
 function App() {
   const [showSignIn, setShowSignIn] = useState(false); 
