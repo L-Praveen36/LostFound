@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 function ReportForm() {
   const [type, setType] = useState('lost');
