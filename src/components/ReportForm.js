@@ -18,7 +18,7 @@ function ReportForm() {
     userEmail: '',
     studentId: ''
   });
-  const [message, setMessage] = useState(null);
+  const [ setMessage] = useState(null);
 
   const handleInput = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,7 +54,7 @@ function ReportForm() {
     });
 
     try {
-      const res = await axios.post('/api/items', payload);
+      await axios.post('/api/items', payload);
       toast.success("✅ Item submitted successfully!");
 
       // Reset form
