@@ -190,12 +190,21 @@ const AdminPanel = ({ onClose }) => {
                       )}
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500 space-y-1 mb-3">
+                  <div className="text-sm text-gray-500 space-y-1">
+                    <p><strong>Type:</strong> {item.type}</p>
+                    <p><strong>Title:</strong> {item.title}</p>
+                    <p><strong>Description:</strong> {item.description}</p>
+                    <p><strong>Category:</strong> {item.category || 'N/A'}</p>
                     <p><strong>Location:</strong> {item.location}</p>
-                    <p><strong>Type:</strong> {item.type} | <strong>Date:</strong> {formatDateDMY(item.date || item.submittedAt)}</p>
+                    <p><strong>Date:</strong> {formatDateDMY(item.date || item.submittedAt)}</p>
+                    <p><strong>Submitted By:</strong> {item.submittedBy || 'N/A'}</p>
+                    <p><strong>Email:</strong> {item.userEmail || 'N/A'}</p>
+                    <p><strong>Phone:</strong> {item.phone || 'N/A'}</p>
+                    <p><strong>School ID:</strong> {item.schoolId || 'N/A'}</p>
                     <p><strong>Status:</strong> <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadge(item.status)}`}>{item.status}</span></p>
                     {item.resolved && <p className="text-purple-600 font-semibold">✅ Resolved</p>}
                   </div>
+
 
                   <div className="mt-2 flex gap-2 flex-wrap">
                     {item.status === 'pending' && (

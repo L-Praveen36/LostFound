@@ -1,13 +1,14 @@
 import React from 'react';
 
 function ContactModal({ visible, onClose, item }) {
-  if (!visible || !item) return null;
+  if (!visible || !item || item.type !== 'found' || item.resolved) return null;
 
-  const isEmail = item.contactInfo && /\S+@\S+\.\S+/.test(item.contactInfo);
+  const email = item.contactInfo || item.userEmail;
+  const isEmail = email && /\S+@\S+\.\S+/.test(email);
 
   const handleContact = () => {
     if (isEmail) {
-      window.location.href = `mailto:${item.contactInfo}?subject=Regarding your Lost & Found Item: ${item.title}`;
+      window.location.href = `mailto:${email}?subject=Regarding your Lost & Found Item: ${item.title}`;
     } else {
       alert("No valid email found to contact the finder.");
     }
@@ -30,7 +31,7 @@ function ContactModal({ visible, onClose, item }) {
             <p className="mb-2 text-gray-700">
               You can reach the finder via email:
             </p>
-            <p className="font-medium text-blue-600">{item.contactInfo}</p>
+            <p className="font-medium text-blue-600 break-words">{email}</p>
             <button
               onClick={handleContact}
               className="mt-4 w-full neumorphic-btn py-2 rounded-full"
