@@ -98,7 +98,7 @@ const AdminPanel = ({ onClose }) => {
 
   function formatDateDMY(dateString) {
     const date = new Date(dateString);
-    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()}`;
+    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
   }
 
   const getStatusBadge = (status) => {
@@ -113,10 +113,11 @@ const AdminPanel = ({ onClose }) => {
   const filteredItems = items.filter(item => {
     const matchFilter =
       filter === 'all' ||
-      (filter === 'pending' && item.status === 'pending') ||
+      (filter === 'pending' && item.status === 'approved' && !item.resolved) ||
       (filter === 'approved' && item.status === 'approved') ||
       (filter === 'rejected' && item.status === 'rejected') ||
       (filter === 'resolved' && item.resolved);
+
     const matchSearch =
       item.title.toLowerCase().includes(search.toLowerCase()) ||
       item.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -173,42 +174,44 @@ const AdminPanel = ({ onClose }) => {
           {loading ? (
             <Skeleton count={5} height={120} className="mb-4" />
           ) : (
-            filteredItems.map(item => (
-              <div key={item._id} className={`mb-4 p-4 rounded-xl border ${highlightedId === item._id ? 'ring-2 ring-purple-500' : ''} bg-white bg-opacity-60 backdrop-blur-lg shadow-md`}>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold">{item.title}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-                    <div className="text-sm text-gray-500 space-y-1">
-                      <p><strong>Location:</strong> {item.location}</p>
-                      <p><strong>Type:</strong> {item.type} | <strong>Date:</strong> {formatDateDMY(item.date || item.submittedAt)}</p>
-                      <p><strong>Status:</strong> <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadge(item.status)}`}>{item.status}</span></p>
-                      {item.resolved && <p className="text-purple-600 font-semibold">✅ Resolved</p>}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredItems.map(item => (
+                <div key={item._id} className={`p-4 rounded-xl border ${highlightedId === item._id ? 'ring-2 ring-purple-500' : ''} bg-white bg-opacity-60 backdrop-blur-lg shadow-md`}>
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h3 className="text-lg font-semibold">{item.title}</h3>
+                      <p className="text-sm text-gray-600">{item.description}</p>
+                    </div>
+                    <div className="ml-4">
+                      {item.imageUrl ? (
+                        <img src={item.imageUrl} alt="" className="w-20 h-20 rounded-lg object-cover" />
+                      ) : (
+                        <Skeleton width={80} height={80} />
+                      )}
                     </div>
                   </div>
-                  <div className="ml-4">
-                    {item.imageUrl ? (
-                      <img src={item.imageUrl} alt="" className="w-20 h-20 rounded-lg object-cover" />
-                    ) : (
-                      <Skeleton width={80} height={80} />
+                  <div className="text-sm text-gray-500 space-y-1 mb-3">
+                    <p><strong>Location:</strong> {item.location}</p>
+                    <p><strong>Type:</strong> {item.type} | <strong>Date:</strong> {formatDateDMY(item.date || item.submittedAt)}</p>
+                    <p><strong>Status:</strong> <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadge(item.status)}`}>{item.status}</span></p>
+                    {item.resolved && <p className="text-purple-600 font-semibold">✅ Resolved</p>}
+                  </div>
+
+                  <div className="mt-2 flex gap-2 flex-wrap">
+                    {item.status === 'pending' && (
+                      <>
+                        <button onClick={() => moderateItem(item._id, 'approved')} className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600">Approve</button>
+                        <button onClick={() => moderateItem(item._id, 'rejected')} className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600">Reject</button>
+                      </>
                     )}
+                    {item.status === 'approved' && !item.resolved && (
+                      <button onClick={() => resolveItem(item._id)} className="px-4 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600">Mark Resolved</button>
+                    )}
+                    <button onClick={() => handleDelete(item._id)} className="px-4 py-2 bg-gray-700 text-white rounded-full hover:bg-gray-800">Delete</button>
                   </div>
                 </div>
-
-                <div className="mt-4 flex gap-2 flex-wrap">
-                  {item.status === 'pending' && (
-                    <>
-                      <button onClick={() => moderateItem(item._id, 'approved')} className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600">Approve</button>
-                      <button onClick={() => moderateItem(item._id, 'rejected')} className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600">Reject</button>
-                    </>
-                  )}
-                  {item.status === 'approved' && !item.resolved && (
-                    <button onClick={() => resolveItem(item._id)} className="px-4 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600">Mark Resolved</button>
-                  )}
-                  <button onClick={() => handleDelete(item._id)} className="px-4 py-2 bg-gray-700 text-white rounded-full hover:bg-gray-800">Delete</button>
-                </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       </div>
