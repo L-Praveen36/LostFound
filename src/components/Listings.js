@@ -6,8 +6,7 @@ function Listings() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('https://lostfound-api.onrender.com/api/items')
-
+    fetch('https://lostfound-api.netlify.app/api/items')
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch items');
         return res.json();
@@ -70,12 +69,29 @@ function Listings() {
                     <span className="category-chip bg-blue-100 text-blue-800">{item.location}</span>
                   </div>
 
-                  <button
-                    onClick={() => window.dispatchEvent(new CustomEvent('openContactModal', { detail: item }))}
-                    className="w-full neumorphic-btn py-2 rounded-full font-medium"
-                  >
-                    {item.type === 'lost' ? 'Contact Finder' : 'Claim This Item'}
-                  </button>
+                  {/* 📌 Action buttons */}
+                  {!item.resolved && (
+                    <div className="flex flex-col gap-2">
+                      {item.status === 'approved' && (
+                        <button
+                          onClick={() =>
+                            window.dispatchEvent(new CustomEvent('openClaimModal', { detail: item }))
+                          }
+                          className="bg-green-500 text-white py-2 rounded-full font-medium hover:bg-green-600 transition"
+                        >
+                          Claim This Item
+                        </button>
+                      )}
+                      <button
+                        onClick={() =>
+                          window.dispatchEvent(new CustomEvent('openContactModal', { detail: item }))
+                        }
+                        className="bg-blue-500 text-white py-2 rounded-full font-medium hover:bg-blue-600 transition"
+                      >
+                        Contact Finder
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

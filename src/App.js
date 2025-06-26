@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Stats from './components/Stats';
@@ -14,14 +14,33 @@ import SignInModal from './components/SignInModal';
 import AdminSignInModal from './components/AdminSignInModal';
 
 function App() {
+  // 🔐 Auth/admin logic
   const [showSignIn, setShowSignIn] = useState(false);
   const [showAdminSignIn, setShowAdminSignIn] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
 
-  // ✅ Fix: define this function to pass it cleanly
+  // 🧾 Item modal state
+  const [selectedClaimItem, setSelectedClaimItem] = useState(null);
+  const [selectedContactItem, setSelectedContactItem] = useState(null);
+
+  // ✅ Listen for modal open events from Listings
+  useEffect(() => {
+    const openClaimListener = (e) => setSelectedClaimItem(e.detail);
+    const openContactListener = (e) => setSelectedContactItem(e.detail);
+
+    window.addEventListener("openClaimModal", openClaimListener);
+    window.addEventListener("openContactModal", openContactListener);
+
+    return () => {
+      window.removeEventListener("openClaimModal", openClaimListener);
+      window.removeEventListener("openContactModal", openContactListener);
+    };
+  }, []);
+
+  // 🔐 When admin logs in
   const handleAdminLogin = () => {
-    setShowAdminSignIn(false); // Close the modal first
-    setShowAdminPanel(true);   // Then show the admin panel
+    setShowAdminSignIn(false);
+    setShowAdminPanel(true);
   };
 
   return (
@@ -39,16 +58,29 @@ function App() {
       <Future />
       <Footer />
 
-      {/* Modals */}
-      <ClaimModal />
-      <ContactModal />
-
+      {/* 🔓 Admin Panel */}
       {showAdminPanel && <AdminPanel onClose={() => setShowAdminPanel(false)} />}
       {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
       {showAdminSignIn && (
         <AdminSignInModal
           onClose={() => setShowAdminSignIn(false)}
-          onSuccess={handleAdminLogin} // ✅ This now works correctly
+          onSuccess={handleAdminLogin}
+        />
+      )}
+
+      {/* 🧾 Item Modals */}
+      {selectedClaimItem && (
+        <ClaimModal
+          visible={true}
+          item={selectedClaimItem}
+          onClose={() => setSelectedClaimItem(null)}
+        />
+      )}
+      {selectedContactItem && (
+        <ContactModal
+          visible={true}
+          item={selectedContactItem}
+          onClose={() => setSelectedContactItem(null)}
         />
       )}
     </div>
