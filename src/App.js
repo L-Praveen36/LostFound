@@ -12,23 +12,33 @@ import ContactModal from './components/Modals/ContactModal';
 import AdminPanel from './components/Modals/AdminPanel';
 
 function App() {
-  const [adminVisible, setAdminVisible] = useState(false);
+  const [showSignIn, setShowSignIn] = useState(false); 
+  const [showAdminSignIn, setShowAdminSignIn] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50 text-gray-800">
-      <Navbar onAdminLogin={() => setAdminVisible(true)} />
+      <Navbar onAdminLogin={() => setShowAdminPanel(true)} />
       <Hero />
-      <Stats />
-      <HowItWorks />
       <Listings />
       <ReportForm />
+      <Stats />           
+      <HowItWorks />     
       <Future />
       <Footer />
-
-      {/* Global modals */}
       <ClaimModal />
       <ContactModal />
-      {adminVisible && <AdminPanel onClose={() => setAdminVisible(false)} />}
+      {showAdminPanel && <AdminPanel onClose={() => setShowAdminPanel(false)} />}
+      {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
+      {showAdminSignIn && (
+        <AdminSignInModal
+          onClose={() => setShowAdminSignIn(false)}
+          onSuccess={() => {
+            setShowAdminSignIn(false);
+            setShowAdminPanel(true);
+          }}
+        />
+      )}
     </div>
   );
 }
