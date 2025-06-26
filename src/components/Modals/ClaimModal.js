@@ -25,7 +25,7 @@ function ClaimModal() {
   const formData = new FormData(e.target);
   const name = formData.get('name');
   const email = formData.get('email');
-  const answer = formData.get('answer'); // optional if used
+  
 
   try {
     const res = await fetch(`https://lostfound-api.onrender.com/api/items/${item._id}/claim`, {
