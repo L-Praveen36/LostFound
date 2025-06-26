@@ -34,12 +34,12 @@ function App() {
       {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
       {showAdminSignIn && (
         <AdminSignInModal
-          onClose={() => setShowAdminSignIn(false)}
-          onSuccess={() => {
-            setShowAdminSignIn(false);
-            setShowAdminPanel(true);
-          }}
-        />
+  onClose={() => setShowAdminSignIn(false)}
+  onSuccess={() => {
+    setShowAdminSignIn(false);
+    onAdminLogin();  // ⬅️ triggers AdminPanel view
+  }}
+/>
       )}
     </div>
   );
