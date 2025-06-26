@@ -54,7 +54,7 @@ function ReportForm() {
     });
 
     try {
-      await axios.post('https://lost-found-backend.onrender.com/api/items', payload);
+      await axios.post('https://lostfound-api.onrender.com/api/items', payload);
 
       toast.success("✅ Item submitted successfully!");
 
