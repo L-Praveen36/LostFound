@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showSignIn, setShowSignIn] = useState(false);
+
 
   return (
     <nav className="gradient-bg text-white shadow-lg">
@@ -27,6 +29,13 @@ function Navbar() {
             <a href="#how-it-works" className="hover:text-gray-200 transition">How It Works</a>
           </div>
           <div className="flex items-center space-x-4">
+            <button
+  onClick={() => setShowSignIn(true)}
+  className="hidden md:block px-4 py-2 rounded-full bg-white text-purple-700 font-medium hover:bg-gray-100 transition"
+>
+  Sign In
+</button>
+
             <button
               onClick={() => document.getElementById('adminPanel').classList.remove('hidden')}
               className="hidden md:block px-4 py-2 rounded-full bg-white text-purple-700 font-medium hover:bg-gray-100 transition"

@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from './components/Navbar';
+import SignInModal from './components/SignInModal';
 import Hero from './components/Hero';
 import Stats from './components/Stats';
 import HowItWorks from './components/HowItWorks';
@@ -25,6 +26,7 @@ function App() {
       <ClaimModal />
       <ContactModal />
       <AdminPanel />
+      {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
     </div>
   );
 }
