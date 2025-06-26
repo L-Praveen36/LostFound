@@ -30,25 +30,38 @@ function Navbar() {
             <a href="#how-it-works" className="hover:text-gray-200 transition">How It Works</a>
           </div>
           <div className="flex items-center space-x-4">
+            {/* Sign In Button (now left) */}
             <button
-  onClick={() => setShowSignIn(true)}
-  className="hidden md:block px-4 py-2 rounded-full bg-white text-purple-700 font-medium hover:bg-gray-100 transition"
->
-  Sign In
-</button>
+              onClick={() => setShowSignIn(true)}
+              className="hidden md:block px-4 py-2 rounded-full bg-white text-purple-700 font-medium hover:bg-gray-100 transition"
+            >
+              Sign In
+            </button>
 
+            {/* Admin Button (now right) */}
             <button
-              onClick={() => document.getElementById('adminPanel').classList.remove('hidden')}
+              onClick={toggleAdminPanel}
               className="hidden md:block px-4 py-2 rounded-full bg-white text-purple-700 font-medium hover:bg-gray-100 transition"
             >
               Admin
             </button>
-            <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-white focus:outline-none">
+
+            {/* Mobile menu button */}
+            <button
+              className="md:hidden text-white focus:outline-none"
+              id="mobile-menu-button"
+            >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             </button>
           </div>
+
         </div>
         {menuOpen && (
           <div className="md:hidden pt-4">
@@ -71,7 +84,7 @@ function Navbar() {
         <SignInModal onClose={() => setShowSignIn(false)} />
       )}
     </nav>
-    
+
   );
 }
 
