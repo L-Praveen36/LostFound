@@ -1,118 +1,71 @@
+// components/SignInModal.js
 import React, { useState } from 'react';
-import {
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 
 function SignInModal({ onClose }) {
-  const [isSignUp, setIsSignUp] = useState(false); // toggle mode
+  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
-  const handleEmailSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      let result;
-      if (isSignUp) {
-        result = await createUserWithEmailAndPassword(auth, email, password);
-      } else {
-        result = await signInWithEmailAndPassword(auth, email, password);
-      }
-      localStorage.setItem('user', JSON.stringify(result.user));
-      onClose();
-    } catch (err) {
-      setError(err.message || 'Something went wrong');
-      console.error(err);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
+  const handleGoogleAuth = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      localStorage.setItem('user', JSON.stringify(result.user));
+      const user = result.user;
+      localStorage.setItem('user', JSON.stringify(user));
       onClose();
     } catch (err) {
-      setError('Google sign-in failed');
-      console.error(err);
+      console.error('Google auth error', err);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center px-4">
-      <div className="glass-card max-w-md w-full p-6 rounded-2xl relative">
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl"
-        >
-          &times;
-        </button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl p-8 w-full max-w-md relative">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">&times;</button>
+        <h2 className="text-2xl font-bold mb-6 text-center">{isSignUp ? 'Sign Up' : 'Sign In'}</h2>
 
-        <h3 className="text-2xl font-bold mb-6 text-center">
-          {isSignUp ? 'Sign Up' : 'Sign In'}
-        </h3>
-
-        {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
-
-        <form onSubmit={handleEmailSubmit} className="space-y-4">
+        {/* Email/Password fields (disabled if only Google is used) */}
+        <div className="space-y-4">
           <input
             type="email"
             placeholder="Email"
-            required
-            className="input w-full"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="input w-full"
+            disabled
           />
           <input
             type="password"
             placeholder="Password"
-            required
-            className="input w-full"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="input w-full"
+            disabled
           />
-          <button
-            type="submit"
-            className="w-full neumorphic-btn py-2 rounded-full"
-          >
-            {isSignUp ? 'Create Account' : 'Sign In'}
+          <button className="w-full bg-gray-400 text-white py-2 rounded-full cursor-not-allowed">
+            {isSignUp ? 'Sign Up with Email (Disabled)' : 'Sign In with Email (Disabled)'}
           </button>
-        </form>
 
-        <div className="my-4 text-center text-gray-500">— or —</div>
+          <div className="text-center text-gray-500">or</div>
 
-        <button
-          onClick={handleGoogleSignIn}
-          className="w-full border border-gray-300 rounded-full py-2 hover:bg-gray-100 transition"
-        >
-          Sign in with Google
-        </button>
-
-        <div className="mt-6 text-center text-sm text-gray-600">
-          {isSignUp ? (
-            <>
-              Already have an account?{' '}
-              <button
-                onClick={() => setIsSignUp(false)}
-                className="text-purple-600 hover:underline"
-              >
-                Sign In
-              </button>
-            </>
-          ) : (
-            <>
-              Don’t have an account?{' '}
-              <button
-                onClick={() => setIsSignUp(true)}
-                className="text-purple-600 hover:underline"
-              >
-                Sign Up
-              </button>
-            </>
-          )}
+          <button
+            onClick={handleGoogleAuth}
+            className="w-full bg-white border border-gray-300 py-2 rounded-full text-purple-700 font-medium hover:shadow"
+          >
+            {isSignUp ? 'Sign Up with Google' : 'Sign In with Google'}
+          </button>
         </div>
+
+        <p className="text-center mt-6 text-sm text-gray-500">
+          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+          <button
+            className="text-purple-600 hover:underline font-medium"
+            onClick={() => setIsSignUp(!isSignUp)}
+          >
+            {isSignUp ? 'Sign In' : 'Sign Up'}
+          </button>
+        </p>
       </div>
     </div>
   );

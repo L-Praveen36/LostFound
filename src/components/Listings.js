@@ -2,38 +2,95 @@ import React, { useEffect, useState } from 'react';
 
 function Listings() {
   const [items, setItems] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fetchItems = async () => {
+    try {
+      const res = await fetch('https://lostfound-api.onrender.com/api/items');
+      if (!res.ok) throw new Error('Failed to fetch items');
+      const data = await res.json();
+      setItems(data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError('Unable to load items.');
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetch('https://lostfound-api.netlify.app/api/items')
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch items');
-        return res.json();
-      })
-      .then(data => {
-        setItems(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setError('Unable to load items.');
-        setLoading(false);
-      });
+    fetchItems();
   }, []);
+
+  useEffect(() => {
+    let filteredItems = items;
+
+    if (filter === 'lost') {
+      filteredItems = filteredItems.filter(item => item.type === 'lost');
+    } else if (filter === 'found') {
+      filteredItems = filteredItems.filter(item => item.type === 'found');
+    } else if (filter === 'resolved') {
+      filteredItems = filteredItems.filter(item => item.resolved === true);
+    }
+
+    if (search) {
+      const q = search.toLowerCase();
+      filteredItems = filteredItems.filter(item =>
+        item.title.toLowerCase().includes(q) ||
+        item.description.toLowerCase().includes(q) ||
+        item.location.toLowerCase().includes(q)
+      );
+    }
+
+    setFiltered(filteredItems);
+  }, [items, filter, search]);
 
   return (
     <section id="listings" className="py-20 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-10 text-center">Browse Lost & Found Items</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Browse Lost & Found Items</h2>
 
+        {/* 🔍 Search + Filters */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+          <input
+            type="text"
+            placeholder="🔍 Search by title, location, or description..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full md:w-1/2 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+
+          <div className="flex flex-wrap gap-2">
+            {['all', 'lost', 'found', 'resolved'].map(option => (
+              <button
+                key={option}
+                onClick={() => setFilter(option)}
+                className={`px-4 py-2 rounded-full font-medium capitalize transition-colors ${
+                  filter === option
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 🧾 Item Grid */}
         {loading ? (
           <p className="text-center text-gray-500">Loading items...</p>
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
+        ) : filtered.length === 0 ? (
+          <p className="text-center text-gray-400">No matching items found.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {items.map(item => (
+            {filtered.map(item => (
               <div
                 key={item._id}
                 className={`item-card glass-card rounded-2xl overflow-hidden shadow-md transition-transform duration-300 hover:scale-[1.02] ${item.resolved ? 'opacity-80' : ''}`}
@@ -44,7 +101,9 @@ function Listings() {
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${item.type === 'lost' ? 'bg-yellow-500 text-white' : 'bg-white text-black'}`}>
+                  <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${
+                    item.type === 'lost' ? 'bg-yellow-500 text-white' : 'bg-green-100 text-green-800'
+                  }`}>
                     {item.type}
                   </div>
                   {item.resolved && (
