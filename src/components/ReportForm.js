@@ -18,7 +18,7 @@ function ReportForm() {
     userEmail: '',
     studentId: ''
   });
-  const [ setMessage] = useState(null);
+  const [setMessage] = useState(null);
 
   const handleInput = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,7 +54,8 @@ function ReportForm() {
     });
 
     try {
-      await axios.post('/api/items', payload);
+      await axios.post('https://lost-found-backend.onrender.com/api/items', payload);
+
       toast.success("✅ Item submitted successfully!");
 
       // Reset form
@@ -71,7 +72,7 @@ function ReportForm() {
 
   return (
     <section id="report" className="py-20 bg-gray-50">
-       <ToastContainer position="top-right" autoClose={5000} />
+      <ToastContainer position="top-right" autoClose={5000} />
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Report Lost or Found Item</h2>
 
@@ -141,7 +142,14 @@ function ReportForm() {
             {/* Date */}
             <div className="mb-6">
               <label className="block text-gray-700 mb-2">Date Lost/Found</label>
-              <input type="date" name="date" onChange={handleInput} className="input" />
+              <input
+                type="date"
+                max={new Date().toISOString().split("T")[0]}
+                className="input"
+                value={formData.date}
+onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+
+              />
             </div>
 
             {/* Description */}
