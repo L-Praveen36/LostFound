@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import SignInModal from './SignInModal';
-import AdminSignInModal from './AdminSignInModal';
 
-function Navbar({ onAdminLogin }) {
+function Navbar({ onAdminLogin, onShowSignIn, onShowAdminSignIn }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [showAdminSignIn, setShowAdminSignIn] = useState(false);
 
   return (
     <nav className="gradient-bg text-white shadow-lg">
@@ -24,7 +20,7 @@ function Navbar({ onAdminLogin }) {
             <span className="text-xl font-bold">CampusFind</span>
           </div>
 
-          {/* Links */}
+          {/* Desktop Links */}
           <div className="hidden md:flex space-x-6">
             <a href="#home" className="hover:text-gray-200 transition">Home</a>
             <a href="#listings" className="hover:text-gray-200 transition">Browse Items</a>
@@ -32,37 +28,34 @@ function Navbar({ onAdminLogin }) {
             <a href="#how-it-works" className="hover:text-gray-200 transition">How It Works</a>
           </div>
 
-          {/* Buttons */}
-          <div className="flex items-center space-x-3">
-            {/* Admin button - LEFT */}
+          {/* Desktop Buttons */}
+          <div className="hidden md:flex items-center space-x-3">
             <button
-              onClick={() => setShowAdminSignIn(true)}
-              className="hidden md:block px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition"
+              onClick={onShowAdminSignIn}
+              className="px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition"
             >
               Admin
             </button>
-
-            {/* Sign In button - RIGHT */}
             <button
-              onClick={() => setShowSignIn(true)}
-              className="hidden md:block px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition"
+              onClick={onShowSignIn}
+              className="px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition"
             >
               Sign In
             </button>
-
-            {/* Mobile menu icon */}
-            <button
-              className="md:hidden text-white focus:outline-none"
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
           </div>
+
+          {/* Mobile Menu Icon */}
+          <button
+            className="md:hidden text-white focus:outline-none"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile Menu */}
         {menuOpen && (
           <div className="md:hidden pt-4">
             <div className="flex flex-col space-y-3">
@@ -70,16 +63,21 @@ function Navbar({ onAdminLogin }) {
               <a href="#listings" className="block hover:text-gray-200 transition">Browse Items</a>
               <a href="#report" className="block hover:text-gray-200 transition">Report Item</a>
               <a href="#how-it-works" className="block hover:text-gray-200 transition">How It Works</a>
-
               <button
-                onClick={() => setShowAdminSignIn(true)}
-                className="block hover:text-gray-200 transition"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onShowAdminSignIn();
+                }}
+                className="block hover:text-gray-200 transition text-left"
               >
                 Admin
               </button>
               <button
-                onClick={() => setShowSignIn(true)}
-                className="block hover:text-gray-200 transition"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onShowSignIn();
+                }}
+                className="block hover:text-gray-200 transition text-left"
               >
                 Sign In
               </button>
@@ -87,20 +85,6 @@ function Navbar({ onAdminLogin }) {
           </div>
         )}
       </div>
-
-      {/* Modals */}
-      {showSignIn && (
-        <SignInModal onClose={() => setShowSignIn(false)} />
-      )}
-      {showAdminSignIn && (
-        <AdminSignInModal
-          onClose={() => setShowAdminSignIn(false)}
-          onSuccess={() => {
-            setShowAdminSignIn(false);
-            onAdminLogin(); // this will show the admin panel
-          }}
-        />
-      )}
     </nav>
   );
 }
