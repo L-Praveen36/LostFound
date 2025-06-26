@@ -73,13 +73,13 @@ function Navbar({ onAdminLogin }) {
               
               <button
                 onClick={() => setShowAdminSignIn(true)}
-                className="w-full text-left px-4 py-2 rounded-full bg-white text-purple-700 font-medium hover:bg-gray-100 transition"
+                className="block hover:text-gray-200 transition"
               >
                 Admin
               </button>
               <button
                 onClick={() => setShowSignIn(true)}
-                className="w-full text-left px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition"
+                className="block hover:text-gray-200 transition"
               >
                 Sign In
               </button>
