@@ -1,6 +1,7 @@
 // components/Navbar.js
 import React, { useState } from 'react';
-import SignInModal from './components/SignInModal';
+import SignInModal from './SignInModal';
+
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);

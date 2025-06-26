@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
-import SignInModal from './components/SignInModal';
 import Hero from './components/Hero';
 import Stats from './components/Stats';
 import HowItWorks from './components/HowItWorks';
@@ -11,6 +10,7 @@ import Footer from './components/Footer';
 import ClaimModal from './components/Modals/ClaimModal';
 import ContactModal from './components/Modals/ContactModal';
 import AdminPanel from './components/Modals/AdminPanel';
+import SignInModal from './components/SignInModal';
 
 function App() {
   const [showSignIn, setShowSignIn] = useState(false); 
