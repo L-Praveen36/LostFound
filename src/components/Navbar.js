@@ -37,7 +37,7 @@ function Navbar({ onAdminLogin }) {
             {/* Admin button - LEFT */}
             <button
               onClick={() => setShowAdminSignIn(true)}
-              className="px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition"
+              className="hidden md:block px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition"
             >
               Admin
             </button>
@@ -45,7 +45,7 @@ function Navbar({ onAdminLogin }) {
             {/* Sign In button - RIGHT */}
             <button
               onClick={() => setShowSignIn(true)}
-              className="px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition"
+              className="hidden md:block px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition"
             >
               Sign In
             </button>
@@ -70,7 +70,7 @@ function Navbar({ onAdminLogin }) {
               <a href="#listings" className="block hover:text-gray-200 transition">Browse Items</a>
               <a href="#report" className="block hover:text-gray-200 transition">Report Item</a>
               <a href="#how-it-works" className="block hover:text-gray-200 transition">How It Works</a>
-              
+
               <button
                 onClick={() => setShowAdminSignIn(true)}
                 className="block hover:text-gray-200 transition"
