@@ -11,9 +11,11 @@ import ClaimModal from './components/Modals/ClaimModal';
 import ContactModal from './components/Modals/ContactModal';
 import AdminPanel from './components/Modals/AdminPanel';
 import SignInModal from './components/SignInModal';
+import AdminSignInModal from './components/AdminSignInModal';
 
 function App() {
   const [showSignIn, setShowSignIn] = useState(false); 
+  const [showAdminSignIn, setShowAdminSignIn] = useState(false);
   return (
     <div className="font-sans bg-gray-50 text-gray-800">
       <Navbar />
@@ -28,6 +30,15 @@ function App() {
       <ContactModal />
       <AdminPanel />
       {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
+        {showAdminSignIn && (
+        <AdminSignInModal
+          onClose={() => setShowAdminSignIn(false)}
+          onSuccess={() => {
+            setShowAdminSignIn(false);
+            onAdminLogin(); // this will show the admin panel
+          }}
+        />
+      )}
     </div>
   );
 }
