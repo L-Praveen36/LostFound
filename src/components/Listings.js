@@ -6,7 +6,8 @@ function Listings() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('https://lostfound-api.netlify.app/api/items')
+    fetch('https://lostfound-api.onrender.com/api/items')
+
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch items');
         return res.json();
