@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function Navbar({ onAdminLogin, onShowSignIn, onShowAdminSignIn }) {
+function Navbar({  onShowSignIn, onShowAdminSignIn }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
