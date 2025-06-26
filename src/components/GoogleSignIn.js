@@ -1,12 +1,10 @@
-// components/GoogleSignIn.js
-import React from 'react';
 import { signInWithPopup } from 'firebase/auth';
-import { auth, provider } from '../firebase';
+import { auth, googleProvider } from '../firebase'; // ✅ correct import
 
 function GoogleSignIn({ onSuccess }) {
   const handleSignIn = async () => {
     try {
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, googleProvider); // ✅ use googleProvider
       const user = result.user;
       localStorage.setItem("user", JSON.stringify(user));
       onSuccess(user);
