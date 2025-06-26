@@ -29,3 +29,8 @@
 .category-chip {
   @apply px-3 py-1 rounded-full text-sm transition-transform hover:scale-105;
 }
+.input {
+  @apply w-full bg-gray-100 border-0 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:outline-none;
+}
+// Just shorthand for consistent input styling
+<input className="w-full bg-gray-100 border-0 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:outline-none" />
