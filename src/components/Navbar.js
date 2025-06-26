@@ -66,7 +66,11 @@ function Navbar() {
           </div>
         )}
       </div>
+      {showSignIn && (
+        <SignInModal onClose={() => setShowSignIn(false)} />
+      )}
     </nav>
+    
   );
 }
 

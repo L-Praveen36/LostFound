@@ -13,6 +13,7 @@ import ContactModal from './components/Modals/ContactModal';
 import AdminPanel from './components/Modals/AdminPanel';
 
 function App() {
+  const [showSignIn, setShowSignIn] = useState(false); 
   return (
     <div className="font-sans bg-gray-50 text-gray-800">
       <Navbar />
