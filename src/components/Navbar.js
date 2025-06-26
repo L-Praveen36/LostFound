@@ -1,18 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { auth } from '../firebase';
 import { useAuth } from '../AuthContext';
 import SignInModal from './SignInModal';
+import MyProfileModal from './MyProfileModal'; // optional
 
 function Navbar({ onShowAdminSignIn }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const { user } = useAuth();
+  const dropdownRef = useRef();
 
   const handleSignOut = () => {
     auth.signOut();
     localStorage.removeItem("user");
-    window.location.reload(); // Refresh to reset state
+    window.location.reload();
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <nav className="gradient-bg text-white shadow-lg z-50 relative">
@@ -39,7 +55,7 @@ function Navbar({ onShowAdminSignIn }) {
             <a href="#how-it-works" className="hover:text-gray-200 transition">How It Works</a>
           </div>
 
-          {/* Desktop Right Buttons */}
+          {/* Desktop Right */}
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={onShowAdminSignIn}
@@ -56,18 +72,33 @@ function Navbar({ onShowAdminSignIn }) {
                 Sign In
               </button>
             ) : (
-              <div className="relative group">
-                <img src={user.photoURL} alt="profile" className="w-10 h-10 rounded-full cursor-pointer" />
-                <div className="absolute right-0 mt-2 hidden group-hover:block bg-white text-black rounded-lg shadow-lg w-40 z-50">
-                  <p className="px-4 py-2 hover:bg-gray-100 cursor-pointer">My Profile</p>
-                  <p className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Help</p>
-                  <p
-                    onClick={handleSignOut}
-                    className="px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
-                  >
-                    Sign Out
-                  </p>
-                </div>
+              <div className="relative" ref={dropdownRef}>
+                <img
+                  src={user.photoURL}
+                  onClick={() => setIsDropdownOpen(prev => !prev)}
+                  className="w-10 h-10 rounded-full cursor-pointer"
+                  alt="User"
+                />
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 bg-white text-black rounded-lg shadow-lg w-40 z-50">
+                    <p
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        setShowProfileModal(true);
+                      }}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      My Profile
+                    </p>
+                    <p className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Help</p>
+                    <p
+                      onClick={handleSignOut}
+                      className="px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
+                    >
+                      Sign Out
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -83,7 +114,7 @@ function Navbar({ onShowAdminSignIn }) {
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden pt-4">
             <div className="flex flex-col space-y-3">
@@ -116,7 +147,15 @@ function Navbar({ onShowAdminSignIn }) {
                 <div className="mt-4 text-center">
                   <img src={user.photoURL} className="w-10 h-10 rounded-full mx-auto" alt="user" />
                   <div className="mt-2 bg-white text-black rounded-lg shadow text-center">
-                    <p className="py-2 hover:bg-gray-100 cursor-pointer">My Profile</p>
+                    <p
+                      className="py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        setShowProfileModal(true);
+                        setMenuOpen(false);
+                      }}
+                    >
+                      My Profile
+                    </p>
                     <p className="py-2 hover:bg-gray-100 cursor-pointer">Help</p>
                     <p
                       onClick={handleSignOut}
@@ -132,10 +171,9 @@ function Navbar({ onShowAdminSignIn }) {
         )}
       </div>
 
-      {/* Sign In Modal */}
-      {showSignInModal && (
-        <SignInModal onClose={() => setShowSignInModal(false)} />
-      )}
+      {/* Modals */}
+      {showSignInModal && <SignInModal onClose={() => setShowSignInModal(false)} />}
+      {showProfileModal && <MyProfileModal onClose={() => setShowProfileModal(false)} />}
     </nav>
   );
 }
