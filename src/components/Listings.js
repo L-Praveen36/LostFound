@@ -4,28 +4,25 @@ function Listings() {
   const [items, setItems] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [typeFilter, setTypeFilter] = useState('all');
-  const [searchLocation, setSearchLocation] = useState('');
-  const [searchCategory, setSearchCategory] = useState('');
-  const [searchDate, setSearchDate] = useState('');
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchItems = async () => {
-    try {
-      const res = await fetch('https://lostfound-api.onrender.com/api/items');
-      if (!res.ok) throw new Error('Failed to fetch items');
-      const data = await res.json();
-      setItems(data);
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
-      setError('Unable to load items.');
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchItems();
+    fetch('https://lostfound-api.onrender.com/api/items')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch items');
+        return res.json();
+      })
+      .then(data => {
+        setItems(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setError('Unable to load items.');
+        setLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -36,29 +33,22 @@ function Listings() {
     } else if (typeFilter === 'found') {
       filteredItems = filteredItems.filter(item => item.type === 'found');
     } else if (typeFilter === 'resolved') {
-      filteredItems = filteredItems.filter(item => item.resolved === true);
+      filteredItems = filteredItems.filter(item => item.resolved);
     }
 
-    if (searchLocation) {
+    if (search) {
+      const q = search.toLowerCase();
       filteredItems = filteredItems.filter(item =>
-        item.location.toLowerCase().includes(searchLocation.toLowerCase())
-      );
-    }
-
-    if (searchCategory) {
-      filteredItems = filteredItems.filter(item =>
-        item.category.toLowerCase().includes(searchCategory.toLowerCase())
-      );
-    }
-
-    if (searchDate) {
-      filteredItems = filteredItems.filter(item =>
-        new Date(item.date).toISOString().split('T')[0] === searchDate
+        item.title?.toLowerCase().includes(q) ||
+        item.description?.toLowerCase().includes(q) ||
+        item.location?.toLowerCase().includes(q) ||
+        item.category?.toLowerCase().includes(q) ||
+        new Date(item.date || item.submittedAt).toLocaleDateString().includes(q)
       );
     }
 
     setFiltered(filteredItems);
-  }, [items, typeFilter, searchLocation, searchCategory, searchDate]);
+  }, [items, typeFilter, search]);
 
   return (
     <section id="listings" className="py-20 bg-white">
@@ -67,29 +57,17 @@ function Listings() {
           Browse Lost & Found Items
         </h2>
 
-        {/* Filters */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {/* 🔍 Unified Search Bar + Type Filter */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <input
             type="text"
-            placeholder="📍 Location"
-            value={searchLocation}
-            onChange={(e) => setSearchLocation(e.target.value)}
-            className="px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="🔍 Search title, location, category, date..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full md:w-2/3 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
-          <input
-            type="text"
-            placeholder="📦 Category"
-            value={searchCategory}
-            onChange={(e) => setSearchCategory(e.target.value)}
-            className="px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <input
-            type="date"
-            value={searchDate}
-            onChange={(e) => setSearchDate(e.target.value)}
-            className="px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <div className="flex gap-2 flex-wrap">
+
+          <div className="flex flex-wrap gap-2">
             {['all', 'lost', 'found', 'resolved'].map(type => (
               <button
                 key={type}
@@ -106,7 +84,7 @@ function Listings() {
           </div>
         </div>
 
-        {/* Listings */}
+        {/* 🧾 Listings */}
         {loading ? (
           <p className="text-center text-gray-500">Loading items...</p>
         ) : error ? (
@@ -117,7 +95,6 @@ function Listings() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {filtered.map(item => {
               const isEmail = item.contactInfo && /\S+@\S+\.\S+/.test(item.contactInfo);
-
               return (
                 <div
                   key={item._id}
@@ -125,6 +102,7 @@ function Listings() {
                     item.resolved ? 'opacity-80' : ''
                   }`}
                 >
+                  {/* Image + Type/Resolved */}
                   <div className="relative h-48 bg-gray-200">
                     <img
                       src={item.imageUrl || 'https://via.placeholder.com/500x300?text=No+Image'}
@@ -132,9 +110,7 @@ function Listings() {
                       className="w-full h-full object-cover"
                     />
                     <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${
-                      item.type === 'lost'
-                        ? 'bg-yellow-500 text-white'
-                        : 'bg-green-100 text-green-800'
+                      item.type === 'lost' ? 'bg-yellow-500 text-white' : 'bg-green-100 text-green-800'
                     }`}>
                       {item.type}
                     </div>
@@ -145,6 +121,7 @@ function Listings() {
                     )}
                   </div>
 
+                  {/* Details */}
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="text-xl font-semibold">{item.title}</h3>
@@ -160,10 +137,10 @@ function Listings() {
                       <span className="category-chip bg-blue-100 text-blue-800">{item.location}</span>
                     </div>
 
-                    {!item.resolved && (
+                    {/* Buttons */}
+                    {!item.resolved && item.status === 'approved' && (
                       <div className="flex flex-col gap-2">
-                        {/* ✅ Claim Button: only for found + approved + not resolved */}
-                        {item.type === 'found' && item.status === 'approved' && (
+                        {item.type === 'found' && (
                           <button
                             onClick={() =>
                               window.dispatchEvent(new CustomEvent('openClaimModal', { detail: item }))
@@ -173,9 +150,7 @@ function Listings() {
                             Claim This Item
                           </button>
                         )}
-
-                        {/* ✅ Contact Button: only for approved + not resolved + valid email */}
-                        {item.status === 'approved' && isEmail && (
+                        {isEmail && (
                           <button
                             onClick={() =>
                               window.dispatchEvent(new CustomEvent('openContactModal', { detail: item }))
