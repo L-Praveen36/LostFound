@@ -93,7 +93,7 @@ function Listings() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {filtered.map(item => {
-              const isEmail = item.contactInfo && /\S+@\S+\.\S+/.test(item.contactInfo);
+              
               return (
                 <div
                   key={item._id}
