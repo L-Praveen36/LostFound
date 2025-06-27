@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 function ClaimModal({ visible, onClose, item }) {
-  const [form, setForm] = useState({ name: '', email: '', answer: '' });
+  const [form, setForm] = useState({ rollNo: '', name: '', email: '' });
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -20,7 +20,7 @@ function ClaimModal({ visible, onClose, item }) {
       const res = await fetch(`https://lostfound-api.onrender.com/api/items/${item._id}/claim`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: form.name, email: form.email })
+        body: JSON.stringify(form)
       });
 
       if (!res.ok) {
@@ -28,14 +28,14 @@ function ClaimModal({ visible, onClose, item }) {
         throw new Error(err.message || 'Failed to claim item');
       }
 
-      setMessage('✅ Item successfully claimed!');
+      setMessage('✅ Successfully claimed! Item marked as resolved.');
       setTimeout(() => {
-        setSubmitting(false);
         onClose();
-        window.location.reload(); // 🔁 Refresh listings to reflect resolved status
+        window.location.reload();
       }, 1500);
     } catch (err) {
       setMessage(`❌ ${err.message}`);
+    } finally {
       setSubmitting(false);
     }
   };
@@ -49,18 +49,18 @@ function ClaimModal({ visible, onClose, item }) {
         <h3 className="text-2xl font-semibold mb-6">Claim This Item</h3>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm mb-1">Verification Answer</label>
+            <label className="block text-sm mb-1">Roll No</label>
             <input
-              name="answer"
+              name="rollNo"
               className="input w-full"
-              placeholder="Describe the item to verify ownership"
-              value={form.answer}
+              placeholder="Enter your roll number"
+              value={form.rollNo}
               onChange={handleChange}
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm mb-1">Your Name</label>
+            <label className="block text-sm mb-1">Name</label>
             <input
               name="name"
               className="input w-full"
@@ -71,28 +71,22 @@ function ClaimModal({ visible, onClose, item }) {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm mb-1">Your Email</label>
+            <label className="block text-sm mb-1">College Email</label>
             <input
               name="email"
               type="email"
               className="input w-full"
-              placeholder="you@example.com"
+              placeholder="yourid@college.edu"
               value={form.email}
               onChange={handleChange}
               required
             />
           </div>
 
-          {message && (
-            <p className={`text-sm mb-4 ${message.startsWith('✅') ? 'text-green-600' : 'text-red-500'}`}>
-              {message}
-            </p>
-          )}
+          {message && <p className="text-sm mb-4 text-center">{message}</p>}
 
           <div className="flex justify-end gap-3">
-            <button type="button" onClick={onClose} className="px-4 py-2 border rounded-full">
-              Cancel
-            </button>
+            <button type="button" onClick={onClose} className="px-4 py-2 border rounded-full">Cancel</button>
             <button
               type="submit"
               className="neumorphic-btn px-6 py-2 rounded-full"

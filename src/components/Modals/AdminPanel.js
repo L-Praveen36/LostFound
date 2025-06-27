@@ -203,6 +203,24 @@ const AdminPanel = ({ onClose }) => {
                     <p><strong>School ID:</strong> {item.schoolId || 'N/A'}</p>
                     <p><strong>Status:</strong> <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadge(item.status)}`}>{item.status}</span></p>
                     {item.resolved && <p className="text-purple-600 font-semibold">✅ Resolved</p>}
+                    {item.resolved && item.claimedInfo && (
+                      <div className="mt-3 p-3 bg-purple-50 border border-purple-200 rounded-lg text-sm text-purple-900">
+                        <p className="font-semibold mb-1">📦 Claimed By:</p>
+                        <p><strong>👤 Name:</strong> {item.claimedInfo.name || 'N/A'}</p>
+                        <p><strong>🎓 Roll No:</strong> {item.claimedInfo.rollNo || 'N/A'}</p>
+                        <p>
+                          <strong>📧 Email:</strong>{' '}
+                          {item.claimedInfo.email ? (
+                            <a href={`mailto:${item.claimedInfo.email}`} className="text-blue-600 underline">
+                              {item.claimedInfo.email}
+                            </a>
+                          ) : (
+                            'N/A'
+                          )}
+                        </p>
+                      </div>
+                    )}
+
                   </div>
 
 
