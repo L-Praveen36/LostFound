@@ -72,11 +72,10 @@ function Listings() {
               <button
                 key={type}
                 onClick={() => setTypeFilter(type)}
-                className={`px-4 py-2 rounded-full font-medium capitalize ${
-                  typeFilter === type
+                className={`px-4 py-2 rounded-full font-medium capitalize ${typeFilter === type
                     ? 'bg-purple-600 text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
+                  }`}
               >
                 {type}
               </button>
@@ -98,9 +97,8 @@ function Listings() {
               return (
                 <div
                   key={item._id}
-                  className={`item-card glass-card rounded-2xl overflow-hidden shadow-md transition-transform duration-300 hover:scale-[1.02] ${
-                    item.resolved ? 'opacity-80' : ''
-                  }`}
+                  className={`item-card glass-card rounded-2xl overflow-hidden shadow-md transition-transform duration-300 hover:scale-[1.02] ${item.resolved ? 'opacity-80' : ''
+                    }`}
                 >
                   {/* Image + Type/Resolved */}
                   <div className="relative h-48 bg-gray-200">
@@ -109,9 +107,8 @@ function Listings() {
                       alt={item.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${
-                      item.type === 'lost' ? 'bg-yellow-500 text-white' : 'bg-green-100 text-green-800'
-                    }`}>
+                    <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${item.type === 'lost' ? 'bg-yellow-500 text-white' : 'bg-green-100 text-green-800'
+                      }`}>
                       {item.type}
                     </div>
                     {item.resolved && (
@@ -150,16 +147,17 @@ function Listings() {
                             Claim This Item
                           </button>
                         )}
-                        {isEmail && (
+                        {item.status === 'approved' && !item.resolved && item.contactInfo && (
                           <button
-                            onClick={() =>
-                              window.dispatchEvent(new CustomEvent('openContactModal', { detail: item }))
-                            }
+                            onClick={() => {
+                              window.location.href = `mailto:${item.contactInfo}?subject=Regarding your Lost & Found Item: ${item.title}`;
+                            }}
                             className="bg-blue-500 text-white py-2 rounded-full font-medium hover:bg-blue-600 transition"
                           >
                             Contact Finder
                           </button>
                         )}
+
                       </div>
                     )}
                   </div>
