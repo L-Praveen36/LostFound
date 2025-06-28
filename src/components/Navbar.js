@@ -58,11 +58,19 @@ function Navbar({ onShowAdminSignIn }) {
           {/* Desktop Right */}
           <div className="hidden md:flex items-center space-x-4">
             <button
-              onClick={onShowAdminSignIn}
-              className="px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition"
+              onClick={() => {
+                const token = sessionStorage.getItem('adminToken');
+                if (token) {
+                  window.dispatchEvent(new Event('openAdminPanel'));
+                } else {
+                  onShowAdminSignIn();
+                }
+              }}
+              className="px-4 py-2 rounded-full border border-white ..."
             >
               Admin
             </button>
+
 
             {!user ? (
               <button
@@ -126,7 +134,12 @@ function Navbar({ onShowAdminSignIn }) {
               <button
                 onClick={() => {
                   setMenuOpen(false);
-                  onShowAdminSignIn();
+                  const token = sessionStorage.getItem('adminToken');
+                  if (token) {
+                    window.dispatchEvent(new Event('openAdminPanel'));
+                  } else {
+                    onShowAdminSignIn();
+                  }
                 }}
                 className="block hover:text-gray-200 transition text-left"
               >

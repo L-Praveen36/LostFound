@@ -14,31 +14,35 @@ import SignInModal from './components/SignInModal';
 import AdminSignInModal from './components/AdminSignInModal';
 
 function App() {
-  // 🔐 Auth/admin logic
+  // 🔐 Admin state
   const [showSignIn, setShowSignIn] = useState(false);
   const [showAdminSignIn, setShowAdminSignIn] = useState(false);
-  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(() => !!sessionStorage.getItem('adminToken'));
 
-  // 🧾 Item modal state
+  // 🧾 Modals for item actions
   const [selectedClaimItem, setSelectedClaimItem] = useState(null);
   const [selectedContactItem, setSelectedContactItem] = useState(null);
 
-  // ✅ Listen for modal open events from Listings
+  // ✅ Listen for modal open events
   useEffect(() => {
     const openClaimListener = (e) => setSelectedClaimItem(e.detail);
     const openContactListener = (e) => setSelectedContactItem(e.detail);
+    const openAdminListener = () => setShowAdminPanel(true);
 
-    window.addEventListener("openClaimModal", openClaimListener);
-    window.addEventListener("openContactModal", openContactListener);
+    window.addEventListener('openClaimModal', openClaimListener);
+    window.addEventListener('openContactModal', openContactListener);
+    window.addEventListener('openAdminPanel', openAdminListener);
 
     return () => {
-      window.removeEventListener("openClaimModal", openClaimListener);
-      window.removeEventListener("openContactModal", openContactListener);
+      window.removeEventListener('openClaimModal', openClaimListener);
+      window.removeEventListener('openContactModal', openContactListener);
+      window.removeEventListener('openAdminPanel', openAdminListener);
     };
   }, []);
 
   // 🔐 When admin logs in
   const handleAdminLogin = () => {
+    sessionStorage.setItem('adminToken', 'valid'); // Mark session
     setShowAdminSignIn(false);
     setShowAdminPanel(true);
   };
@@ -58,17 +62,17 @@ function App() {
       <Future />
       <Footer />
 
-      {/* 🔓 Admin Panel */}
+      {/* Admin */}
       {showAdminPanel && <AdminPanel onClose={() => setShowAdminPanel(false)} />}
-      {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
       {showAdminSignIn && (
         <AdminSignInModal
           onClose={() => setShowAdminSignIn(false)}
           onSuccess={handleAdminLogin}
         />
       )}
+      {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
 
-      {/* 🧾 Item Modals */}
+      {/* Item Modals */}
       {selectedClaimItem && (
         <ClaimModal
           visible={true}
