@@ -144,7 +144,7 @@ function Listings() {
                             }
                             className="bg-green-500 text-white py-2 rounded-full font-medium hover:bg-green-600 transition"
                           >
-                            Claim This Item
+                            claimed This Item
                           </button>
                         )}
                         {item.status === 'approved' && !item.resolved && item.userEmail && (

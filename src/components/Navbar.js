@@ -44,7 +44,7 @@ function Navbar({ onShowAdminSignIn }) {
               loop
               autoPlay
             ></lottie-player>
-            <span className="text-xl font-bold">CampusFind</span>
+            <span className="text-xl font-bold">Lost&Found</span>
           </div>
 
           {/* Desktop Links */}
