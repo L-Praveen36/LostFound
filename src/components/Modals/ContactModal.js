@@ -1,9 +1,10 @@
 import React from 'react';
 
 function ContactModal({ visible, onClose, item }) {
-  if (!visible || !item || item.type !== 'found' || item.resolved) return null;
+  if (!visible || !item || !item.userEmail || item.resolved) return null;
 
-  const email = item.contactInfo || item.userEmail;
+
+  const email = item.userEmail;
   const isEmail = email && /\S+@\S+\.\S+/.test(email);
 
   const handleContact = () => {

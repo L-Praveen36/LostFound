@@ -73,8 +73,8 @@ function Listings() {
                 key={type}
                 onClick={() => setTypeFilter(type)}
                 className={`px-4 py-2 rounded-full font-medium capitalize ${typeFilter === type
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
               >
                 {type}
@@ -93,7 +93,7 @@ function Listings() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {filtered.map(item => {
-              
+
               return (
                 <div
                   key={item._id}
@@ -147,16 +147,17 @@ function Listings() {
                             Claim This Item
                           </button>
                         )}
-                        {item.status === 'approved' && !item.resolved && item.contactInfo && (
+                        {item.status === 'approved' && !item.resolved && item.userEmail && (
                           <button
                             onClick={() => {
-                              window.location.href = `mailto:${item.contactInfo}?subject=Regarding your Lost & Found Item: ${item.title}`;
+                              window.location.href = `mailto:${item.userEmail}?subject=Regarding your Lost & Found Item: ${item.title}`;
                             }}
                             className="bg-blue-500 text-white py-2 rounded-full font-medium hover:bg-blue-600 transition"
                           >
                             Contact Finder
                           </button>
                         )}
+
 
                       </div>
                     )}
