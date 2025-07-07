@@ -21,7 +21,7 @@ function App() {
   // 🔐 Auth/admin logic
   const [showSignIn, setShowSignIn] = useState(false);
   const [showAdminSignIn, setShowAdminSignIn] = useState(false);
-  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(() => !!sessionStorage.getItem('adminToken'));
 
   // 🧾 Item modal state
   const [selectedClaimItem, setSelectedClaimItem] = useState(null);
@@ -38,17 +38,22 @@ function App() {
       else setShowSignIn(true);
     };
 
+    const openAdminListener = () => setShowAdminPanel(true);
+
     window.addEventListener("openClaimModal", openClaimListener);
     window.addEventListener("openContactModal", openContactListener);
+    window.addEventListener("openAdminPanel", openAdminListener);
 
     return () => {
       window.removeEventListener("openClaimModal", openClaimListener);
       window.removeEventListener("openContactModal", openContactListener);
+      window.removeEventListener("openAdminPanel", openAdminListener);
     };
   }, [user]);
 
   // 🔐 When admin logs in
   const handleAdminLogin = () => {
+    sessionStorage.setItem('adminToken', 'valid');
     setShowAdminSignIn(false);
     setShowAdminPanel(true);
   };

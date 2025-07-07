@@ -9,6 +9,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
   const [location, setLocation] = useState('Library');
   const [customLocation, setCustomLocation] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -35,10 +36,12 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
     onRequireSignIn(); // Trigger modal
     return;
   }
+   setSubmitting(true);
     const locationToUse = location === 'Other' ? customLocation.trim() : location;
 
     if (!formData.title || !formData.description || !formData.category || !formData.contactInfo || !formData.submittedBy || !formData.userEmail || !locationToUse) {
-      return setMessage("Please fill all required fields.");
+      setSubmitting(false);
+       return setMessage("Please fill all required fields.");
     }
 
     const payload = new FormData();
@@ -79,7 +82,9 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
       setLocation('Library');
     } catch (err) {
       toast.error("❌ Submission failed: " + (err.response?.data?.message || err.message));
-    }
+    }finally {
+    setSubmitting(false); // ✅ Done submitting
+  }
   };
 
   const locationOptions = ['Library', 'Cafeteria', 'Dormitories', 'Sports Complex', 'Lecture Halls', 'Other'];
@@ -205,9 +210,14 @@ onChange={(e) => setFormData({ ...formData, date: e.target.value })}
             </div>
 
             <div className="text-center">
-              <button type="submit" className="neumorphic-btn px-8 py-3 rounded-full font-medium text-purple-700">
-                Submit Report
-              </button>
+              <button
+  type="submit"
+  className="neumorphic-btn px-8 py-3 rounded-full font-medium text-purple-700"
+  disabled={submitting}
+>
+  {submitting ? 'Submitting...' : 'Submit Report'}
+</button>
+
             </div>
           </form>
         </div>
