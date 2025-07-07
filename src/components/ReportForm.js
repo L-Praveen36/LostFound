@@ -3,7 +3,8 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
 
-function ReportForm() {
+function ReportForm({ isSignedIn, onRequireSignIn }) {
+
   const [type, setType] = useState('lost');
   const [location, setLocation] = useState('Library');
   const [customLocation, setCustomLocation] = useState('');
@@ -30,7 +31,10 @@ function ReportForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!isSignedIn) {
+    onRequireSignIn(); // Trigger modal
+    return;
+  }
     const locationToUse = location === 'Other' ? customLocation.trim() : location;
 
     if (!formData.title || !formData.description || !formData.category || !formData.contactInfo || !formData.submittedBy || !formData.userEmail || !locationToUse) {
@@ -59,7 +63,17 @@ function ReportForm() {
       toast.success("✅ Item submitted successfully!");
 
       // Reset form
-      setFormData({});
+      setFormData({
+  title: '',
+  description: '',
+  category: '',
+  date: '',
+  contactInfo: '',
+  submittedBy: '',
+  userEmail: '',
+  studentId: ''
+});
+
       setSelectedImages([]);
       setCustomLocation('');
       setLocation('Library');
