@@ -10,13 +10,23 @@ const AdminPanel = ({ onClose }) => {
   const [loading, setLoading] = useState(true);
   const [highlightedId, setHighlightedId] = useState(null);
 
+  const handleUnauthorized = () => {
+    alert("⚠️ Session expired. Please sign in again.");
+    sessionStorage.removeItem('adminToken');
+    window.location.reload();
+  };
+
   const fetchItems = useCallback(async () => {
     try {
       const response = await fetch('https://lostfound-api.onrender.com/api/admin/items', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
+
+      if (response.status === 401 || response.status === 403) {
+        handleUnauthorized();
+        return;
+      }
+
       const data = await response.json();
       data.sort((a, b) => new Date(b.date || b.submittedAt) - new Date(a.date || a.submittedAt));
       setItems(data);
@@ -42,6 +52,12 @@ const AdminPanel = ({ onClose }) => {
         },
         body: JSON.stringify({ status, moderatorName: 'Admin' })
       });
+
+      if (response.status === 401 || response.status === 403) {
+        handleUnauthorized();
+        return;
+      }
+
       if (response.ok) {
         setHighlightedId(id);
         fetchItems();
@@ -65,6 +81,12 @@ const AdminPanel = ({ onClose }) => {
           Authorization: `Bearer ${token}`
         }
       });
+
+      if (response.status === 401 || response.status === 403) {
+        handleUnauthorized();
+        return;
+      }
+
       if (response.ok) {
         setHighlightedId(id);
         fetchItems();
@@ -85,6 +107,12 @@ const AdminPanel = ({ onClose }) => {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
+
+      if (response.status === 401 || response.status === 403) {
+        handleUnauthorized();
+        return;
+      }
+
       if (response.ok) {
         fetchItems();
       } else {
@@ -220,9 +248,7 @@ const AdminPanel = ({ onClose }) => {
                         </p>
                       </div>
                     )}
-
                   </div>
-
 
                   <div className="mt-2 flex gap-2 flex-wrap">
                     {item.status === 'pending' && (
