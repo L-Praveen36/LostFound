@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -12,37 +13,42 @@ import ContactModal from './components/Modals/ContactModal';
 import AdminPanel from './components/Modals/AdminPanel';
 import SignInModal from './components/SignInModal';
 import AdminSignInModal from './components/AdminSignInModal';
+import { useAuth } from './AuthContext';
 
 function App() {
-  // 🔐 Admin state
+  const { user } = useAuth();
+
+  // 🔐 Auth/admin logic
   const [showSignIn, setShowSignIn] = useState(false);
   const [showAdminSignIn, setShowAdminSignIn] = useState(false);
-  const [showAdminPanel, setShowAdminPanel] = useState(() => !!sessionStorage.getItem('adminToken'));
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
 
-  // 🧾 Modals for item actions
+  // 🧾 Item modal state
   const [selectedClaimItem, setSelectedClaimItem] = useState(null);
   const [selectedContactItem, setSelectedContactItem] = useState(null);
 
-  // ✅ Listen for modal open events
+  // ✅ Listen for modal open events from Listings
   useEffect(() => {
-    const openClaimListener = (e) => setSelectedClaimItem(e.detail);
-    const openContactListener = (e) => setSelectedContactItem(e.detail);
-    const openAdminListener = () => setShowAdminPanel(true);
+    const openClaimListener = (e) => {
+      if (user) setSelectedClaimItem(e.detail);
+      else setShowSignIn(true);
+    };
+    const openContactListener = (e) => {
+      if (user) setSelectedContactItem(e.detail);
+      else setShowSignIn(true);
+    };
 
-    window.addEventListener('openClaimModal', openClaimListener);
-    window.addEventListener('openContactModal', openContactListener);
-    window.addEventListener('openAdminPanel', openAdminListener);
+    window.addEventListener("openClaimModal", openClaimListener);
+    window.addEventListener("openContactModal", openContactListener);
 
     return () => {
-      window.removeEventListener('openClaimModal', openClaimListener);
-      window.removeEventListener('openContactModal', openContactListener);
-      window.removeEventListener('openAdminPanel', openAdminListener);
+      window.removeEventListener("openClaimModal", openClaimListener);
+      window.removeEventListener("openContactModal", openContactListener);
     };
-  }, []);
+  }, [user]);
 
   // 🔐 When admin logs in
   const handleAdminLogin = () => {
-    sessionStorage.setItem('adminToken', 'valid'); // Mark session
     setShowAdminSignIn(false);
     setShowAdminPanel(true);
   };
@@ -56,23 +62,26 @@ function App() {
       />
       <Hero />
       <Listings />
-      <ReportForm />
+      <ReportForm
+        onRequireSignIn={() => setShowSignIn(true)}
+        isSignedIn={!!user}
+      />
       <Stats />
       <HowItWorks />
       <Future />
       <Footer />
 
-      {/* Admin */}
+      {/* 🔓 Admin Panel */}
       {showAdminPanel && <AdminPanel onClose={() => setShowAdminPanel(false)} />}
+      {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
       {showAdminSignIn && (
         <AdminSignInModal
           onClose={() => setShowAdminSignIn(false)}
           onSuccess={handleAdminLogin}
         />
       )}
-      {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
 
-      {/* Item Modals */}
+      {/* 🧾 Item Modals */}
       {selectedClaimItem && (
         <ClaimModal
           visible={true}
