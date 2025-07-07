@@ -52,11 +52,12 @@ function App() {
   }, [user]);
 
   // 🔐 When admin logs in
-  const handleAdminLogin = () => {
-    sessionStorage.setItem('adminToken', 'valid');
-    setShowAdminSignIn(false);
-    setShowAdminPanel(true);
-  };
+  const handleAdminLogin = (token) => {
+  sessionStorage.setItem('adminToken', token); // ✅ Store real JWT
+  setShowAdminSignIn(false);
+  setShowAdminPanel(true);
+};
+
 
   return (
     <div className="font-sans bg-gray-50 text-gray-800">
