@@ -28,49 +28,57 @@ function SignInModal({ onClose }) {
     localStorage.setItem('user', JSON.stringify(userData));
   };
 
-  const handleGoogleAuth = async () => {
-    setError('');
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
+  const [googleLoading, setGoogleLoading] = useState(false);
 
-      const methods = await fetchSignInMethodsForEmail(auth, user.email);
-      const alreadyHasPassword = methods.includes('password');
+const handleGoogleAuth = async () => {
+  setError('');
+  setGoogleLoading(true);
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
 
-      if (!alreadyHasPassword) {
-        const shouldSetPassword = window.confirm(
-          '✅ Signed in with Google.\nWould you like to set a password for this account?'
-        );
-        if (shouldSetPassword) {
-          const pw = prompt('Enter a password (min 6 characters):');
-          if (pw && pw.length >= 6) {
-            const credential = EmailAuthProvider.credential(user.email, pw);
-            try {
-              await linkWithCredential(user, credential);
-              alert('✅ Password linked! You can now log in using email and password.');
-            } catch (err) {
-              // If requires recent login, re-authenticate
-              if (err.code === 'auth/requires-recent-login') {
-                const refreshedUser = await reauthenticateWithPopup(user, googleProvider);
-                await linkWithCredential(refreshedUser.user, credential);
-                alert('✅ Password linked after re-auth. You can now use it to sign in.');
-              } else {
-                alert('❌ Could not link password: ' + err.message);
-              }
+    const methods = await fetchSignInMethodsForEmail(auth, user.email);
+    const alreadyHasPassword = methods.includes('password');
+
+    if (!alreadyHasPassword) {
+      const shouldSetPassword = window.confirm(
+        '✅ Signed in with Google.\nWould you like to set a password for this account?'
+      );
+      if (shouldSetPassword) {
+        const pw = prompt('Enter a password (min 6 characters):');
+        if (pw && pw.length >= 6) {
+          const credential = EmailAuthProvider.credential(user.email, pw);
+          try {
+            await linkWithCredential(user, credential);
+            alert('✅ Password linked! You can now log in using email and password.');
+          } catch (err) {
+            if (err.code === 'auth/requires-recent-login') {
+              const refreshedUser = await reauthenticateWithPopup(user, googleProvider);
+              await linkWithCredential(refreshedUser.user, credential);
+              alert('✅ Password linked after re-auth.');
+            } else {
+              alert('❌ Could not link password: ' + err.message);
             }
-          } else {
-            alert('⚠️ Password not set. You can still use Google to log in.');
           }
+        } else {
+          alert('⚠️ Password not set. You can still use Google to log in.');
         }
       }
+    }
 
-      saveUserLocally(user);
-      onClose();
-    } catch (err) {
-      console.error('Google auth error', err);
+    saveUserLocally(user);
+    onClose();
+  } catch (err) {
+    console.error('Google auth error:', err);
+    if (err.code === 'auth/popup-closed-by-user') {
+      setError("Google Sign-In was cancelled. Please try again and don't close the popup early.");
+    } else {
       setError('Google Sign-In failed.');
     }
-  };
+  } finally {
+    setGoogleLoading(false);
+  }
+};
 
   const handleEmailAuth = async () => {
     setError('');
@@ -153,11 +161,15 @@ function SignInModal({ onClose }) {
           <div className="text-center text-gray-500">or</div>
 
           <button
-            onClick={handleGoogleAuth}
-            className="w-full bg-white border border-gray-300 py-2 rounded-full text-purple-700 font-medium hover:shadow"
-          >
-            {isSignUp ? 'Sign Up with Google' : 'Sign In with Google'}
-          </button>
+  onClick={handleGoogleAuth}
+  disabled={googleLoading}
+  className={`w-full border border-gray-300 py-2 rounded-full font-medium hover:shadow ${
+    googleLoading ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-purple-700'
+  }`}
+>
+  {googleLoading ? 'Signing in with Google...' : (isSignUp ? 'Sign Up with Google' : 'Sign In with Google')}
+</button>
+
         </div>
 
         <p className="text-center mt-6 text-sm text-gray-500">
