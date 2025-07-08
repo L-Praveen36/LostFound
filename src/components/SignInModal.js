@@ -1,6 +1,5 @@
 // components/SignInModal.js
 import React, { useState } from 'react';
-
 import {
   signInWithPopup,
   signInWithEmailAndPassword,
@@ -18,40 +17,36 @@ function SignInModal({ onClose }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  const handleGoogleAuth = async () => {
+    setError('');
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
 
-
-const handleGoogleAuth = async () => {
-  try {
-    const result = await signInWithPopup(auth, googleProvider);
-    const user = result.user;
-
-    // Check if password login is not yet linked
-    const methods = await fetchSignInMethodsForEmail(auth, user.email);
-
-    if (!methods.includes("password")) {
-      const pw = prompt("You signed in with Google. Set a password to allow email login:");
-      if (pw) {
-        const credential = EmailAuthProvider.credential(user.email, pw);
-        await linkWithCredential(user, credential);
-        alert("✅ Password login linked to your Google account.");
+      // If user logged in with Google, check if they have Email/Password linked
+      const signInMethods = await fetchSignInMethodsForEmail(auth, user.email);
+      if (!signInMethods.includes('password') && password) {
+        const credential = EmailAuthProvider.credential(user.email, password);
+        await linkWithCredential(user, credential); // Link email/password
       }
-    }
 
-    const userData = {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-    };
-    localStorage.setItem("user", JSON.stringify(userData));
-    onClose();
-  } catch (err) {
-    console.error("Google auth error", err);
-    setError("Google Sign-In failed.");
-  }
-};
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || user.email?.split('@')[0] || '',
+        photoURL: user.photoURL
+      };
+
+      localStorage.setItem('user', JSON.stringify(userData));
+      onClose();
+    } catch (err) {
+      console.error('Google auth error', err);
+      setError('Google Sign-In failed.');
+    }
+  };
 
   const handleEmailAuth = async () => {
+    setError('');
     if (!email || !password) {
       setError('Please enter both email and password.');
       return;
@@ -60,14 +55,12 @@ const handleGoogleAuth = async () => {
     try {
       const signInMethods = await fetchSignInMethodsForEmail(auth, email);
 
-      // ❌ Trying to Sign In without account
       if (!isSignUp && signInMethods.length === 0) {
         setError("No account found with this email.");
         document.getElementById("switch-to-signup")?.classList.add("text-red-600", "font-semibold");
         return;
       }
 
-      // ❌ Trying to Sign Up but email already in use
       if (isSignUp && signInMethods.length > 0) {
         setError("An account already exists. Please sign in instead.");
         return;
@@ -76,6 +69,21 @@ const handleGoogleAuth = async () => {
       const method = isSignUp ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
       const result = await method(auth, email, password);
       const user = result.user;
+
+      // If the user signs in with email/password, but also has Google linked
+      if (isSignUp && !signInMethods.includes('google.com')) {
+        try {
+          const googleResult = await signInWithPopup(auth, googleProvider);
+          const googleUser = googleResult.user;
+
+          if (googleUser.email === user.email) {
+            const credential = EmailAuthProvider.credential(user.email, password);
+            await linkWithCredential(googleUser, credential);
+          }
+        } catch (e) {
+          console.warn("Skipping Google linking:", e.message);
+        }
+      }
 
       const userData = {
         uid: user.uid,
@@ -91,7 +99,6 @@ const handleGoogleAuth = async () => {
       setError(err.message || 'Authentication failed.');
     }
   };
-
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -135,15 +142,15 @@ const handleGoogleAuth = async () => {
         <p className="text-center mt-6 text-sm text-gray-500">
           {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
           <button
-          id="switch-to-signup"
-          className="text-purple-600 hover:underline font-medium"
-          onClick={() => {
-            setIsSignUp(!isSignUp);
-            setError('');
-            document.getElementById("switch-to-signup")?.classList.remove("text-red-600", "font-semibold");
-          }}
-        >
-          {isSignUp ? 'Sign In' : 'Sign Up'}
+            id="switch-to-signup"
+            className="text-purple-600 hover:underline font-medium"
+            onClick={() => {
+              setIsSignUp(!isSignUp);
+              setError('');
+              document.getElementById("switch-to-signup")?.classList.remove("text-red-600", "font-semibold");
+            }}
+          >
+            {isSignUp ? 'Sign In' : 'Sign Up'}
           </button>
         </p>
       </div>
