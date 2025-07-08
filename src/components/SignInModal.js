@@ -1,6 +1,6 @@
 // components/SignInModal.js
 import React, { useState } from 'react';
-import { EmailAuthProvider, linkWithCredential } from 'firebase/auth';
+
 import {
   signInWithPopup,
   signInWithEmailAndPassword,
