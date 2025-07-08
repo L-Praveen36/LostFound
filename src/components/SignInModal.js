@@ -82,8 +82,13 @@ function SignInModal({ onClose }) {
     try {
       const signInMethods = await fetchSignInMethodsForEmail(auth, email);
 
-      if (!isSignUp && signInMethods.length === 0) {
-        setError('No account found with this email.');
+      if (!isSignUp && !signInMethods.includes('password')) {
+  if (signInMethods.includes('google.com')) {
+    setError("This account uses Google Sign-In. Please use 'Sign in with Google' or link a password.");
+  } else {
+    setError("No account found with this email.");
+  }
+  
         document.getElementById('switch-to-signup')?.classList.add('text-red-600', 'font-semibold');
         return;
       }
