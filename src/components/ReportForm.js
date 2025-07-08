@@ -18,10 +18,11 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
     description: '',
     category: '',
     date: '',
-    contactInfo: '',
+    
     submittedBy: user?.displayName || '',
   userEmail: user?.email || '',
-    studentId: ''
+    studentId: '',
+    phone: ''
   });
   const [setMessage] = useState(null);
 
@@ -84,7 +85,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
   description: '',
   category: '',
   date: '',
-  contactInfo: '',
+
   submittedBy: user?.displayName || '',
         userEmail: user?.email || '',
   studentId: ''
