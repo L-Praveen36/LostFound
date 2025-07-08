@@ -4,7 +4,9 @@ import {
   signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  fetchSignInMethodsForEmail
+  fetchSignInMethodsForEmail,
+  EmailAuthProvider,
+  linkWithCredential
 } from 'firebase/auth';
 
 import { auth, googleProvider } from '../firebase';
@@ -15,56 +17,80 @@ function SignInModal({ onClose }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleGoogleAuth = async () => {
+   const handleGoogleAuth = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      localStorage.setItem('user', JSON.stringify(user));
+
+      // Ask user if they want to enable password login
+      const wantsToSetPassword = window.confirm("Do you want to enable password login for this account?");
+      if (wantsToSetPassword) {
+        const password = prompt("Set a password you'll use for email sign-in:");
+        if (password) {
+          const credential = EmailAuthProvider.credential(user.email, password);
+          try {
+            await linkWithCredential(user, credential);
+            console.log("✅ Email/password linked to Google account.");
+          } catch (err) {
+            console.error("❌ Linking failed:", err.message);
+          }
+        }
+      }
+
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || user.email.split('@')[0],
+        photoURL: user.photoURL
+      };
+
+      localStorage.setItem('user', JSON.stringify(userData));
       onClose();
     } catch (err) {
       console.error('Google auth error', err);
       setError('Google Sign-In failed.');
     }
   };
-
- const handleEmailAuth = async () => {
-  if (!email || !password) {
-    setError('Please enter both email and password.');
-    return;
-  }
-
-  try {
-    const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-
-    if (!isSignUp && signInMethods.length === 0) {
-      setError("No account found with this email.");
-      document.getElementById("switch-to-signup")?.classList.add("text-red-600", "font-semibold");
+  const handleEmailAuth = async () => {
+    if (!email || !password) {
+      setError('Please enter both email and password.');
       return;
     }
 
-    if (isSignUp && signInMethods.length > 0) {
-      setError("An account already exists. Please sign in instead.");
-      return;
+    try {
+      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+
+      // ❌ Trying to Sign In without account
+      if (!isSignUp && signInMethods.length === 0) {
+        setError("No account found with this email.");
+        document.getElementById("switch-to-signup")?.classList.add("text-red-600", "font-semibold");
+        return;
+      }
+
+      // ❌ Trying to Sign Up but email already in use
+      if (isSignUp && signInMethods.length > 0) {
+        setError("An account already exists. Please sign in instead.");
+        return;
+      }
+
+      const method = isSignUp ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
+      const result = await method(auth, email, password);
+      const user = result.user;
+
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || user.email?.split('@')[0] || '',
+        photoURL: user.photoURL
+      };
+
+      localStorage.setItem('user', JSON.stringify(userData));
+      onClose();
+    } catch (err) {
+      console.error('Auth error', err);
+      setError(err.message || 'Authentication failed.');
     }
-
-    const method = isSignUp ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
-    const result = await method(auth, email, password);
-    const user = result.user;
-
-    const userData = {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName || user.email?.split('@')[0] || '',
-      photoURL: user.photoURL
-    };
-
-    localStorage.setItem('user', JSON.stringify(userData));
-    onClose();
-  } catch (err) {
-    console.error('Auth error', err);
-    setError(err.message || 'Authentication failed.');
-  }
-};
+  };
 
 
   return (
