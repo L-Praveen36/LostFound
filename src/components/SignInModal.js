@@ -17,57 +17,62 @@ function SignInModal({ onClose }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
- const handleGoogleAuth = async () => {
-  try {
-    const result = await signInWithPopup(auth, googleProvider);
-    const user = result.user;
+  // 🔐 Google Sign-In and optional password link
+  const handleGoogleAuth = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
 
-    // If user signed in with Google, ask them to optionally link a password
-    const shouldSetPassword = window.confirm("✅ Google Sign-In successful.\nDo you want to set a password for this account?");
+      // ✅ Prompt to set password only if not already linked
+      const methods = await fetchSignInMethodsForEmail(auth, user.email);
+      const alreadyLinked = methods.includes('password');
 
-    if (shouldSetPassword) {
-      const pw = prompt("Enter a password (min 6 characters):");
-      if (pw && pw.length >= 6) {
-        const cred = EmailAuthProvider.credential(user.email, pw);
-        await linkWithCredential(user, cred);
-        alert("✅ Password linked! You can now log in with email and password.");
-      } else {
-        alert("❌ Password not set. You can still sign in with Google.");
+      if (!alreadyLinked) {
+        const shouldLink = window.confirm("✅ Signed in with Google.\nDo you want to set a password for this account?");
+        if (shouldLink) {
+          const newPw = prompt("Enter a new password (min 6 characters):");
+          if (newPw && newPw.length >= 6) {
+            const cred = EmailAuthProvider.credential(user.email, newPw);
+            await linkWithCredential(user, cred);
+            alert("✅ Password set! You can now log in with email/password too.");
+          } else {
+            alert("❌ Password too short. You can still sign in with Google.");
+          }
+        }
       }
+
+      localStorage.setItem("user", JSON.stringify({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || user.email.split('@')[0],
+        photoURL: user.photoURL
+      }));
+
+      onClose();
+    } catch (err) {
+      console.error("Google sign-in failed", err);
+      setError("Google Sign-In failed. Try again.");
     }
+  };
 
-    const userData = {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName || user.email?.split('@')[0],
-      photoURL: user.photoURL
-    };
-
-    localStorage.setItem('user', JSON.stringify(userData));
-    onClose();
-  } catch (err) {
-    console.error('Google auth error', err);
-    setError('Google Sign-In failed.');
-  }
-};
-
+  // 🔐 Email/Password Sign-In or Sign-Up
   const handleEmailAuth = async () => {
     setError('');
     if (!email || !password) {
-      setError('Please enter both email and password.');
+      setError("Please enter both email and password.");
       return;
     }
 
     try {
-      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+      const methods = await fetchSignInMethodsForEmail(auth, email);
 
-      if (!isSignUp && signInMethods.length === 0) {
+      if (!isSignUp && methods.length === 0) {
         setError("No account found with this email.");
         document.getElementById("switch-to-signup")?.classList.add("text-red-600", "font-semibold");
         return;
       }
 
-      if (isSignUp && signInMethods.length > 0) {
+      if (isSignUp && methods.length > 0) {
         setError("An account already exists. Please sign in instead.");
         return;
       }
@@ -76,33 +81,17 @@ function SignInModal({ onClose }) {
       const result = await method(auth, email, password);
       const user = result.user;
 
-      // If the user signs in with email/password, but also has Google linked
-      if (isSignUp && !signInMethods.includes('google.com')) {
-        try {
-          const googleResult = await signInWithPopup(auth, googleProvider);
-          const googleUser = googleResult.user;
-
-          if (googleUser.email === user.email) {
-            const credential = EmailAuthProvider.credential(user.email, password);
-            await linkWithCredential(googleUser, credential);
-          }
-        } catch (e) {
-          console.warn("Skipping Google linking:", e.message);
-        }
-      }
-
-      const userData = {
+      localStorage.setItem("user", JSON.stringify({
         uid: user.uid,
         email: user.email,
-        displayName: user.displayName || user.email?.split('@')[0] || '',
+        displayName: user.displayName || user.email.split('@')[0],
         photoURL: user.photoURL
-      };
+      }));
 
-      localStorage.setItem('user', JSON.stringify(userData));
       onClose();
     } catch (err) {
-      console.error('Auth error', err);
-      setError(err.message || 'Authentication failed.');
+      console.error("Email auth error", err);
+      setError(err.message || "Authentication failed.");
     }
   };
 
@@ -110,7 +99,9 @@ function SignInModal({ onClose }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-8 w-full max-w-md relative">
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">&times;</button>
-        <h2 className="text-2xl font-bold mb-6 text-center">{isSignUp ? 'Sign Up' : 'Sign In'}</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          {isSignUp ? 'Sign Up' : 'Sign In'}
+        </h2>
 
         <div className="space-y-4">
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
@@ -118,16 +109,17 @@ function SignInModal({ onClose }) {
             type="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             className="input w-full"
           />
           <input
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             className="input w-full"
           />
+
           <button
             onClick={handleEmailAuth}
             className="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition"
@@ -149,12 +141,12 @@ function SignInModal({ onClose }) {
           {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
           <button
             id="switch-to-signup"
-            className="text-purple-600 hover:underline font-medium"
             onClick={() => {
               setIsSignUp(!isSignUp);
               setError('');
               document.getElementById("switch-to-signup")?.classList.remove("text-red-600", "font-semibold");
             }}
+            className="text-purple-600 hover:underline font-medium"
           >
             {isSignUp ? 'Sign In' : 'Sign Up'}
           </button>
