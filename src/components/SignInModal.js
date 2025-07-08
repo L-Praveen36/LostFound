@@ -17,33 +17,39 @@ function SignInModal({ onClose }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleGoogleAuth = async () => {
-    setError('');
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
+ const handleGoogleAuth = async () => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
 
-      // If user logged in with Google, check if they have Email/Password linked
-      const signInMethods = await fetchSignInMethodsForEmail(auth, user.email);
-      if (!signInMethods.includes('password') && password) {
-        const credential = EmailAuthProvider.credential(user.email, password);
-        await linkWithCredential(user, credential); // Link email/password
+    // If user signed in with Google, ask them to optionally link a password
+    const shouldSetPassword = window.confirm("✅ Google Sign-In successful.\nDo you want to set a password for this account?");
+
+    if (shouldSetPassword) {
+      const pw = prompt("Enter a password (min 6 characters):");
+      if (pw && pw.length >= 6) {
+        const cred = EmailAuthProvider.credential(user.email, pw);
+        await linkWithCredential(user, cred);
+        alert("✅ Password linked! You can now log in with email and password.");
+      } else {
+        alert("❌ Password not set. You can still sign in with Google.");
       }
-
-      const userData = {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || user.email?.split('@')[0] || '',
-        photoURL: user.photoURL
-      };
-
-      localStorage.setItem('user', JSON.stringify(userData));
-      onClose();
-    } catch (err) {
-      console.error('Google auth error', err);
-      setError('Google Sign-In failed.');
     }
-  };
+
+    const userData = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || user.email?.split('@')[0],
+      photoURL: user.photoURL
+    };
+
+    localStorage.setItem('user', JSON.stringify(userData));
+    onClose();
+  } catch (err) {
+    console.error('Google auth error', err);
+    setError('Google Sign-In failed.');
+  }
+};
 
   const handleEmailAuth = async () => {
     setError('');
