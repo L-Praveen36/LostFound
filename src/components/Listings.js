@@ -7,6 +7,7 @@ function Listings() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [zoomImage, setZoomImage] = useState(null);
 
   useEffect(() => {
     fetch('https://lostfound-api.onrender.com/api/items')
@@ -50,14 +51,22 @@ function Listings() {
     setFiltered(filteredItems);
   }, [items, typeFilter, search]);
 
+  const formatDate = (dateStr) => {
+    const d = new Date(dateStr);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   return (
-    <section id="listings" className="py-20 bg-white">
+    <section id="listings" className="py-20 bg-white relative">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
           Browse Lost & Found Items
         </h2>
 
-        {/* 🔍 Unified Search Bar + Type Filter */}
+        {/* Search & Filter */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <input
             type="text"
@@ -83,7 +92,7 @@ function Listings() {
           </div>
         </div>
 
-        {/* 🧾 Listings */}
+        {/* Listings */}
         {loading ? (
           <p className="text-center text-gray-500">Loading items...</p>
         ) : error ? (
@@ -93,17 +102,17 @@ function Listings() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {filtered.map(item => {
-
+              const imageSrc = item.imageUrl || 'https://via.placeholder.com/500x300?text=No+Image';
               return (
                 <div
                   key={item._id}
                   className={`item-card glass-card rounded-2xl overflow-hidden shadow-md transition-transform duration-300 hover:scale-[1.02] ${item.resolved ? 'opacity-80' : ''
                     }`}
                 >
-                  {/* Image + Type/Resolved */}
-                  <div className="relative h-48 bg-gray-200">
+                  {/* Clickable Image */}
+                  <div className="relative h-48 bg-gray-200 cursor-pointer" onClick={() => setZoomImage(imageSrc)}>
                     <img
-                      src={item.imageUrl || 'https://via.placeholder.com/500x300?text=No+Image'}
+                      src={imageSrc}
                       alt={item.title}
                       className="w-full h-full object-cover"
                     />
@@ -118,12 +127,11 @@ function Listings() {
                     )}
                   </div>
 
-                  {/* Details */}
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="text-xl font-semibold">{item.title}</h3>
                       <span className="text-sm text-gray-500">
-                        {new Date(item.date || item.submittedAt).toLocaleDateString()}
+                        {formatDate(item.date || item.submittedAt)}
                       </span>
                     </div>
 
@@ -134,7 +142,7 @@ function Listings() {
                       <span className="category-chip bg-blue-100 text-blue-800">{item.location}</span>
                     </div>
 
-                    {/* Buttons */}
+                    {/* Actions */}
                     {!item.resolved && item.status === 'approved' && (
                       <div className="flex flex-col gap-2">
                         {item.type === 'found' && (
@@ -144,10 +152,10 @@ function Listings() {
                             }
                             className="bg-green-500 text-white py-2 rounded-full font-medium hover:bg-green-600 transition"
                           >
-                            claim This Item
+                            Claim This Item
                           </button>
                         )}
-                        {item.status === 'approved' && !item.resolved && item.userEmail && (
+                        {item.status === 'approved' && item.userEmail && (
                           <button
                             onClick={() => {
                               window.location.href = `mailto:${item.userEmail}?subject=Regarding your Lost & Found Item: ${item.title}`;
@@ -157,8 +165,6 @@ function Listings() {
                             Contact Finder
                           </button>
                         )}
-
-
                       </div>
                     )}
                   </div>
@@ -168,6 +174,16 @@ function Listings() {
           </div>
         )}
       </div>
+
+      {/* Modal for Zoomed Image */}
+      {zoomImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          onClick={() => setZoomImage(null)}
+        >
+          <img src={zoomImage} alt="Zoomed" className="max-w-full max-h-full object-contain p-4" />
+        </div>
+      )}
     </section>
   );
 }
