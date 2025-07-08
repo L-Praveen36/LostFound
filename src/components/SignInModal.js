@@ -1,3 +1,4 @@
+// components/SignInModal.js
 import React, { useState } from 'react';
 import {
   signInWithPopup,
@@ -5,7 +6,8 @@ import {
   createUserWithEmailAndPassword,
   fetchSignInMethodsForEmail,
   EmailAuthProvider,
-  linkWithCredential
+  linkWithCredential,
+  reauthenticateWithPopup
 } from 'firebase/auth';
 
 import { auth, googleProvider } from '../firebase';
@@ -16,46 +18,53 @@ function SignInModal({ onClose }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  const saveUserLocally = (user) => {
+    const userData = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || user.email?.split('@')[0],
+      photoURL: user.photoURL,
+    };
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
   const handleGoogleAuth = async () => {
+    setError('');
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      const shouldSetPassword = window.confirm(
-        "✅ Google Sign-In successful.\nDo you want to set a password for this account?"
-      );
+      const methods = await fetchSignInMethodsForEmail(auth, user.email);
+      const alreadyHasPassword = methods.includes('password');
 
-      if (shouldSetPassword) {
-        const pw = prompt("Enter a password (min 6 characters):");
-
-        if (pw && pw.length >= 6) {
-          const cred = EmailAuthProvider.credential(user.email, pw);
-          try {
-            await linkWithCredential(user, cred);
-            alert("✅ Password linked! You can now log in with email and password.");
-          } catch (err) {
-            if (err.code === "auth/requires-recent-login") {
-              const reauth = await signInWithPopup(auth, googleProvider);
-              await linkWithCredential(reauth.user, cred);
-              alert("✅ Password linked after re-authentication!");
-            } else {
-              console.error("Linking failed:", err);
-              alert("❌ Failed to set password. Try again.");
+      if (!alreadyHasPassword) {
+        const shouldSetPassword = window.confirm(
+          '✅ Signed in with Google.\nWould you like to set a password for this account?'
+        );
+        if (shouldSetPassword) {
+          const pw = prompt('Enter a password (min 6 characters):');
+          if (pw && pw.length >= 6) {
+            const credential = EmailAuthProvider.credential(user.email, pw);
+            try {
+              await linkWithCredential(user, credential);
+              alert('✅ Password linked! You can now log in using email and password.');
+            } catch (err) {
+              // If requires recent login, re-authenticate
+              if (err.code === 'auth/requires-recent-login') {
+                const refreshedUser = await reauthenticateWithPopup(user, googleProvider);
+                await linkWithCredential(refreshedUser.user, credential);
+                alert('✅ Password linked after re-auth. You can now use it to sign in.');
+              } else {
+                alert('❌ Could not link password: ' + err.message);
+              }
             }
+          } else {
+            alert('⚠️ Password not set. You can still use Google to log in.');
           }
-        } else {
-          alert("❌ Password not set. You can still use Google login.");
         }
       }
 
-      const userData = {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || user.email.split('@')[0],
-        photoURL: user.photoURL
-      };
-
-      localStorage.setItem('user', JSON.stringify(userData));
+      saveUserLocally(user);
       onClose();
     } catch (err) {
       console.error('Google auth error', err);
@@ -74,31 +83,26 @@ function SignInModal({ onClose }) {
       const signInMethods = await fetchSignInMethodsForEmail(auth, email);
 
       if (!isSignUp && signInMethods.length === 0) {
-        setError("No account found with this email.");
-        document.getElementById("switch-to-signup")?.classList.add("text-red-600", "font-semibold");
+        setError('No account found with this email.');
+        document.getElementById('switch-to-signup')?.classList.add('text-red-600', 'font-semibold');
         return;
       }
 
       if (isSignUp && signInMethods.length > 0) {
-        setError("An account already exists. Please sign in instead.");
+        setError('An account already exists. Please sign in instead.');
         return;
       }
 
-      const method = isSignUp ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
+      const method = isSignUp
+        ? createUserWithEmailAndPassword
+        : signInWithEmailAndPassword;
       const result = await method(auth, email, password);
       const user = result.user;
 
-      const userData = {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || user.email.split('@')[0],
-        photoURL: user.photoURL
-      };
-
-      localStorage.setItem('user', JSON.stringify(userData));
+      saveUserLocally(user);
       onClose();
     } catch (err) {
-      console.error('Auth error', err);
+      console.error('Email auth error:', err);
       setError(err.message || 'Authentication failed.');
     }
   };
@@ -106,11 +110,20 @@ function SignInModal({ onClose }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-8 w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">&times;</button>
-        <h2 className="text-2xl font-bold mb-6 text-center">{isSignUp ? 'Sign Up' : 'Sign In'}</h2>
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+        >
+          &times;
+        </button>
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          {isSignUp ? 'Sign Up' : 'Sign In'}
+        </h2>
 
         <div className="space-y-4">
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
           <input
             type="email"
             placeholder="Email"
@@ -150,7 +163,9 @@ function SignInModal({ onClose }) {
             onClick={() => {
               setIsSignUp(!isSignUp);
               setError('');
-              document.getElementById("switch-to-signup")?.classList.remove("text-red-600", "font-semibold");
+              document
+                .getElementById('switch-to-signup')
+                ?.classList.remove('text-red-600', 'font-semibold');
             }}
           >
             {isSignUp ? 'Sign In' : 'Sign Up'}
