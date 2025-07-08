@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import {
   signInWithPopup,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  fetchSignInMethodsForEmail
 } from 'firebase/auth';
+
 import { auth, googleProvider } from '../firebase';
 
 function SignInModal({ onClose }) {
@@ -25,23 +27,45 @@ function SignInModal({ onClose }) {
     }
   };
 
-  const handleEmailAuth = async () => {
-    if (!email || !password) {
-      setError('Please enter both email and password.');
+ const handleEmailAuth = async () => {
+  if (!email || !password) {
+    setError('Please enter both email and password.');
+    return;
+  }
+
+  try {
+    const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+
+    if (!isSignUp && signInMethods.length === 0) {
+      setError("No account found with this email.");
+      document.getElementById("switch-to-signup")?.classList.add("text-red-600", "font-semibold");
       return;
     }
 
-    try {
-      const method = isSignUp ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
-      const result = await method(auth, email, password);
-      const user = result.user;
-      localStorage.setItem('user', JSON.stringify(user));
-      onClose();
-    } catch (err) {
-      console.error('Email auth error', err);
-      setError(err.message || 'Authentication failed.');
+    if (isSignUp && signInMethods.length > 0) {
+      setError("An account already exists. Please sign in instead.");
+      return;
     }
-  };
+
+    const method = isSignUp ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
+    const result = await method(auth, email, password);
+    const user = result.user;
+
+    const userData = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || user.email?.split('@')[0] || '',
+      photoURL: user.photoURL
+    };
+
+    localStorage.setItem('user', JSON.stringify(userData));
+    onClose();
+  } catch (err) {
+    console.error('Auth error', err);
+    setError(err.message || 'Authentication failed.');
+  }
+};
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -85,13 +109,15 @@ function SignInModal({ onClose }) {
         <p className="text-center mt-6 text-sm text-gray-500">
           {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
           <button
-            className="text-purple-600 hover:underline font-medium"
-            onClick={() => {
-              setIsSignUp(!isSignUp);
-              setError('');
-            }}
-          >
-            {isSignUp ? 'Sign In' : 'Sign Up'}
+          id="switch-to-signup"
+          className="text-purple-600 hover:underline font-medium"
+          onClick={() => {
+            setIsSignUp(!isSignUp);
+            setError('');
+            document.getElementById("switch-to-signup")?.classList.remove("text-red-600", "font-semibold");
+          }}
+        >
+          {isSignUp ? 'Sign In' : 'Sign Up'}
           </button>
         </p>
       </div>
