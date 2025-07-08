@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from 'react';
+import React, { useState ,useEffect ,useRef } from 'react';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from '../AuthContext';
@@ -11,6 +11,8 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
   const [customLocation, setCustomLocation] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const fileInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -91,6 +93,8 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
       setSelectedImages([]);
       setCustomLocation('');
       setLocation('Library');
+      fileInputRef.current.value = '';
+
     } catch (err) {
       toast.error("❌ Submission failed: " + (err.response?.data?.message || err.message));
     }finally {
@@ -212,12 +216,14 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
           <div className="mb-6">
             <label className="block text-gray-700 mb-2">Upload Photos (optional)</label>
             <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImages}
-              className="bg-white rounded-lg p-3 border border-gray-300 w-full"
-            />
+  type="file"
+  multiple
+  accept="image/*"
+  onChange={handleImages}
+  ref={fileInputRef}
+  className="bg-white rounded-lg p-3 border border-gray-300 w-full"
+/>
+
             {selectedImages.length > 0 && (
               <p className="text-sm text-gray-500 mt-2">{selectedImages.length} image(s) selected</p>
             )}
