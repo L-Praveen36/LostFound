@@ -227,7 +227,7 @@ const AdminPanel = ({ onClose }) => {
                     <p><strong>Date:</strong> {formatDateDMY(item.date || item.submittedAt)}</p>
                     <p><strong>Submitted By:</strong> {item.submittedBy || 'N/A'}</p>
                     <p><strong>Email:</strong> {item.userEmail || 'N/A'}</p>
-                    <p><strong>Phone:</strong> {item.phone || 'N/A'}</p>
+                    <p><strong>Phone:</strong> {item.contactInfo || 'N/A'}</p>
                     <p><strong>School ID:</strong> {item.schoolId || 'N/A'}</p>
                     <p><strong>Status:</strong> <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadge(item.status)}`}>{item.status}</span></p>
                     {item.resolved && <p className="text-purple-600 font-semibold">✅ Resolved</p>}
