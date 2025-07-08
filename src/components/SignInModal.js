@@ -29,11 +29,17 @@ function SignInModal({ onClose }) {
         if (password) {
           const credential = EmailAuthProvider.credential(user.email, password);
           try {
-            await linkWithCredential(user, credential);
-            console.log("✅ Email/password linked to Google account.");
-          } catch (err) {
-            console.error("❌ Linking failed:", err.message);
-          }
+  await linkWithCredential(user, credential);
+  console.log("✅ Email/password linked to Google account.");
+} catch (err) {
+  if (err.code === 'auth/credential-already-in-use') {
+    alert("⚠️ This Google account is already linked with a password.");
+  } else {
+    console.error("❌ Linking failed:", err.message);
+    alert("Failed to link password: " + err.message);
+  }
+}
+
         }
       }
 
