@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+
 function Listings() {
   const [items, setItems] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -8,6 +9,7 @@ function Listings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [zoomImage, setZoomImage] = useState(null);
+
 
   useEffect(() => {
     fetch('https://lostfound-api.onrender.com/api/items')
@@ -157,14 +159,15 @@ function Listings() {
                         )}
                         {item.status === 'approved' && item.userEmail && (
                           <button
-                            onClick={() => {
-                              window.location.href = `mailto:${item.userEmail}?subject=Regarding your Lost & Found Item: ${item.title}`;
-                            }}
+                            onClick={() =>
+                              window.dispatchEvent(new CustomEvent('openContactModal', { detail: item }))
+                            }
                             className="bg-blue-500 text-white py-2 rounded-full font-medium hover:bg-blue-600 transition"
                           >
                             Contact Finder
                           </button>
                         )}
+
                       </div>
                     )}
                   </div>
@@ -184,6 +187,7 @@ function Listings() {
           <img src={zoomImage} alt="Zoomed" className="max-w-full max-h-full object-contain p-4" />
         </div>
       )}
+
     </section>
   );
 }
