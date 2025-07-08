@@ -1,5 +1,6 @@
 // components/SignInModal.js
 import React, { useState } from 'react';
+import { EmailAuthProvider, linkWithCredential } from 'firebase/auth';
 import {
   signInWithPopup,
   signInWithEmailAndPassword,
@@ -17,46 +18,39 @@ function SignInModal({ onClose }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-   const handleGoogleAuth = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
 
-      // Ask user if they want to enable password login
-      const wantsToSetPassword = window.confirm("Do you want to enable password login for this account?");
-      if (wantsToSetPassword) {
-        const password = prompt("Set a password you'll use for email sign-in:");
-        if (password) {
-          const credential = EmailAuthProvider.credential(user.email, password);
-          try {
-  await linkWithCredential(user, credential);
-  console.log("✅ Email/password linked to Google account.");
-} catch (err) {
-  if (err.code === 'auth/credential-already-in-use') {
-    alert("⚠️ This Google account is already linked with a password.");
-  } else {
-    console.error("❌ Linking failed:", err.message);
-    alert("Failed to link password: " + err.message);
-  }
-}
 
-        }
+const handleGoogleAuth = async () => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+
+    // Check if password login is not yet linked
+    const methods = await fetchSignInMethodsForEmail(auth, user.email);
+
+    if (!methods.includes("password")) {
+      const pw = prompt("You signed in with Google. Set a password to allow email login:");
+      if (pw) {
+        const credential = EmailAuthProvider.credential(user.email, pw);
+        await linkWithCredential(user, credential);
+        alert("✅ Password login linked to your Google account.");
       }
-
-      const userData = {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || user.email.split('@')[0],
-        photoURL: user.photoURL
-      };
-
-      localStorage.setItem('user', JSON.stringify(userData));
-      onClose();
-    } catch (err) {
-      console.error('Google auth error', err);
-      setError('Google Sign-In failed.');
     }
-  };
+
+    const userData = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+    };
+    localStorage.setItem("user", JSON.stringify(userData));
+    onClose();
+  } catch (err) {
+    console.error("Google auth error", err);
+    setError("Google Sign-In failed.");
+  }
+};
+
   const handleEmailAuth = async () => {
     if (!email || !password) {
       setError('Please enter both email and password.');
