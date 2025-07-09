@@ -254,15 +254,24 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
                 required
                 readOnly={!!user}
               />
-              <input
-                type="tel"
-                name="contactInfo"
-                value={formData.contactInfo}
-                onChange={handleInput}
-                className="input"
-                placeholder="Phone Number"
-                required
-              />
+             <input
+  type="tel"
+  name="phone"
+  value={formData.phone}
+  onChange={handleInput}
+  className="input"
+  placeholder="Phone Number"
+  required
+/><input
+  type="text"
+  name="contactInfo"
+  value={formData.contactInfo}
+  onChange={handleInput}
+  className="input"
+  placeholder="Other contact info (optional email/ID/etc)"
+/>
+
+
               <input
                 type="text"
                 name="studentId"

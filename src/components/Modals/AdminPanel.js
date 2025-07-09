@@ -228,6 +228,17 @@ const AdminPanel = ({ onClose }) => {
                     <p><strong>Submitted By:</strong> {item.submittedBy || 'N/A'}</p>
                     <p><strong>Email:</strong> {item.userEmail || 'N/A'}</p>
                     <p><strong>Phone:</strong> {item.phone || 'N/A'}</p>
+                    <p>
+  <strong>Contact Info:</strong>{' '}
+  {item.contactInfo && item.contactInfo.includes('@') ? (
+    <a href={`mailto:${item.contactInfo}`} className="text-blue-600 underline">
+      {item.contactInfo}
+    </a>
+  ) : (
+    item.contactInfo || 'N/A'
+  )}
+</p>
+
                     <p><strong>School ID:</strong> {item.schoolId || 'N/A'}</p>
                     <p><strong>Status:</strong> <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadge(item.status)}`}>{item.status}</span></p>
                     {item.resolved && (
