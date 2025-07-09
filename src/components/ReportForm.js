@@ -52,7 +52,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
    setSubmitting(true);
     const locationToUse = location === 'Other' ? customLocation.trim() : location;
 
-    if (!formData.title || !formData.description || !formData.category || !formData.contactInfo || !formData.submittedBy || !formData.userEmail || !locationToUse) {
+    if (!formData.title || !formData.description || !formData.category || !formData.submittedBy || !formData.userEmail || !locationToUse) {
       setSubmitting(false);
        return setMessage("Please fill all required fields.");
     }
@@ -268,7 +268,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
   value={formData.contactInfo}
   onChange={handleInput}
   className="input"
-  placeholder="Other contact info (optional email/ID/etc)"
+  placeholder="Other contact info (optional email/R.no/etc)"
 />
 
 
