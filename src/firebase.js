@@ -1,12 +1,19 @@
+// firebase.js
 import { initializeApp } from "firebase/app";
-import { getAuth ,GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink
+} from "firebase/auth";
 
-// ✅ Your web app's Firebase configuration
+// ✅ Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCWX1k4uNa8TPl7w5vbp_nSlcW19OHtE4k",
   authDomain: "lostfound-api.firebaseapp.com",
   projectId: "lostfound-api",
-  storageBucket: "lostfound-api.appspot.com", // 🛠️ fixed this (was incorrect in your code)
+  storageBucket: "lostfound-api.appspot.com",
   messagingSenderId: "461112286783",
   appId: "1:461112286783:web:369ce7e89f6ad636baa28a",
   measurementId: "G-KE9MRH4SGF",
@@ -15,6 +22,14 @@ const firebaseConfig = {
 // ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// ✅ Export auth instance to use in AuthContext
+// ✅ Export auth & providers
 export const auth = getAuth(app);
+auth.useDeviceLanguage(); // Automatically use user’s browser language
 export const googleProvider = new GoogleAuthProvider();
+
+// ✅ Export for passwordless email link sign-in
+export {
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink
+};
