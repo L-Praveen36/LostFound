@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { auth, googleProvider } from '../firebase';
 import {
   sendSignInLinkToEmail,
-  fetchSignInMethodsForEmail,
+
   signInWithPopup,
 } from 'firebase/auth';
 
