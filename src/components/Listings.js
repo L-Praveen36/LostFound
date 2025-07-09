@@ -11,22 +11,29 @@ function Listings() {
   const [zoomImage, setZoomImage] = useState(null);
 
 
-  useEffect(() => {
-    fetch('https://lostfound-api.onrender.com/api/items')
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch items');
-        return res.json();
-      })
-      .then(data => {
-        setItems(data);
-        setLoading(false);
-      })
-      .catch(err => {
+useEffect(() => {
+  const fetchItems = async (retries = 3) => {
+    try {
+      const res = await fetch('https://lostfound-api.onrender.com/api/items');
+      if (!res.ok) throw new Error('Failed');
+      const data = await res.json();
+      setItems(data);
+      setLoading(false);
+    } catch (err) {
+      if (retries > 0) {
+        console.warn('Retrying fetch...');
+        setTimeout(() => fetchItems(retries - 1), 2000); // Retry after 2 sec
+      } else {
         console.error(err);
         setError('Unable to load items.');
         setLoading(false);
-      });
-  }, []);
+      }
+    }
+  };
+
+  fetchItems();
+}, []);
+
 
   useEffect(() => {
     let filteredItems = [...items];
