@@ -31,7 +31,7 @@ function SignInModal({ onClose }) {
     setLoading(true);
     try {
       const actionCodeSettings = {
-        url: 'https://lostfound-api.netlify.app/__/auth/handler',
+        url: 'https://lostfound-api.netlify.app',
         handleCodeInApp: true
       };
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
