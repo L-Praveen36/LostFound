@@ -14,9 +14,12 @@ import AdminPanel from './components/Modals/AdminPanel';
 import SignInModal from './components/SignInModal';
 import AdminSignInModal from './components/AdminSignInModal';
 import { useAuth } from './AuthContext';
+import QrPoster from './components/Modals/QrModal';
 
 function App() {
   const { user } = useAuth();
+  const [showQr, setShowQr] = useState(false);
+
 
   // 🔐 Auth/admin logic
   const [showSignIn, setShowSignIn] = useState(false);
@@ -39,15 +42,18 @@ function App() {
     };
 
     const openAdminListener = () => setShowAdminPanel(true);
+    const openQrListener = () => setShowQr(true);
 
     window.addEventListener("openClaimModal", openClaimListener);
     window.addEventListener("openContactModal", openContactListener);
     window.addEventListener("openAdminPanel", openAdminListener);
+    window.addEventListener("openQrModal", openQrListener);
 
     return () => {
       window.removeEventListener("openClaimModal", openClaimListener);
       window.removeEventListener("openContactModal", openContactListener);
       window.removeEventListener("openAdminPanel", openAdminListener);
+      window.addEventListener("openQrModal", openQrListener);
     };
   }, [user]);
 
@@ -102,6 +108,8 @@ function App() {
           onClose={() => setSelectedContactItem(null)}
         />
       )}
+    {showQr && <QrModal onClose={() => setShowQr(false)} />}
+
     </div>
   );
 }
