@@ -99,6 +99,33 @@ const AdminPanel = ({ onClose }) => {
       console.error(err);
     }
   };
+  const handleFoundBySecurity = async (id, newValue) => {
+  try {
+    const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${id}/found-by-security`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ foundBySecurity: newValue })
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      handleUnauthorized();
+      return;
+    }
+
+    if (response.ok) {
+      fetchItems();
+    } else {
+      const err = await response.json();
+      alert('Update failed: ' + (err.message || 'Unknown error'));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
@@ -241,7 +268,17 @@ const AdminPanel = ({ onClose }) => {
 
                     <p><strong>School ID:</strong> {item.schoolId || 'N/A'}</p>
                     <p><strong>Status:</strong> <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadge(item.status)}`}>{item.status}</span></p>
-                    {item.resolved && (
+                    {item.type === 'lost' && (
+  <div className="flex items-center gap-2 mt-2">
+    <input
+      type="checkbox"
+      checked={item.foundBySecurity}
+      onChange={() => handleFoundBySecurity(item._id, !item.foundBySecurity)}
+    />
+    <label>Found by Security</label>
+  </div>
+)}
+{item.resolved && (
   <p className="text-purple-600 font-semibold" title={`Resolved on ${formatDateDMY(item.resolvedAt)}`}>
     ✅ Resolved {item.resolvedBy === 'user' ? 'by User' : item.resolvedBy ? `by ${item.resolvedBy}` : ''}
   </p>

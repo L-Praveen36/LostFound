@@ -154,16 +154,17 @@ useEffect(() => {
                     {/* Actions */}
                     {!item.resolved && item.status === 'approved' && (
                       <div className="flex flex-col gap-2">
-                        {item.type === 'found' && (
-                          <button
-                            onClick={() =>
-                              window.dispatchEvent(new CustomEvent('openClaimModal', { detail: item }))
-                            }
-                            className="bg-green-500 text-white py-2 rounded-full font-medium hover:bg-green-600 transition"
-                          >
-                            Claim This Item
-                          </button>
-                        )}
+                        {item.type === 'lost' && item.foundBySecurity && !item.resolved && (
+  <button
+    onClick={() =>
+      window.dispatchEvent(new CustomEvent('openClaimModal', { detail: item }))
+    }
+    className="bg-green-500 text-white py-2 rounded-full font-medium hover:bg-green-600 transition"
+  >
+    Claim This Item
+  </button>
+)}
+
                         {item.status === 'approved' && item.userEmail && (
                           <button
                             onClick={() =>
