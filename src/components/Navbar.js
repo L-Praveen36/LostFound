@@ -44,7 +44,13 @@ function Navbar({ onShowAdminSignIn }) {
               loop
               autoPlay
             ></lottie-player>
-            <span className="text-xl font-bold">Lost&Found</span>
+            <h1
+  className="text-xl font-bold cursor-pointer"
+  onClick={() => window.dispatchEvent(new Event("openQrModal"))}
+>
+  Lost & Found
+</h1>
+
           </div>
 
           {/* Desktop Links */}

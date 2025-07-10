@@ -11,7 +11,13 @@ function Footer() {
               <div dangerouslySetInnerHTML={{
                 __html: `<lottie-player src="https://assets3.lottiefiles.com/packages/lf20_5tkzkblw.json" background="transparent" speed="1" style="width: 30px; height: 30px;" loop autoplay></lottie-player>`
               }} />
-              <span className="text-xl font-bold">CampusFind</span>
+              <h1
+  className="text-xl font-bold cursor-pointer"
+  onClick={() => window.dispatchEvent(new Event("openQrModal"))}
+>
+  Lost&Found
+</h1>
+
             </div>
             <p className="text-sm opacity-80">
               Helping students reunite with their lost belongings since 2023.
