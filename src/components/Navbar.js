@@ -48,7 +48,7 @@ function Navbar({ onShowAdminSignIn }) {
   className="text-xl font-bold cursor-pointer"
   onClick={() => window.dispatchEvent(new Event("openQrModal"))}
 >
-  Lost & Found
+  Lost&Found
 </h1>
 
           </div>

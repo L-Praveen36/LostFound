@@ -14,7 +14,7 @@ import AdminPanel from './components/Modals/AdminPanel';
 import SignInModal from './components/SignInModal';
 import AdminSignInModal from './components/AdminSignInModal';
 import { useAuth } from './AuthContext';
-import QrPoster from './components/Modals/QrModal';
+import QrModal from './components/Modals/QrModal';
 
 function App() {
   const { user } = useAuth();
