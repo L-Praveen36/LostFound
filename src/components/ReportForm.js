@@ -146,8 +146,8 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
                   placeholder="e.g. iPhone 12, Backpack"
                 />
               </div>
-              <div>
-                <label className="block mb-2 text-black">Category</label>
+              <div className="text-black">
+                <label className="block mb-2 ">Category</label>
                 <select
                   name="category"
                   value={formData.category}
