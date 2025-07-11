@@ -7,7 +7,7 @@ import Listings from './components/Listings';
 import ReportForm from './components/ReportForm';
 import Future from './components/Future';
 import Footer from './components/Footer';
-import MyProfileModal from './components/Modals/MyProfileModal';
+import MyProfileModal from './components/MyProfileModal';
 import ClaimModal from './components/Modals/ClaimModal';
 import ContactModal from './components/Modals/ContactModal';
 import AdminPanel from './components/Modals/AdminPanel';
