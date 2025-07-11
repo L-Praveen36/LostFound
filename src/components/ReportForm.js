@@ -100,22 +100,22 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
   const locationOptions = ['Library', 'Cafeteria', 'Dormitories', 'Sports Complex', 'Lecture Halls', 'Other'];
 
   return (
-    <section id="report" className="py-20 bg-gray-50">
+    <section id="report" className="py-20 text-white">
       <ToastContainer position="top-right" autoClose={5000} />
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Report Lost or Found Item</h2>
-        <div className="glass-card max-w-3xl mx-auto p-8 rounded-2xl">
-          <div className="flex border-b border-gray-200 mb-8">
+        <div className="bg-white/5 backdrop-blur-lg border border-white/10 shadow-xl max-w-3xl mx-auto p-8 rounded-2xl">
+          <div className="flex border-b border-white/20 mb-8">
             <button
               type="button"
-              className={`px-4 py-2 font-medium border-b-2 ${type === 'lost' ? 'border-purple-600 text-purple-600' : 'text-gray-500'}`}
+              className={`px-4 py-2 font-medium rounded-t ${type === 'lost' ? 'bg-white/10 text-purple-300' : 'text-white/50 hover:text-white'}`}
               onClick={() => setType('lost')}
             >
               Lost Item
             </button>
             <button
               type="button"
-              className={`px-4 py-2 font-medium border-b-2 ${type === 'found' ? 'border-purple-600 text-purple-600' : 'text-gray-500'}`}
+              className={`px-4 py-2 font-medium rounded-t ${type === 'found' ? 'bg-white/10 text-purple-300' : 'text-white/50 hover:text-white'}`}
               onClick={() => setType('found')}
             >
               Found Item
@@ -123,10 +123,9 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
           </div>
 
           <form onSubmit={handleSubmit}>
-            {/* Title & Category */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block text-gray-700 mb-2">Item Name</label>
+                <label className="block mb-2">Item Name</label>
                 <input
                   type="text"
                   name="title"
@@ -138,7 +137,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2">Category</label>
+                <label className="block mb-2">Category</label>
                 <select
                   name="category"
                   value={formData.category}
@@ -156,16 +155,15 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
               </div>
             </div>
 
-            {/* Location */}
             <div className="mb-6">
-              <label className="block text-gray-700 mb-2">Location</label>
+              <label className="block mb-2">Location</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-2">
                 {locationOptions.map((loc) => (
                   <button
                     key={loc}
                     type="button"
                     onClick={() => setLocation(loc)}
-                    className={`px-4 py-2 rounded-lg ${location === loc ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}
+                    className={`px-4 py-2 rounded-lg border border-white/10 ${location === loc ? 'bg-purple-200/20 text-purple-300' : 'bg-white/5 text-white/70 hover:bg-white/10'}`}
                   >
                     {loc}
                   </button>
@@ -183,9 +181,8 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
               )}
             </div>
 
-            {/* Date */}
             <div className="mb-6">
-              <label className="block text-gray-700 mb-2">Date Lost/Found</label>
+              <label className="block mb-2">Date Lost/Found</label>
               <input
                 type="date"
                 max={new Date().toISOString().split("T")[0]}
@@ -195,9 +192,8 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
               />
             </div>
 
-            {/* Description */}
             <div className="mb-6">
-              <label className="block text-gray-700 mb-2">Description</label>
+              <label className="block mb-2">Description</label>
               <textarea
                 name="description"
                 value={formData.description}
@@ -208,23 +204,21 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
               ></textarea>
             </div>
 
-            {/* Upload */}
             <div className="mb-6">
-              <label className="block text-gray-700 mb-2">Upload Photos (optional, photo should be less than 2 MB)</label>
+              <label className="block mb-2">Upload Photos (optional, less than 2 MB)</label>
               <input
                 type="file"
                 multiple
                 accept="image/*"
                 onChange={handleImages}
                 ref={fileInputRef}
-                className="bg-white rounded-lg p-3 border border-gray-300 w-full"
+                className="bg-white/10 border border-white/20 text-white w-full rounded-lg p-3"
               />
               {selectedImages.length > 0 && (
-                <p className="text-sm text-gray-500 mt-2">{selectedImages.length} image(s) selected</p>
+                <p className="text-sm text-purple-200 mt-2">{selectedImages.length} image(s) selected</p>
               )}
             </div>
 
-            {/* Contact Info */}
             <div className="mb-8">
               <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -279,12 +273,12 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
             <div className="text-center">
               <button
                 type="submit"
-                className="neumorphic-btn px-8 py-3 rounded-full font-medium text-purple-700 flex items-center justify-center gap-2"
+                className="px-8 py-3 rounded-full font-medium text-purple-300 bg-white/10 hover:bg-purple-300/10 border border-white/20 transition-all flex items-center justify-center gap-2"
                 disabled={submitting}
               >
                 {submitting ? (
                   <>
-                    <svg className="animate-spin w-5 h-5 text-purple-700" viewBox="0 0 24 24">
+                    <svg className="animate-spin w-5 h-5 text-purple-300" viewBox="0 0 24 24">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
                     </svg>

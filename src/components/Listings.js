@@ -1,4 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+
+// Constants
+const FILTER_TYPES = ['all', 'lost', 'found', 'resolved'];
+
+// Utility: Format date
+const formatDate = (dateStr) => {
+  const d = new Date(dateStr);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = d.toLocaleString('default', { month: 'short' });
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+};
 
 // Reusable Chip component
 const Chip = ({ text, colorClass }) => (
@@ -9,30 +21,27 @@ const Chip = ({ text, colorClass }) => (
 
 function Listings() {
   const [items, setItems] = useState([]);
-  const [filtered, setFiltered] = useState([]);
   const [typeFilter, setTypeFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [zoomImage, setZoomImage] = useState(null);
-  const [visibleCount, setVisibleCount] = useState(6); // 👈 Show 6 items initially
+  const [visibleCount, setVisibleCount] = useState(6);
 
-  // Fetch items
+  // Fetch items with retries
   useEffect(() => {
     const fetchItems = async (retries = 3) => {
       try {
         const res = await fetch('https://lostfound-api.onrender.com/api/items');
-        if (!res.ok) throw new Error('Failed');
+        if (!res.ok) throw new Error('Fetch failed');
         const data = await res.json();
         setItems(data);
         setLoading(false);
       } catch (err) {
         if (retries > 0) {
-          console.warn('Retrying fetch...');
           setTimeout(() => fetchItems(retries - 1), 2000);
         } else {
-          console.error(err);
           setError('Unable to load items.');
           setLoading(false);
         }
@@ -41,12 +50,23 @@ function Listings() {
     fetchItems();
   }, []);
 
+  // Debounce search input
   useEffect(() => {
     const timeout = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(timeout);
   }, [search]);
 
+  // Zoom modal escape handler
   useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === 'Escape') setZoomImage(null);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
+
+  // Filtered items
+  const filtered = useMemo(() => {
     let filteredItems = [...items];
 
     if (typeFilter === 'lost') {
@@ -68,19 +88,10 @@ function Listings() {
       );
     }
 
-    setFiltered(filteredItems);
-    setVisibleCount(6); // 👈 Reset visible count on new filter/search
+    return filteredItems;
   }, [items, typeFilter, debouncedSearch]);
 
-  const formatDate = (dateStr) => {
-    const d = new Date(dateStr);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = d.toLocaleString('default', { month: 'short' });
-    const year = d.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
-  const handleLoadMore = () => setVisibleCount(prev => prev + 6); // 👈 Load 6 more
+  const handleLoadMore = () => setVisibleCount(prev => prev + 6);
 
   return (
     <section id="listings" className="py-20 bg-white relative">
@@ -99,14 +110,18 @@ function Listings() {
             className="w-full md:w-2/3 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <div className="flex flex-wrap gap-2">
-            {['all', 'lost', 'found', 'resolved'].map(type => (
+            {FILTER_TYPES.map(type => (
               <button
                 key={type}
-                onClick={() => setTypeFilter(type)}
-                className={`px-4 py-2 rounded-full font-medium capitalize ${typeFilter === type
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                onClick={() => {
+                  setTypeFilter(type);
+                  setVisibleCount(6);
+                }}
+                className={`px-4 py-2 rounded-full font-medium capitalize ${
+                  typeFilter === type
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
               >
                 {type}
               </button>
@@ -120,7 +135,9 @@ function Listings() {
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : filtered.length === 0 ? (
-          <p className="text-center text-gray-400">No matching items found.</p>
+          <p className="text-center text-gray-400 italic">
+            No items match your search or filter. Try adjusting your criteria.
+          </p>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -129,8 +146,9 @@ function Listings() {
                 return (
                   <div
                     key={item._id}
-                    className={`item-card glass-card rounded-2xl overflow-hidden shadow-md transition-transform duration-300 hover:scale-[1.02] ${item.resolved ? 'opacity-80' : ''
-                      }`}
+                    className={`item-card glass-card rounded-2xl overflow-hidden shadow-md transition-transform duration-300 hover:scale-[1.02] ${
+                      item.resolved ? 'opacity-80' : ''
+                    }`}
                   >
                     <div
                       className="relative h-48 bg-gray-200 cursor-pointer overflow-hidden group"
@@ -142,13 +160,16 @@ function Listings() {
                       <img
                         loading="lazy"
                         src={imageSrc}
-                        alt={item.title}
+                        alt={item.title || 'Lost/Found item'}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
-                      <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${item.type === 'lost'
-                        ? 'bg-yellow-500 text-white'
-                        : 'bg-green-100 text-green-800'
-                        }`}>
+                      <div
+                        className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${
+                          item.type === 'lost'
+                            ? 'bg-yellow-500 text-white'
+                            : 'bg-green-100 text-green-800'
+                        }`}
+                      >
                         {item.type}
                       </div>
                       {item.resolved && (
@@ -166,7 +187,9 @@ function Listings() {
                         </span>
                       </div>
 
-                      <p className="text-gray-600 mb-4 line-clamp-3">{item.description}</p>
+                      <p className="text-gray-600 mb-4 line-clamp-3">
+                        {item.description}
+                      </p>
 
                       <div className="flex flex-wrap gap-2 mb-4">
                         <Chip text={item.category} colorClass="bg-purple-100 text-purple-800" />
@@ -174,7 +197,7 @@ function Listings() {
                       </div>
 
                       {!item.resolved && item.status === 'approved' && (
-                        <div className="flex flex-col gap-2">
+                        <>
                           {item.type === 'lost' && item.foundBySecurity && (
                             <button
                               onClick={() =>
@@ -186,7 +209,7 @@ function Listings() {
                             </button>
                           )}
 
-                          {item.status === 'approved' && item.userEmail && (
+                          {item.userEmail && (
                             <button
                               onClick={() =>
                                 window.dispatchEvent(new CustomEvent('openContactModal', { detail: item }))
@@ -196,7 +219,7 @@ function Listings() {
                               Contact Finder
                             </button>
                           )}
-                        </div>
+                        </>
                       )}
                     </div>
                   </div>
@@ -204,7 +227,7 @@ function Listings() {
               })}
             </div>
 
-            {/* Load More Button */}
+            {/* Load More */}
             {visibleCount < filtered.length && (
               <div className="text-center mt-8">
                 <button
@@ -225,7 +248,11 @@ function Listings() {
           className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
           onClick={() => setZoomImage(null)}
         >
-          <img src={zoomImage} alt="Zoomed" className="max-w-full max-h-full object-contain p-4" />
+          <img
+            src={zoomImage}
+            alt="Zoomed"
+            className="max-w-full max-h-full object-contain p-4"
+          />
         </div>
       )}
     </section>

@@ -63,7 +63,8 @@ function App() {
   };
 
   return (
-    <div className="font-sans bg-gray-50 text-gray-800">
+    <div className="font-sans min-h-screen text-white">
+
       <Navbar
         onAdminLogin={handleAdminLogin}
         onShowSignIn={() => setShowSignIn(true)}
