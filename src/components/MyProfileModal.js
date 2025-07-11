@@ -92,7 +92,7 @@ function MyProfileModal({ onClose }) {
                   className="w-12 h-12 rounded-full object-cover"
                 />
               )}
-              <div>
+              <div className="text-2xl font-bold mb-2">
                 <p><strong>Name:</strong> {user.displayName || 'Not available'}</p>
                 <p><strong>Email:</strong> {user.email}</p>
               </div>
