@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 
 function ContactModal({ visible, onClose, item }) {
-  if (!visible || !item || !item.userEmail || item.resolved) return null;
-
-  const email = item.userEmail;
+  const email = item?.userEmail || "";
   const isEmail = /\S+@\S+\.\S+/.test(email);
 
+  // ✅ Always call hooks unconditionally
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') onClose();
@@ -13,6 +12,9 @@ function ContactModal({ visible, onClose, item }) {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [onClose]);
+
+  // 🧤 Only render if valid
+  if (!visible || !item || !item.userEmail || item.resolved) return null;
 
   const handleContact = () => {
     if (isEmail) {
