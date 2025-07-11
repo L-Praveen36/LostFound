@@ -146,7 +146,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
                   placeholder="e.g. iPhone 12, Backpack"
                 />
               </div>
-              <div className="text-black">
+              <div >
                 <label className="block mb-2 ">Category</label>
                 <select
                   name="category"
@@ -156,7 +156,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
                   className="input"
                 >
                   <option value="">Select Category</option>
-                  <option>Electronics</option>
+                  <option className='text-black'>Electronics</option>
                   <option>Accessories</option>
                   <option>Books</option>
                   <option>Clothing</option>
