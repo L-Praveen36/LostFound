@@ -7,7 +7,7 @@ import Listings from './components/Listings';
 import ReportForm from './components/ReportForm';
 import Future from './components/Future';
 import Footer from './components/Footer';
-
+import MyProfileModal from './components/Modals/MyProfileModal';
 import ClaimModal from './components/Modals/ClaimModal';
 import ContactModal from './components/Modals/ContactModal';
 import AdminPanel from './components/Modals/AdminPanel';
@@ -63,7 +63,8 @@ function App() {
   };
 
   return (
-  <div className="font-sans min-h-screen text-white bg-gradient-to-br from-white/10 via-white/5 to-white/0 backdrop-blur-sm">
+  <div className="relative z-0 font-sans min-h-screen text-white bg-gradient-to-br from-white/10 via-white/5 to-white/0 backdrop-blur-sm">
+
     <Navbar
       onAdminLogin={handleAdminLogin}
       onShowSignIn={() => setShowSignIn(true)}
@@ -111,6 +112,9 @@ function App() {
 
     {/* 📱 QR Modal */}
     {showQr && <QrModal onClose={() => setShowQr(false)} />}
+
+      {showProfile && <MyProfileModal onClose={() => setShowProfile(false)} />}
+
   </div>
 );
 }
