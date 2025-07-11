@@ -60,19 +60,19 @@ function MyProfileModal({ onClose }) {
 
   return (
     <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        <motion.div
-          className="glass-card max-w-3xl w-full p-6 rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh] relative border border-white/10"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 25 }}
-        >
+  <motion.div
+    className="fixed inset-0 z-[1000] bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+  >
+    <motion.div
+      className="glass-card w-full max-w-3xl max-h-[90vh] overflow-y-auto relative p-6 rounded-2xl border border-white/10"
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.9, opacity: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+    >
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-white/80 hover:text-white text-2xl font-bold"
