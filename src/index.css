@@ -2,9 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global background based on galaxy theme */
+body {
+  @apply font-sans;
+  background-image: 
+    linear-gradient(to bottom right, rgba(24, 6, 59, 0.95), rgba(46, 16, 101, 0.95)),
+    url('https://images.unsplash.com/photo-1535468120506-4f1d9d8d3ac1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-blend-mode: overlay;
+  color: white;
+}
+
 /* Glassmorphism-style card */
 .glass-card {
-  @apply bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-lg rounded-xl p-4;
+  @apply bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-lg rounded-xl p-4 text-white;
 }
 
 /* Neumorphic-style button */
@@ -35,7 +49,7 @@
 
 /* Input field style */
 .input {
-  @apply w-full bg-gray-100 border-0 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:outline-none;
+  @apply w-full bg-white bg-opacity-10 text-white border border-white border-opacity-30 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:outline-none;
 }
 
 /* Button base class for reusable styles */
