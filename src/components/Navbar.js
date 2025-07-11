@@ -31,7 +31,7 @@ function Navbar({ onShowAdminSignIn }) {
   }, []);
 
   return (
-    <nav className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md z-50 relative dark:from-blue-800 dark:to-black">
+    <nav className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md z-50 relative dark:from-blue-800 dark:to-gray-500">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo */}
