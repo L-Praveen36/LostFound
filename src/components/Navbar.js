@@ -31,7 +31,7 @@ function Navbar({ onShowAdminSignIn }) {
   }, []);
 
   return (
-    <nav className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md z-50 relative dark:from-gray-800 dark:to-black">
+    <nav className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md z-50 relative dark:from-blue-800 dark:to-blue">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -54,15 +54,21 @@ function Navbar({ onShowAdminSignIn }) {
 
           {/* Desktop Links */}
           <div className="hidden md:flex space-x-6">
-            {['Home', 'Browse Items', 'Report Item', 'How It Works'].map((text, idx) => (
-              <a
-                key={idx}
-                href={`#${text.toLowerCase().replace(/ /g, '-')}`}
-                className="hover:text-gray-200 transition"
-              >
-                {text}
-              </a>
-            ))}
+            {[
+  { text: 'Home', href: '#home' },
+  { text: 'Browse Items', href: '#listings' },
+  { text: 'Report Item', href: '#report' },
+  { text: 'How It Works', href: '#how-it-works' }
+].map(({ text, href }) => (
+  <a
+    key={text}
+    href={href}
+    className="hover:text-gray-200 transition"
+  >
+    {text}
+  </a>
+))}
+
           </div>
 
           {/* Desktop Right */}
@@ -143,15 +149,22 @@ function Navbar({ onShowAdminSignIn }) {
         {menuOpen && (
           <div className="md:hidden pt-4">
             <div className="flex flex-col space-y-3">
-              {['Home', 'Browse Items', 'Report Item', 'How It Works'].map((text, idx) => (
-                <a
-                  key={idx}
-                  href={`#${text.toLowerCase().replace(/ /g, '-')}`}
-                  className="block hover:text-gray-200 transition"
-                >
-                  {text}
-                </a>
-              ))}
+              {[
+  { text: 'Home', href: '#home' },
+  { text: 'Browse Items', href: '#listings' },
+  { text: 'Report Item', href: '#report' },
+  { text: 'How It Works', href: '#how-it-works' }
+].map(({ text, href }) => (
+  <a
+    key={text}
+    href={href}
+    onClick={() => setMenuOpen(false)}
+    className="block hover:text-gray-200 transition"
+  >
+    {text}
+  </a>
+))}
+
               <button
                 onClick={() => {
                   setMenuOpen(false);

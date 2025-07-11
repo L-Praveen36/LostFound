@@ -109,7 +109,8 @@ function Hero() {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center md:justify-start">
               <a
                 href="#listings"
-                className="neumorphic-btn px-8 py-3 rounded-full font-medium text-purple-700 text-center"
+                 className="px-8 py-3 rounded-full font-medium border-2 border-white text-white hover:bg-white hover:text-purple-700 transition text-center"
+              
               >
                 Browse Found Items
               </a>

@@ -16,8 +16,9 @@ function Listings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [zoomImage, setZoomImage] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(6); // 👈 Show 6 items initially
 
-  // Fetch items from backend
+  // Fetch items
   useEffect(() => {
     const fetchItems = async (retries = 3) => {
       try {
@@ -40,13 +41,11 @@ function Listings() {
     fetchItems();
   }, []);
 
-  // Debounce search input
   useEffect(() => {
     const timeout = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(timeout);
   }, [search]);
 
-  // Apply filters
   useEffect(() => {
     let filteredItems = [...items];
 
@@ -70,6 +69,7 @@ function Listings() {
     }
 
     setFiltered(filteredItems);
+    setVisibleCount(6); // 👈 Reset visible count on new filter/search
   }, [items, typeFilter, debouncedSearch]);
 
   const formatDate = (dateStr) => {
@@ -79,6 +79,8 @@ function Listings() {
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
   };
+
+  const handleLoadMore = () => setVisibleCount(prev => prev + 6); // 👈 Load 6 more
 
   return (
     <section id="listings" className="py-20 bg-white relative">
@@ -96,7 +98,6 @@ function Listings() {
             onChange={(e) => setSearch(e.target.value)}
             className="w-full md:w-2/3 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
-
           <div className="flex flex-wrap gap-2">
             {['all', 'lost', 'found', 'resolved'].map(type => (
               <button
@@ -121,92 +122,104 @@ function Listings() {
         ) : filtered.length === 0 ? (
           <p className="text-center text-gray-400">No matching items found.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filtered.map(item => {
-              const imageSrc = item.imageUrl || 'https://via.placeholder.com/500x300?text=No+Image';
-              return (
-                <div
-                  key={item._id}
-                  className={`item-card glass-card rounded-2xl overflow-hidden shadow-md transition-transform duration-300 hover:scale-[1.02] ${item.resolved ? 'opacity-80' : ''
-                    }`}
-                >
-                  {/* Clickable Image */}
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filtered.slice(0, visibleCount).map(item => {
+                const imageSrc = item.imageUrl || 'https://via.placeholder.com/500x300?text=No+Image';
+                return (
                   <div
-                    className="relative h-48 bg-gray-200 cursor-pointer overflow-hidden group"
-                    onClick={() => setZoomImage(imageSrc)}
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Zoom image"
+                    key={item._id}
+                    className={`item-card glass-card rounded-2xl overflow-hidden shadow-md transition-transform duration-300 hover:scale-[1.02] ${item.resolved ? 'opacity-80' : ''
+                      }`}
                   >
-                    <img
-                      loading="lazy"
-                      src={imageSrc}
-                      alt={item.title}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${item.type === 'lost'
-                      ? 'bg-yellow-500 text-white'
-                      : 'bg-green-100 text-green-800'
-                      }`}>
-                      {item.type}
-                    </div>
-                    {item.resolved && (
-                      <div className="absolute top-3 left-3 bg-purple-500 text-white text-xs px-2 py-1 rounded-full">
-                        ✅ Resolved
+                    <div
+                      className="relative h-48 bg-gray-200 cursor-pointer overflow-hidden group"
+                      onClick={() => setZoomImage(imageSrc)}
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Zoom image"
+                    >
+                      <img
+                        loading="lazy"
+                        src={imageSrc}
+                        alt={item.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                      <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${item.type === 'lost'
+                        ? 'bg-yellow-500 text-white'
+                        : 'bg-green-100 text-green-800'
+                        }`}>
+                        {item.type}
                       </div>
-                    )}
-                  </div>
-
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-3">
-                      <h3 className="text-xl font-semibold">{item.title}</h3>
-                      <span className="text-sm text-gray-500">
-                        {formatDate(item.date || item.submittedAt)}
-                      </span>
+                      {item.resolved && (
+                        <div className="absolute top-3 left-3 bg-purple-500 text-white text-xs px-2 py-1 rounded-full">
+                          ✅ Resolved
+                        </div>
+                      )}
                     </div>
 
-                    <p className="text-gray-600 mb-4 line-clamp-3">{item.description}</p>
-
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      <Chip text={item.category} colorClass="bg-purple-100 text-purple-800" />
-                      <Chip text={item.location} colorClass="bg-blue-100 text-blue-800" />
-                    </div>
-
-                    {/* Actions */}
-                    {!item.resolved && item.status === 'approved' && (
-                      <div className="flex flex-col gap-2">
-                        {item.type === 'lost' && item.foundBySecurity && (
-                          <button
-                            onClick={() =>
-                              window.dispatchEvent(new CustomEvent('openClaimModal', { detail: item }))
-                            }
-                            className="bg-green-500 text-white py-2 rounded-full font-medium hover:bg-green-600 transition"
-                          >
-                            Claim This Item
-                          </button>
-                        )}
-
-                        {item.status === 'approved' && item.userEmail && (
-                          <button
-                            onClick={() =>
-                              window.dispatchEvent(new CustomEvent('openContactModal', { detail: item }))
-                            }
-                            className="bg-blue-500 text-white py-2 rounded-full font-medium hover:bg-blue-600 transition"
-                          >
-                            Contact Finder
-                          </button>
-                        )}
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="text-xl font-semibold">{item.title}</h3>
+                        <span className="text-sm text-gray-500">
+                          {formatDate(item.date || item.submittedAt)}
+                        </span>
                       </div>
-                    )}
+
+                      <p className="text-gray-600 mb-4 line-clamp-3">{item.description}</p>
+
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <Chip text={item.category} colorClass="bg-purple-100 text-purple-800" />
+                        <Chip text={item.location} colorClass="bg-blue-100 text-blue-800" />
+                      </div>
+
+                      {!item.resolved && item.status === 'approved' && (
+                        <div className="flex flex-col gap-2">
+                          {item.type === 'lost' && item.foundBySecurity && (
+                            <button
+                              onClick={() =>
+                                window.dispatchEvent(new CustomEvent('openClaimModal', { detail: item }))
+                              }
+                              className="bg-green-500 text-white py-2 rounded-full font-medium hover:bg-green-600 transition"
+                            >
+                              Claim This Item
+                            </button>
+                          )}
+
+                          {item.status === 'approved' && item.userEmail && (
+                            <button
+                              onClick={() =>
+                                window.dispatchEvent(new CustomEvent('openContactModal', { detail: item }))
+                              }
+                              className="bg-blue-500 text-white py-2 rounded-full font-medium hover:bg-blue-600 transition"
+                            >
+                              Contact Finder
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+
+            {/* Load More Button */}
+            {visibleCount < filtered.length && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={handleLoadMore}
+                  className="px-6 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition"
+                >
+                  Load More
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Zoomed Image Modal */}
+      {/* Zoom Image Modal */}
       {zoomImage && (
         <div
           className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
