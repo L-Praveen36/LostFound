@@ -106,21 +106,30 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-12">Report Lost or Found Item</h2>
 
-        <div className="glass-card max-w-3xl mx-auto p-8 rounded-2xl">
-          <div className="flex border-b border-white/20 mb-8">
-            <button
-              className={`px-4 py-2 font-medium border-b-2 ${type === 'lost' ? 'border-purple-400 text-purple-300' : 'text-white/50 hover:text-white'}`}
-              onClick={() => setType('lost')}
-            >
-              Lost Item
-            </button>
-            <button
-              className={`px-4 py-2 font-medium border-b-2 ${type === 'found' ? 'border-purple-400 text-purple-300' : 'text-white/50 hover:text-white'}`}
-              onClick={() => setType('found')}
-            >
-              Found Item
-            </button>
-          </div>
+       <div className="glass-card max-w-3xl mx-auto p-8 rounded-2xl">
+  <div className="flex border-b border-white/20 mb-8 space-x-4">
+    <button
+      className={`px-4 py-2 font-medium border-b-4 transition duration-200 ${
+        type === 'lost'
+          ? 'border-black text-white'
+          : 'border-transparent text-white/50 hover:text-white hover:border-white/30'
+      }`}
+      onClick={() => setType('lost')}
+    >
+      Lost Item
+    </button>
+    <button
+      className={`px-4 py-2 font-medium border-b-4 transition duration-200 ${
+        type === 'found'
+          ? 'border-black text-white'
+          : 'border-transparent text-white/50 hover:text-white hover:border-white/30'
+      }`}
+      onClick={() => setType('found')}
+    >
+      Found Item
+    </button>
+  </div>
+
 
           <form onSubmit={handleSubmit}>
             {/* Title & Category */}
@@ -138,7 +147,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
                 />
               </div>
               <div>
-                <label className="block mb-2">Category</label>
+                <label className="block mb-2 text-black">Category</label>
                 <select
                   name="category"
                   value={formData.category}
