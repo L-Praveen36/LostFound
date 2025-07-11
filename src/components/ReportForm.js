@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from '../AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function ReportForm({ isSignedIn, onRequireSignIn }) {
   const { user } = useAuth();
@@ -75,6 +75,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
       await axios.post('https://lostfound-api.onrender.com/api/items', payload);
       toast.success("✅ Item submitted successfully!");
 
+      // Reset
       setFormData({
         title: '',
         description: '',
@@ -103,19 +104,20 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
     <section id="report" className="py-20 text-white">
       <ToastContainer position="top-right" autoClose={5000} />
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Report Lost or Found Item</h2>
-        <div className="bg-white/5 backdrop-blur-lg border border-white/10 shadow-xl max-w-3xl mx-auto p-8 rounded-2xl">
+        <h2 className="text-4xl font-bold text-center mb-12">Report Lost or Found Item</h2>
+        
+        <div className="glass-card max-w-3xl mx-auto p-8 rounded-2xl">
           <div className="flex border-b border-white/20 mb-8">
             <button
               type="button"
-              className={`px-4 py-2 font-medium rounded-t ${type === 'lost' ? 'bg-white/10 text-purple-300' : 'text-white/50 hover:text-white'}`}
+              className={`btn-secondary rounded-t px-6 py-2 ${type === 'lost' ? 'text-purple-300 bg-white/10' : 'text-white/50 hover:text-white'}`}
               onClick={() => setType('lost')}
             >
               Lost Item
             </button>
             <button
               type="button"
-              className={`px-4 py-2 font-medium rounded-t ${type === 'found' ? 'bg-white/10 text-purple-300' : 'text-white/50 hover:text-white'}`}
+              className={`btn-secondary rounded-t px-6 py-2 ${type === 'found' ? 'text-purple-300 bg-white/10' : 'text-white/50 hover:text-white'}`}
               onClick={() => setType('found')}
             >
               Found Item
@@ -126,25 +128,11 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label className="block mb-2">Item Name</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInput}
-                  required
-                  className="input"
-                  placeholder="e.g. iPhone 12, Backpack"
-                />
+                <input type="text" name="title" className="input" placeholder="e.g. iPhone 12, Backpack" value={formData.title} onChange={handleInput} required />
               </div>
               <div>
                 <label className="block mb-2">Category</label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInput}
-                  required
-                  className="input"
-                >
+                <select name="category" className="input" value={formData.category} onChange={handleInput} required>
                   <option value="">Select Category</option>
                   <option>Electronics</option>
                   <option>Accessories</option>
@@ -163,56 +151,36 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
                     key={loc}
                     type="button"
                     onClick={() => setLocation(loc)}
-                    className={`px-4 py-2 rounded-lg border border-white/10 ${location === loc ? 'bg-purple-200/20 text-purple-300' : 'bg-white/5 text-white/70 hover:bg-white/10'}`}
+                    className={`btn-secondary px-4 py-2 rounded-lg border border-white/10 ${location === loc ? 'bg-purple-300/10 text-purple-200' : 'hover:bg-white/10'}`}
                   >
                     {loc}
                   </button>
                 ))}
               </div>
               {location === 'Other' && (
-                <input
-                  type="text"
-                  placeholder="Enter custom location"
-                  value={customLocation}
-                  onChange={(e) => setCustomLocation(e.target.value)}
-                  className="input mt-2"
-                  required
-                />
+                <input type="text" className="input mt-2" placeholder="Enter custom location" value={customLocation} onChange={(e) => setCustomLocation(e.target.value)} required />
               )}
             </div>
 
             <div className="mb-6">
               <label className="block mb-2">Date Lost/Found</label>
-              <input
-                type="date"
-                max={new Date().toISOString().split("T")[0]}
-                className="input"
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              />
+              <input type="date" max={new Date().toISOString().split("T")[0]} className="input" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} />
             </div>
 
             <div className="mb-6">
               <label className="block mb-2">Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInput}
-                className="input"
-                rows="4"
-                placeholder="Provide details, markings, colors, etc."
-              ></textarea>
+              <textarea name="description" className="input" rows="4" placeholder="Provide details, markings, colors, etc." value={formData.description} onChange={handleInput}></textarea>
             </div>
 
             <div className="mb-6">
-              <label className="block mb-2">Upload Photos (optional, less than 2 MB)</label>
+              <label className="block mb-2">Upload Photos (optional, &lt;2MB each)</label>
               <input
                 type="file"
                 multiple
                 accept="image/*"
                 onChange={handleImages}
                 ref={fileInputRef}
-                className="bg-white/10 border border-white/20 text-white w-full rounded-lg p-3"
+                className="input"
               />
               {selectedImages.length > 0 && (
                 <p className="text-sm text-purple-200 mt-2">{selectedImages.length} image(s) selected</p>
@@ -222,63 +190,19 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
             <div className="mb-8">
               <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input
-                  type="text"
-                  name="submittedBy"
-                  value={formData.submittedBy}
-                  onChange={handleInput}
-                  className="input"
-                  placeholder="Full Name"
-                  required
-                  readOnly={!!user}
-                />
-                <input
-                  type="email"
-                  name="userEmail"
-                  value={formData.userEmail}
-                  onChange={handleInput}
-                  className="input"
-                  placeholder="Email"
-                  required
-                  readOnly={!!user}
-                />
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInput}
-                  className="input"
-                  placeholder="Phone Number"
-                  required
-                />
-                <input
-                  type="text"
-                  name="contactInfo"
-                  value={formData.contactInfo}
-                  onChange={handleInput}
-                  className="input"
-                  placeholder="Other contact info (optional email/R.no/etc)"
-                />
-                <input
-                  type="text"
-                  name="studentId"
-                  value={formData.studentId}
-                  onChange={handleInput}
-                  className="input"
-                  placeholder="Student ID (optional)"
-                />
+                <input name="submittedBy" className="input" placeholder="Full Name" value={formData.submittedBy} onChange={handleInput} required readOnly={!!user} />
+                <input name="userEmail" type="email" className="input" placeholder="Email" value={formData.userEmail} onChange={handleInput} required readOnly={!!user} />
+                <input name="phone" type="tel" className="input" placeholder="Phone Number" value={formData.phone} onChange={handleInput} required />
+                <input name="contactInfo" className="input" placeholder="Other contact info (optional)" value={formData.contactInfo} onChange={handleInput} />
+                <input name="studentId" className="input" placeholder="Student ID (optional)" value={formData.studentId} onChange={handleInput} />
               </div>
             </div>
 
             <div className="text-center">
-              <button
-                type="submit"
-                className="px-8 py-3 rounded-full font-medium text-purple-300 bg-white/10 hover:bg-purple-300/10 border border-white/20 transition-all flex items-center justify-center gap-2"
-                disabled={submitting}
-              >
+              <button type="submit" className="btn-primary px-8 py-3 flex items-center justify-center gap-2" disabled={submitting}>
                 {submitting ? (
                   <>
-                    <svg className="animate-spin w-5 h-5 text-purple-300" viewBox="0 0 24 24">
+                    <svg className="animate-spin w-5 h-5 text-purple-200" viewBox="0 0 24 24">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
                     </svg>
