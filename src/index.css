@@ -1,21 +1,23 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Add utility classes for floating, glass-card, etc. */
+/* Glassmorphism-style card */
 .glass-card {
-  @apply bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-lg;
+  @apply bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-lg rounded-xl p-4;
 }
 
+/* Neumorphic-style button */
 .neumorphic-btn {
-  @apply bg-white shadow-md hover:shadow-lg transition duration-300;
+  @apply bg-white text-gray-800 shadow-md hover:shadow-lg transition duration-300 px-4 py-2 rounded-lg;
 }
 
+/* Gradient background utility */
 .gradient-bg {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
+/* Floating animation utility */
 .floating {
   animation: float 3s ease-in-out infinite;
 }
@@ -26,10 +28,35 @@
   100% { transform: translateY(0px); }
 }
 
+/* Category chip for filters or labels */
 .category-chip {
-  @apply px-3 py-1 rounded-full text-sm transition-transform hover:scale-105;
+  @apply px-3 py-1 rounded-full text-sm transition-transform hover:scale-105 bg-gray-100 text-gray-700;
 }
+
+/* Input field style */
 .input {
   @apply w-full bg-gray-100 border-0 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:outline-none;
 }
 
+/* Button base class for reusable styles */
+.btn {
+  @apply px-4 py-2 rounded-full font-medium transition duration-200;
+}
+
+/* Status badge styles */
+.status-badge {
+  @apply px-2 py-1 rounded-full text-xs font-semibold;
+}
+
+.status-pending {
+  @apply bg-yellow-100 text-yellow-800;
+}
+.status-approved {
+  @apply bg-green-100 text-green-800;
+}
+.status-rejected {
+  @apply bg-red-100 text-red-800;
+}
+.status-resolved {
+  @apply bg-purple-100 text-purple-800;
+}

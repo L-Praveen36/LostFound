@@ -1,11 +1,11 @@
-// ✅ UPDATED: SignInModal.js (Email + Google, No Password)
+// components/SignInModal.js
 import React, { useState } from 'react';
 import { auth, googleProvider } from '../firebase';
 import {
   sendSignInLinkToEmail,
-
   signInWithPopup,
 } from 'firebase/auth';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function SignInModal({ onClose }) {
   const [email, setEmail] = useState('');
@@ -32,7 +32,7 @@ function SignInModal({ onClose }) {
     try {
       const actionCodeSettings = {
         url: 'https://lostfound-api.netlify.app',
-        handleCodeInApp: true
+        handleCodeInApp: true,
       };
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       localStorage.setItem('emailForSignIn', email);
@@ -60,46 +60,59 @@ function SignInModal({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl p-8 w-full max-w-md relative">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <motion.div
+          className="bg-white rounded-2xl p-8 w-full max-w-md relative"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 25 }}
         >
-          &times;
-        </button>
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
-
-        <div className="space-y-4">
-          {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
-          )}
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="input w-full"
-          />
           <button
-            onClick={handleEmailLinkSignIn}
-            className="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition"
-            disabled={loading}
+            onClick={onClose}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl"
           >
-            {loading ? 'Sending Link...' : 'Sign In with Email'}
+            &times;
           </button>
+          <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
 
-          <div className="text-center text-gray-500">or</div>
+          <div className="space-y-4">
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input w-full"
+            />
+            <button
+              onClick={handleEmailLinkSignIn}
+              className="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition"
+              disabled={loading}
+            >
+              {loading ? 'Sending Link...' : 'Sign In with Email'}
+            </button>
 
-          <button
-            onClick={handleGoogleAuth}
-            className="w-full border border-gray-300 py-2 rounded-full font-medium bg-white text-purple-700 hover:shadow"
-          >
-            Sign In with Google
-          </button>
-        </div>
-      </div>
-    </div>
+            <div className="text-center text-gray-500">or</div>
+
+            <button
+              onClick={handleGoogleAuth}
+              className="w-full border border-gray-300 py-2 rounded-full font-medium bg-white text-purple-700 hover:shadow"
+            >
+              Sign In with Google
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 

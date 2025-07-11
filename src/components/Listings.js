@@ -1,40 +1,52 @@
 import React, { useEffect, useState } from 'react';
 
+// Reusable Chip component
+const Chip = ({ text, colorClass }) => (
+  <span className={`px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}>
+    {text}
+  </span>
+);
 
 function Listings() {
   const [items, setItems] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [typeFilter, setTypeFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [zoomImage, setZoomImage] = useState(null);
 
-
-useEffect(() => {
-  const fetchItems = async (retries = 3) => {
-    try {
-      const res = await fetch('https://lostfound-api.onrender.com/api/items');
-      if (!res.ok) throw new Error('Failed');
-      const data = await res.json();
-      setItems(data);
-      setLoading(false);
-    } catch (err) {
-      if (retries > 0) {
-        console.warn('Retrying fetch...');
-        setTimeout(() => fetchItems(retries - 1), 2000); // Retry after 2 sec
-      } else {
-        console.error(err);
-        setError('Unable to load items.');
+  // Fetch items from backend
+  useEffect(() => {
+    const fetchItems = async (retries = 3) => {
+      try {
+        const res = await fetch('https://lostfound-api.onrender.com/api/items');
+        if (!res.ok) throw new Error('Failed');
+        const data = await res.json();
+        setItems(data);
         setLoading(false);
+      } catch (err) {
+        if (retries > 0) {
+          console.warn('Retrying fetch...');
+          setTimeout(() => fetchItems(retries - 1), 2000);
+        } else {
+          console.error(err);
+          setError('Unable to load items.');
+          setLoading(false);
+        }
       }
-    }
-  };
+    };
+    fetchItems();
+  }, []);
 
-  fetchItems();
-}, []);
+  // Debounce search input
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timeout);
+  }, [search]);
 
-
+  // Apply filters
   useEffect(() => {
     let filteredItems = [...items];
 
@@ -46,8 +58,8 @@ useEffect(() => {
       filteredItems = filteredItems.filter(item => item.resolved);
     }
 
-    if (search) {
-      const q = search.toLowerCase();
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase();
       filteredItems = filteredItems.filter(item =>
         item.title?.toLowerCase().includes(q) ||
         item.description?.toLowerCase().includes(q) ||
@@ -58,12 +70,12 @@ useEffect(() => {
     }
 
     setFiltered(filteredItems);
-  }, [items, typeFilter, search]);
+  }, [items, typeFilter, debouncedSearch]);
 
   const formatDate = (dateStr) => {
     const d = new Date(dateStr);
     const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const month = d.toLocaleString('default', { month: 'short' });
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
   };
@@ -119,13 +131,22 @@ useEffect(() => {
                     }`}
                 >
                   {/* Clickable Image */}
-                  <div className="relative h-48 bg-gray-200 cursor-pointer" onClick={() => setZoomImage(imageSrc)}>
+                  <div
+                    className="relative h-48 bg-gray-200 cursor-pointer overflow-hidden group"
+                    onClick={() => setZoomImage(imageSrc)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Zoom image"
+                  >
                     <img
+                      loading="lazy"
                       src={imageSrc}
                       alt={item.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
-                    <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${item.type === 'lost' ? 'bg-yellow-500 text-white' : 'bg-green-100 text-green-800'
+                    <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium shadow ${item.type === 'lost'
+                      ? 'bg-yellow-500 text-white'
+                      : 'bg-green-100 text-green-800'
                       }`}>
                       {item.type}
                     </div>
@@ -147,23 +168,23 @@ useEffect(() => {
                     <p className="text-gray-600 mb-4 line-clamp-3">{item.description}</p>
 
                     <div className="flex flex-wrap gap-2 mb-4">
-                      <span className="category-chip bg-purple-100 text-purple-800">{item.category}</span>
-                      <span className="category-chip bg-blue-100 text-blue-800">{item.location}</span>
+                      <Chip text={item.category} colorClass="bg-purple-100 text-purple-800" />
+                      <Chip text={item.location} colorClass="bg-blue-100 text-blue-800" />
                     </div>
 
                     {/* Actions */}
                     {!item.resolved && item.status === 'approved' && (
                       <div className="flex flex-col gap-2">
-                        {item.type === 'lost' && item.foundBySecurity && !item.resolved && (
-  <button
-    onClick={() =>
-      window.dispatchEvent(new CustomEvent('openClaimModal', { detail: item }))
-    }
-    className="bg-green-500 text-white py-2 rounded-full font-medium hover:bg-green-600 transition"
-  >
-    Claim This Item
-  </button>
-)}
+                        {item.type === 'lost' && item.foundBySecurity && (
+                          <button
+                            onClick={() =>
+                              window.dispatchEvent(new CustomEvent('openClaimModal', { detail: item }))
+                            }
+                            className="bg-green-500 text-white py-2 rounded-full font-medium hover:bg-green-600 transition"
+                          >
+                            Claim This Item
+                          </button>
+                        )}
 
                         {item.status === 'approved' && item.userEmail && (
                           <button
@@ -175,7 +196,6 @@ useEffect(() => {
                             Contact Finder
                           </button>
                         )}
-
                       </div>
                     )}
                   </div>
@@ -186,7 +206,7 @@ useEffect(() => {
         )}
       </div>
 
-      {/* Modal for Zoomed Image */}
+      {/* Zoomed Image Modal */}
       {zoomImage && (
         <div
           className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
@@ -195,7 +215,6 @@ useEffect(() => {
           <img src={zoomImage} alt="Zoomed" className="max-w-full max-h-full object-contain p-4" />
         </div>
       )}
-
     </section>
   );
 }

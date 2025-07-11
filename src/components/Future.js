@@ -1,26 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 function Future() {
-  return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Future Enhancements</h2>
+  useEffect(() => {
+    // Dynamically load lottie-player if not already present
+    const scriptId = "lottie-player-script";
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.src = "https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js";
+      script.async = true;
+      script.id = scriptId;
+      document.body.appendChild(script);
+    }
+  }, []);
 
-        <div className="glass-card max-w-4xl mx-auto p-8 rounded-2xl">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="md:w-1/2 mb-8 md:mb-0">
+  return (
+    <section className="py-20 bg-white" id="future">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+          Future Enhancements
+        </h2>
+
+        <div className="glass-card max-w-5xl mx-auto p-8 rounded-2xl shadow-md">
+          <div className="flex flex-col md:flex-row items-center gap-10">
+            {/* Lottie Animation */}
+            <div className="md:w-1/2 w-full">
               <lottie-player
                 src="https://assets1.lottiefiles.com/packages/lf20_isdhpejy.json"
                 background="transparent"
                 speed="1"
                 style={{ width: '100%', height: 'auto' }}
                 loop
-                autoPlay
+                autoplay
               ></lottie-player>
             </div>
-            <div className="md:w-1/2 md:pl-8">
-              <h3 className="text-2xl font-semibold mb-4">AI-Powered Image Search</h3>
-              <p className="text-gray-600 mb-6">
+
+            {/* Feature Description */}
+            <div className="md:w-1/2 w-full">
+              <h3 className="text-2xl font-semibold mb-4">
+                AI-Powered Image Search
+              </h3>
+              <p className="text-gray-600 mb-6 leading-relaxed">
                 Coming soon: Upload a photo of a similar item and our AI will search through found items to find potential matches based on visual similarity.
               </p>
 
@@ -29,11 +48,21 @@ function Future() {
                   "Visual similarity matching",
                   "Color and pattern recognition",
                   "Push notifications for matches",
-                ].map((text, i) => (
-                  <li key={i} className="flex items-start">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                ].map((text, index) => (
+                  <li key={index} className="flex items-start">
+                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mt-1">
+                      <svg
+                        className="w-5 h-5 text-purple-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                     </div>
                     <p className="ml-3 text-gray-700">{text}</p>

@@ -1,4 +1,3 @@
-// App.js
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -8,62 +7,60 @@ import Listings from './components/Listings';
 import ReportForm from './components/ReportForm';
 import Future from './components/Future';
 import Footer from './components/Footer';
+
 import ClaimModal from './components/Modals/ClaimModal';
 import ContactModal from './components/Modals/ContactModal';
 import AdminPanel from './components/Modals/AdminPanel';
 import SignInModal from './components/SignInModal';
 import AdminSignInModal from './components/AdminSignInModal';
-import { useAuth } from './AuthContext';
 import QrModal from './components/Modals/QrModal';
+
+import { useAuth } from './AuthContext';
 
 function App() {
   const { user } = useAuth();
-  const [showQr, setShowQr] = useState(false);
 
-
-  // 🔐 Auth/admin logic
+  // 🧾 Modal state
   const [showSignIn, setShowSignIn] = useState(false);
   const [showAdminSignIn, setShowAdminSignIn] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(() => !!sessionStorage.getItem('adminToken'));
+  const [showQr, setShowQr] = useState(false);
 
-  // 🧾 Item modal state
   const [selectedClaimItem, setSelectedClaimItem] = useState(null);
   const [selectedContactItem, setSelectedContactItem] = useState(null);
 
-  // ✅ Listen for modal open events from Listings
+  // 🔔 Listen for custom modal open events
   useEffect(() => {
-    const openClaimListener = (e) => {
-      if (user) setSelectedClaimItem(e.detail);
-      else setShowSignIn(true);
-    };
-    const openContactListener = (e) => {
-      if (user) setSelectedContactItem(e.detail);
-      else setShowSignIn(true);
+    const handleOpenClaim = (e) => {
+      user ? setSelectedClaimItem(e.detail) : setShowSignIn(true);
     };
 
-    const openAdminListener = () => setShowAdminPanel(true);
-    const openQrListener = () => setShowQr(true);
+    const handleOpenContact = (e) => {
+      user ? setSelectedContactItem(e.detail) : setShowSignIn(true);
+    };
 
-    window.addEventListener("openClaimModal", openClaimListener);
-    window.addEventListener("openContactModal", openContactListener);
-    window.addEventListener("openAdminPanel", openAdminListener);
-    window.addEventListener("openQrModal", openQrListener);
+    const handleOpenAdminPanel = () => setShowAdminPanel(true);
+    const handleOpenQr = () => setShowQr(true);
+
+    window.addEventListener("openClaimModal", handleOpenClaim);
+    window.addEventListener("openContactModal", handleOpenContact);
+    window.addEventListener("openAdminPanel", handleOpenAdminPanel);
+    window.addEventListener("openQrModal", handleOpenQr);
 
     return () => {
-      window.removeEventListener("openClaimModal", openClaimListener);
-      window.removeEventListener("openContactModal", openContactListener);
-      window.removeEventListener("openAdminPanel", openAdminListener);
-      window.addEventListener("openQrModal", openQrListener);
+      window.removeEventListener("openClaimModal", handleOpenClaim);
+      window.removeEventListener("openContactModal", handleOpenContact);
+      window.removeEventListener("openAdminPanel", handleOpenAdminPanel);
+      window.removeEventListener("openQrModal", handleOpenQr);
     };
   }, [user]);
 
-  // 🔐 When admin logs in
+  // ✅ Admin sign-in success
   const handleAdminLogin = (token) => {
-  sessionStorage.setItem('adminToken', token); // ✅ Store real JWT
-  setShowAdminSignIn(false);
-  setShowAdminPanel(true);
-};
-
+    sessionStorage.setItem('adminToken', token);
+    setShowAdminSignIn(false);
+    setShowAdminPanel(true);
+  };
 
   return (
     <div className="font-sans bg-gray-50 text-gray-800">
@@ -72,20 +69,22 @@ function App() {
         onShowSignIn={() => setShowSignIn(true)}
         onShowAdminSignIn={() => setShowAdminSignIn(true)}
       />
+
       <Hero />
       <Listings />
       <ReportForm
-        onRequireSignIn={() => setShowSignIn(true)}
         isSignedIn={!!user}
+        onRequireSignIn={() => setShowSignIn(true)}
       />
       <Stats />
       <HowItWorks />
       <Future />
       <Footer />
 
-      {/* 🔓 Admin Panel */}
-      {showAdminPanel && <AdminPanel onClose={() => setShowAdminPanel(false)} />}
-      {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
+      {/* 🔐 Admin */}
+      {showAdminPanel && (
+        <AdminPanel onClose={() => setShowAdminPanel(false)} />
+      )}
       {showAdminSignIn && (
         <AdminSignInModal
           onClose={() => setShowAdminSignIn(false)}
@@ -93,7 +92,10 @@ function App() {
         />
       )}
 
-      {/* 🧾 Item Modals */}
+      {/* 🔐 User */}
+      {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
+
+      {/* 🧾 Item modals */}
       {selectedClaimItem && (
         <ClaimModal
           visible={true}
@@ -108,8 +110,9 @@ function App() {
           onClose={() => setSelectedContactItem(null)}
         />
       )}
-    {showQr && <QrModal onClose={() => setShowQr(false)} />}
 
+      {/* 📱 QR Modal */}
+      {showQr && <QrModal onClose={() => setShowQr(false)} />}
     </div>
   );
 }

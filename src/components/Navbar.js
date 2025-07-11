@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../firebase';
 import { useAuth } from '../AuthContext';
 import SignInModal from './SignInModal';
-import MyProfileModal from './MyProfileModal'; // optional
+import MyProfileModal from './MyProfileModal';
 
 function Navbar({ onShowAdminSignIn }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -19,7 +20,6 @@ function Navbar({ onShowAdminSignIn }) {
     window.location.reload();
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -31,7 +31,7 @@ function Navbar({ onShowAdminSignIn }) {
   }, []);
 
   return (
-    <nav className="gradient-bg text-white shadow-lg z-50 relative">
+    <nav className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md z-50 relative dark:from-gray-800 dark:to-black">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -45,20 +45,24 @@ function Navbar({ onShowAdminSignIn }) {
               autoPlay
             ></lottie-player>
             <h1
-  className="text-xl font-bold cursor-pointer"
-  onClick={() => window.dispatchEvent(new Event("openQrModal"))}
->
-  Lost&Found
-</h1>
-
+              className="text-xl font-bold cursor-pointer"
+              onClick={() => window.dispatchEvent(new Event("openQrModal"))}
+            >
+              Lost&Found
+            </h1>
           </div>
 
           {/* Desktop Links */}
           <div className="hidden md:flex space-x-6">
-            <a href="#home" className="hover:text-gray-200 transition">Home</a>
-            <a href="#listings" className="hover:text-gray-200 transition">Browse Items</a>
-            <a href="#report" className="hover:text-gray-200 transition">Report Item</a>
-            <a href="#how-it-works" className="hover:text-gray-200 transition">How It Works</a>
+            {['Home', 'Browse Items', 'Report Item', 'How It Works'].map((text, idx) => (
+              <a
+                key={idx}
+                href={`#${text.toLowerCase().replace(/ /g, '-')}`}
+                className="hover:text-gray-200 transition"
+              >
+                {text}
+              </a>
+            ))}
           </div>
 
           {/* Desktop Right */}
@@ -72,16 +76,15 @@ function Navbar({ onShowAdminSignIn }) {
                   onShowAdminSignIn();
                 }
               }}
-              className="px-4 py-2 rounded-full border border-white ..."
+              className="px-4 py-2 rounded-full border border-white hover:bg-white hover:text-purple-700 transition font-semibold"
             >
               Admin
             </button>
 
-
             {!user ? (
               <button
                 onClick={() => setShowSignInModal(true)}
-                className="px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition"
+                className="px-4 py-2 rounded-full border border-white text-white hover:bg-white hover:text-purple-700 transition font-semibold"
               >
                 Sign In
               </button>
@@ -90,29 +93,37 @@ function Navbar({ onShowAdminSignIn }) {
                 <img
                   src={user.photoURL}
                   onClick={() => setIsDropdownOpen(prev => !prev)}
-                  className="w-10 h-10 rounded-full cursor-pointer"
+                  className="w-10 h-10 rounded-full cursor-pointer ring-2 ring-white hover:ring-purple-300 transition"
                   alt="User"
                 />
-                {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 bg-white text-black rounded-lg shadow-lg w-40 z-50">
-                    <p
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        setShowProfileModal(true);
-                      }}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                <AnimatePresence>
+                  {isDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 mt-2 bg-white text-black rounded-lg shadow-lg w-40 z-50 overflow-hidden"
                     >
-                      My Profile
-                    </p>
-                    <p className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Help</p>
-                    <p
-                      onClick={handleSignOut}
-                      className="px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
-                    >
-                      Sign Out
-                    </p>
-                  </div>
-                )}
+                      <p
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          setShowProfileModal(true);
+                        }}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      >
+                        My Profile
+                      </p>
+                      <p className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Help</p>
+                      <p
+                        onClick={handleSignOut}
+                        className="px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
+                      >
+                        Sign Out
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
           </div>
@@ -132,11 +143,15 @@ function Navbar({ onShowAdminSignIn }) {
         {menuOpen && (
           <div className="md:hidden pt-4">
             <div className="flex flex-col space-y-3">
-              <a href="#home" className="block hover:text-gray-200 transition">Home</a>
-              <a href="#listings" className="block hover:text-gray-200 transition">Browse Items</a>
-              <a href="#report" className="block hover:text-gray-200 transition">Report Item</a>
-              <a href="#how-it-works" className="block hover:text-gray-200 transition">How It Works</a>
-
+              {['Home', 'Browse Items', 'Report Item', 'How It Works'].map((text, idx) => (
+                <a
+                  key={idx}
+                  href={`#${text.toLowerCase().replace(/ /g, '-')}`}
+                  className="block hover:text-gray-200 transition"
+                >
+                  {text}
+                </a>
+              ))}
               <button
                 onClick={() => {
                   setMenuOpen(false);

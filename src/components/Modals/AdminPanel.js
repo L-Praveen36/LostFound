@@ -99,33 +99,33 @@ const AdminPanel = ({ onClose }) => {
       console.error(err);
     }
   };
+
   const handleFoundBySecurity = async (id, newValue) => {
-  try {
-    const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${id}/found-by-security`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ foundBySecurity: newValue })
-    });
+    try {
+      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${id}/found-by-security`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ foundBySecurity: newValue })
+      });
 
-    if (response.status === 401 || response.status === 403) {
-      handleUnauthorized();
-      return;
+      if (response.status === 401 || response.status === 403) {
+        handleUnauthorized();
+        return;
+      }
+
+      if (response.ok) {
+        fetchItems();
+      } else {
+        const err = await response.json();
+        alert('Update failed: ' + (err.message || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error(err);
     }
-
-    if (response.ok) {
-      fetchItems();
-    } else {
-      const err = await response.json();
-      alert('Update failed: ' + (err.message || 'Unknown error'));
-    }
-  } catch (err) {
-    console.error(err);
-  }
-};
-
+  };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
@@ -151,10 +151,10 @@ const AdminPanel = ({ onClose }) => {
     }
   };
 
-  function formatDateDMY(dateString) {
+  const formatDateDMY = (dateString) => {
     const date = new Date(dateString);
     return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-  }
+  };
 
   const getStatusBadge = (status) => {
     const classes = {
@@ -168,16 +168,17 @@ const AdminPanel = ({ onClose }) => {
   const filteredItems = items.filter(item => {
     const matchFilter =
       filter === 'all' ||
-      (filter === 'pending' && item.status === 'approved' && !item.resolved) ||
+      (filter === 'pending' && item.status === 'pending') ||
       (filter === 'approved' && item.status === 'approved') ||
       (filter === 'rejected' && item.status === 'rejected') ||
       (filter === 'resolved' && item.resolved);
 
     const matchSearch =
-      item.title.toLowerCase().includes(search.toLowerCase()) ||
-      item.description.toLowerCase().includes(search.toLowerCase()) ||
-      item.location.toLowerCase().includes(search.toLowerCase()) ||
-      (item.userEmail && item.userEmail.toLowerCase().includes(search.toLowerCase()));
+      item.title?.toLowerCase().includes(search.toLowerCase()) ||
+      item.description?.toLowerCase().includes(search.toLowerCase()) ||
+      item.location?.toLowerCase().includes(search.toLowerCase()) ||
+      item.userEmail?.toLowerCase().includes(search.toLowerCase());
+
     return matchFilter && matchSearch;
   });
 
@@ -190,7 +191,7 @@ const AdminPanel = ({ onClose }) => {
             <div className="flex items-center gap-4">
               <button
                 onClick={onClose}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition"
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300"
               >
                 Close
               </button>
@@ -199,7 +200,7 @@ const AdminPanel = ({ onClose }) => {
                   sessionStorage.removeItem('adminToken');
                   window.location.reload();
                 }}
-                className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition"
+                className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
               >
                 Logout
               </button>
@@ -221,7 +222,7 @@ const AdminPanel = ({ onClose }) => {
           <input
             type="text"
             placeholder="Search items..."
-            className="input mb-6"
+            className="input mb-6 w-full px-4 py-2 border rounded-lg"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -231,79 +232,67 @@ const AdminPanel = ({ onClose }) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredItems.map(item => (
-                <div key={item._id} className={`p-4 rounded-xl border ${highlightedId === item._id ? 'ring-2 ring-purple-500' : ''} bg-white bg-opacity-60 backdrop-blur-lg shadow-md`}>
+                <div key={item._id} className={`p-4 rounded-xl border ${highlightedId === item._id ? 'ring-2 ring-purple-500' : ''} bg-white shadow-md`}>
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <h3 className="text-lg font-semibold">{item.title}</h3>
                       <p className="text-sm text-gray-600">{item.description}</p>
                     </div>
-                    <div className="ml-4">
-                      {item.imageUrl ? (
-                        <img src={item.imageUrl} alt="" className="w-20 h-20 rounded-lg object-cover" />
-                      ) : (
-                        <Skeleton width={80} height={80} />
-                      )}
-                    </div>
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt="" className="w-20 h-20 rounded-lg object-cover ml-4" />
+                    ) : <Skeleton width={80} height={80} />}
                   </div>
-                  <div className="text-sm text-gray-500 space-y-1">
-                    <p><strong>Type:</strong> {item.type}</p>
-                    <p><strong>Title:</strong> {item.title}</p>
-                    <p><strong>Description:</strong> {item.description}</p>
-                    <p><strong>Category:</strong> {item.category || 'N/A'}</p>
+
+                  <div className="text-sm text-gray-700 space-y-1">
                     <p><strong>Location:</strong> {item.location}</p>
                     <p><strong>Date:</strong> {formatDateDMY(item.date || item.submittedAt)}</p>
+                    <p><strong>Type:</strong> {item.type}</p>
+                    <p><strong>Category:</strong> {item.category || 'N/A'}</p>
                     <p><strong>Submitted By:</strong> {item.submittedBy || 'N/A'}</p>
                     <p><strong>Email:</strong> {item.userEmail || 'N/A'}</p>
                     <p><strong>Phone:</strong> {item.phone || 'N/A'}</p>
-                    <p>
-  <strong>Contact Info:</strong>{' '}
-  {item.contactInfo && item.contactInfo.includes('@') ? (
-    <a href={`mailto:${item.contactInfo}`} className="text-blue-600 underline">
-      {item.contactInfo}
-    </a>
-  ) : (
-    item.contactInfo || 'N/A'
-  )}
-</p>
-
                     <p><strong>School ID:</strong> {item.schoolId || 'N/A'}</p>
-                    <p><strong>Status:</strong> <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadge(item.status)}`}>{item.status}</span></p>
+                    <p>
+                      <strong>Status:</strong>{' '}
+                      <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadge(item.status)}`}>
+                        {item.status}
+                      </span>
+                    </p>
+
                     {item.type === 'lost' && (
-  <div className="flex items-center gap-2 mt-2">
-    <input
-      type="checkbox"
-      checked={item.foundBySecurity}
-      onChange={() => handleFoundBySecurity(item._id, !item.foundBySecurity)}
-    />
-    <label>Found by Security</label>
-  </div>
-)}
-{item.resolved && (
-  <p className="text-purple-600 font-semibold" title={`Resolved on ${formatDateDMY(item.resolvedAt)}`}>
-    ✅ Resolved {item.resolvedBy === 'user' ? 'by User' : item.resolvedBy ? `by ${item.resolvedBy}` : ''}
-  </p>
-)}
+                      <div className="flex items-center gap-2 mt-2">
+                        <input
+                          type="checkbox"
+                          checked={item.foundBySecurity}
+                          onChange={() => handleFoundBySecurity(item._id, !item.foundBySecurity)}
+                        />
+                        <label>Found by Security</label>
+                      </div>
+                    )}
+
+                    {item.resolved && (
+                      <p className="text-purple-600 font-semibold mt-2">
+                        ✅ Resolved {item.resolvedBy ? `by ${item.resolvedBy}` : ''}
+                      </p>
+                    )}
 
                     {item.resolved && item.claimedInfo && (
                       <div className="mt-3 p-3 bg-purple-50 border border-purple-200 rounded-lg text-sm text-purple-900">
                         <p className="font-semibold mb-1">📦 Claimed By:</p>
                         <p><strong>👤 Name:</strong> {item.claimedInfo.name || 'N/A'}</p>
                         <p><strong>🎓 Roll No:</strong> {item.claimedInfo.rollNo || 'N/A'}</p>
-                        <p>
-                          <strong>📧 Email:</strong>{' '}
+                        <p><strong>📧 Email:</strong>{' '}
                           {item.claimedInfo.email ? (
                             <a href={`mailto:${item.claimedInfo.email}`} className="text-blue-600 underline">
                               {item.claimedInfo.email}
                             </a>
-                          ) : (
-                            'N/A'
-                          )}
+                          ) : 'N/A'}
                         </p>
                       </div>
                     )}
                   </div>
 
-                  <div className="mt-2 flex gap-2 flex-wrap">
+                  <div className="mt-4 flex gap-2 flex-wrap">
                     {item.status === 'pending' && (
                       <>
                         <button onClick={() => moderateItem(item._id, 'approved')} className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600">Approve</button>
