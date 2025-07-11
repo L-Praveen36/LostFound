@@ -20,8 +20,8 @@ function AdminSignInModal({ onClose, onSuccess }) {
 
       const { token } = res.data;
       if (token) {
-        sessionStorage.setItem('adminToken', token); // ✅ use localStorage
-        onSuccess(token); // tells App to open AdminPanel
+        sessionStorage.setItem('adminToken', token); // Use localStorage if needed
+        onSuccess(token);
       } else {
         setError('Invalid response from server');
       }
@@ -33,10 +33,15 @@ function AdminSignInModal({ onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-red-500">✕</button>
-        <h2 className="text-2xl font-bold mb-4 text-center text-purple-700">Admin Login</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="glass-card w-full max-w-md p-6 rounded-2xl shadow-2xl relative border border-white border-opacity-20 bg-white bg-opacity-10 backdrop-blur-xl">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-white hover:text-red-400 text-xl"
+        >
+          ✕
+        </button>
+        <h2 className="text-2xl font-bold text-center mb-4 text-white">🛡️ Admin Login</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="text"
@@ -44,7 +49,7 @@ function AdminSignInModal({ onClose, onSuccess }) {
             value={username}
             onChange={e => setUsername(e.target.value)}
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-purple-400"
           />
           <input
             type="password"
@@ -52,9 +57,9 @@ function AdminSignInModal({ onClose, onSuccess }) {
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-purple-400"
           />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-400 text-sm">{error}</p>}
           <button
             type="submit"
             disabled={loading}

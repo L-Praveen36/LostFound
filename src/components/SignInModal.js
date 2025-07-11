@@ -1,4 +1,3 @@
-// components/SignInModal.js
 import React, { useState } from 'react';
 import { auth, googleProvider } from '../firebase';
 import {
@@ -62,50 +61,50 @@ function SignInModal({ onClose }) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="bg-white rounded-2xl p-8 w-full max-w-md relative"
+          className="glass-card p-8 w-full max-w-md rounded-2xl shadow-2xl relative border border-white border-opacity-20 bg-white bg-opacity-10 backdrop-blur-xl"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl"
+            className="absolute top-4 right-4 text-white hover:text-red-400 text-xl"
           >
             &times;
           </button>
-          <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center text-white">🔐 Sign In</h2>
 
           <div className="space-y-4">
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
+            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+
             <input
               type="email"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 text-black focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-purple-400"
             />
+
             <button
               onClick={handleEmailLinkSignIn}
-              className="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition"
               disabled={loading}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-full transition font-semibold"
             >
               {loading ? 'Sending Link...' : 'Sign In with Email'}
             </button>
 
-            <div className="text-center text-gray-500">or</div>
+            <div className="text-center text-white opacity-70">or</div>
 
             <button
               onClick={handleGoogleAuth}
-              className="w-full border border-gray-300 py-2 rounded-full font-medium bg-white text-purple-700 hover:shadow"
+              className="w-full bg-white bg-opacity-20 text-white py-3 rounded-full border border-white border-opacity-30 hover:bg-white hover:bg-opacity-30 transition font-medium"
             >
               Sign In with Google
             </button>

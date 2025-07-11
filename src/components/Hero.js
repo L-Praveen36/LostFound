@@ -4,7 +4,6 @@ function Hero() {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    // Load Three.js script dynamically if not already present
     if (!window.THREE) {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
@@ -77,7 +76,6 @@ function Hero() {
 
       window.addEventListener('resize', handleResize);
 
-      // Cleanup
       return () => {
         window.removeEventListener('resize', handleResize);
         if (container.contains(renderer.domElement)) {
@@ -89,7 +87,7 @@ function Hero() {
   }, []);
 
   return (
-    <section id="home" className="relative gradient-bg text-white overflow-hidden min-h-screen flex items-center">
+    <section id="home" className="relative bg-gradient-to-br from-[#1a1330] via-[#0d0b1f] to-[#1a1330] text-white overflow-hidden min-h-screen flex items-center">
       <div
         ref={containerRef}
         id="canvas-container"
@@ -98,35 +96,34 @@ function Hero() {
 
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="flex flex-col md:flex-row items-center">
-          {/* Left: Heading */}
+          {/* Left Side */}
           <div className="md:w-1/2 mb-10 md:mb-0 text-center md:text-left">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight drop-shadow-xl">
               Lost Something on Campus?
             </h1>
-            <p className="text-xl mb-8 opacity-90">
+            <p className="text-xl mb-8 opacity-90 max-w-lg">
               Our smart lost & found system helps students reunite with their belongings faster than ever before.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center md:justify-start">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <a
                 href="#listings"
-                 className="px-8 py-3 rounded-full font-medium border-2 border-white text-white hover:bg-white hover:text-purple-700 transition text-center"
-              
+                className="px-8 py-3 rounded-full font-medium border-2 border-white text-white hover:bg-white hover:text-purple-700 transition backdrop-blur-lg bg-white/10"
               >
                 Browse Found Items
               </a>
               <a
                 href="#report"
-                className="px-8 py-3 rounded-full font-medium border-2 border-white text-white hover:bg-white hover:text-purple-700 transition text-center"
+                className="px-8 py-3 rounded-full font-medium border-2 border-white text-white hover:bg-white hover:text-purple-700 transition backdrop-blur-lg bg-white/10"
               >
                 Report Lost Item
               </a>
             </div>
           </div>
 
-          {/* Right: Lottie animation */}
+          {/* Right Side */}
           <div className="md:w-1/2 flex justify-center">
             <div className="relative w-full max-w-md">
-              <div className="glass-card p-6 rounded-3xl">
+              <div className="glass-card p-6 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
                 <lottie-player
                   src="https://assets1.lottiefiles.com/packages/lf20_5tkzkblw.json"
                   background="transparent"
@@ -136,8 +133,8 @@ function Hero() {
                   autoplay
                 ></lottie-player>
                 <div className="text-center mt-4">
-                  <h3 className="text-xl font-semibold">Recent Reunions</h3>
-                  <p className="text-sm opacity-80">87 items returned this week!</p>
+                  <h3 className="text-xl font-semibold">🎉 Recent Reunions</h3>
+                  <p className="text-sm text-purple-200">87 items returned this week!</p>
                 </div>
               </div>
             </div>

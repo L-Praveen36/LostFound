@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global background based on galaxy theme */
+/* 🌌 Global Galaxy Theme Background */
 body {
-  @apply font-sans;
+  @apply font-sans text-white;
   background-image: 
     linear-gradient(to bottom right, rgba(24, 6, 59, 0.95), rgba(46, 16, 101, 0.95)),
     url('https://images.unsplash.com/photo-1535468120506-4f1d9d8d3ac1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80');
@@ -13,55 +13,54 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-blend-mode: overlay;
-  color: white;
 }
 
-/* Glassmorphism-style card */
+/* 💠 Glassmorphism Card */
 .glass-card {
-  @apply bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-lg rounded-xl p-4 text-white;
+  @apply bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-lg rounded-xl p-4 text-white transition hover:shadow-xl;
 }
 
-/* Neumorphic-style button */
-.neumorphic-btn {
-  @apply bg-white text-gray-800 shadow-md hover:shadow-lg transition duration-300 px-4 py-2 rounded-lg;
+/* 🧊 Glassmorphism Modal Wrapper */
+.glass-modal {
+  @apply bg-white bg-opacity-10 backdrop-blur-xl border border-white border-opacity-30 shadow-2xl rounded-2xl p-6 text-white;
 }
 
-/* Gradient background utility */
-.gradient-bg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* 🧾 Input Field */
+.input {
+  @apply w-full px-4 py-3 rounded-lg bg-white/10 text-white placeholder-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500;
 }
 
-/* Floating animation utility */
+/* 🔘 Button Base */
+.btn {
+  @apply px-4 py-2 rounded-full font-medium transition duration-200;
+}
+
+/* 🌈 Button Variants */
+.btn-primary {
+  @apply btn bg-purple-600 text-white hover:bg-purple-700;
+}
+
+.btn-secondary {
+  @apply btn bg-white/10 text-white border border-white/20 hover:bg-white/20;
+}
+
+/* 🪐 Floating Animation */
 .floating {
   animation: float 3s ease-in-out infinite;
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
+  0% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  100% { transform: translateY(0); }
 }
 
-/* Category chip for filters or labels */
+/* 🏷️ Category Chip */
 .category-chip {
-  @apply px-3 py-1 rounded-full text-sm transition-transform hover:scale-105 bg-gray-100 text-gray-700;
+  @apply px-3 py-1 rounded-full text-sm transition-transform hover:scale-105 bg-white/10 text-white border border-white/20;
 }
 
-/* Input field style */
-.input {
-  @apply w-full bg-white bg-opacity-10 text-white border border-white border-opacity-30 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:outline-none;
-}
-
-.input {
-  @apply w-full px-4 py-3 rounded-lg bg-white/10 text-white placeholder-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500;
-}
-
-/* Button base class for reusable styles */
-.btn {
-  @apply px-4 py-2 rounded-full font-medium transition duration-200;
-}
-
-/* Status badge styles */
+/* 🛡️ Status Badge */
 .status-badge {
   @apply px-2 py-1 rounded-full text-xs font-semibold;
 }
@@ -69,12 +68,15 @@ body {
 .status-pending {
   @apply bg-yellow-100 text-yellow-800;
 }
+
 .status-approved {
   @apply bg-green-100 text-green-800;
 }
+
 .status-rejected {
   @apply bg-red-100 text-red-800;
 }
+
 .status-resolved {
   @apply bg-purple-100 text-purple-800;
 }

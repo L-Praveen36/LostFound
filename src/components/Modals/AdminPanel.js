@@ -185,13 +185,13 @@ const AdminPanel = ({ onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
       <div className="min-h-screen px-4 py-8 max-w-7xl mx-auto">
-        <div className="bg-white rounded-2xl p-6 shadow-xl">
+        <div className="glass-card rounded-2xl p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-bold">🛡️ Admin Panel</h2>
+            <h2 className="text-3xl font-bold text-white">🛡️ Admin Panel</h2>
             <div className="flex items-center gap-4">
               <button
                 onClick={onClose}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300"
+                className="px-4 py-2 bg-white bg-opacity-10 text-white rounded-full hover:bg-opacity-20"
               >
                 Close
               </button>
@@ -212,7 +212,7 @@ const AdminPanel = ({ onClose }) => {
               <button
                 key={status}
                 onClick={() => setFilter(status)}
-                className={`px-4 py-2 rounded-full text-sm font-medium capitalize ${filter === status ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                className={`px-4 py-2 rounded-full text-sm font-medium capitalize ${filter === status ? 'bg-purple-600 text-white' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}
               >
                 {status}
               </button>
@@ -222,7 +222,7 @@ const AdminPanel = ({ onClose }) => {
           <input
             type="text"
             placeholder="Search items..."
-            className="input mb-6 w-full px-4 py-2 border rounded-lg"
+            className="input mb-6 w-full px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-70 focus:outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -232,18 +232,18 @@ const AdminPanel = ({ onClose }) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredItems.map(item => (
-                <div key={item._id} className={`p-4 rounded-xl border ${highlightedId === item._id ? 'ring-2 ring-purple-500' : ''} bg-white shadow-md`}>
+                <div key={item._id} className={`glass-card p-4 rounded-xl ${highlightedId === item._id ? 'ring-2 ring-purple-500' : ''}`}>
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="text-lg font-semibold">{item.title}</h3>
-                      <p className="text-sm text-gray-600">{item.description}</p>
+                      <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                      <p className="text-sm text-white/80">{item.description}</p>
                     </div>
                     {item.imageUrl ? (
                       <img src={item.imageUrl} alt="" className="w-20 h-20 rounded-lg object-cover ml-4" />
                     ) : <Skeleton width={80} height={80} />}
                   </div>
 
-                  <div className="text-sm text-gray-700 space-y-1">
+                  <div className="text-sm text-white/80 space-y-1">
                     <p><strong>Location:</strong> {item.location}</p>
                     <p><strong>Date:</strong> {formatDateDMY(item.date || item.submittedAt)}</p>
                     <p><strong>Type:</strong> {item.type}</p>
@@ -271,19 +271,19 @@ const AdminPanel = ({ onClose }) => {
                     )}
 
                     {item.resolved && (
-                      <p className="text-purple-600 font-semibold mt-2">
+                      <p className="text-purple-300 font-semibold mt-2">
                         ✅ Resolved {item.resolvedBy ? `by ${item.resolvedBy}` : ''}
                       </p>
                     )}
 
                     {item.resolved && item.claimedInfo && (
-                      <div className="mt-3 p-3 bg-purple-50 border border-purple-200 rounded-lg text-sm text-purple-900">
+                      <div className="mt-3 p-3 bg-purple-100 bg-opacity-10 border border-purple-200 rounded-lg text-sm text-purple-100">
                         <p className="font-semibold mb-1">📦 Claimed By:</p>
                         <p><strong>👤 Name:</strong> {item.claimedInfo.name || 'N/A'}</p>
                         <p><strong>🎓 Roll No:</strong> {item.claimedInfo.rollNo || 'N/A'}</p>
                         <p><strong>📧 Email:</strong>{' '}
                           {item.claimedInfo.email ? (
-                            <a href={`mailto:${item.claimedInfo.email}`} className="text-blue-600 underline">
+                            <a href={`mailto:${item.claimedInfo.email}`} className="text-blue-300 underline">
                               {item.claimedInfo.email}
                             </a>
                           ) : 'N/A'}
@@ -300,9 +300,9 @@ const AdminPanel = ({ onClose }) => {
                       </>
                     )}
                     {item.status === 'approved' && !item.resolved && (
-                      <button onClick={() => resolveItem(item._id)} className="px-4 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600">Mark Resolved</button>
+                      <button onClick={() => resolveItem(item._id)} className="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700">Mark Resolved</button>
                     )}
-                    <button onClick={() => handleDelete(item._id)} className="px-4 py-2 bg-gray-700 text-white rounded-full hover:bg-gray-800">Delete</button>
+                    <button onClick={() => handleDelete(item._id)} className="px-4 py-2 bg-white bg-opacity-10 text-white rounded-full hover:bg-opacity-20">Delete</button>
                   </div>
                 </div>
               ))}

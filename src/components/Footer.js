@@ -3,7 +3,7 @@ import { Mail, Facebook, Twitter } from 'lucide-react';
 
 function Footer() {
   return (
-    <footer className="gradient-bg text-white py-12">
+    <footer className="bg-gradient-to-br from-[#1a1330] via-[#0e0b23] to-[#1a1330] text-white py-16 border-t border-white/10 backdrop-blur-lg">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
 
@@ -16,20 +16,20 @@ function Footer() {
                 }}
               />
               <h1
-                className="text-xl font-bold cursor-pointer"
+                className="text-xl font-bold cursor-pointer text-purple-300 hover:text-white transition"
                 onClick={() => window.dispatchEvent(new Event("openQrModal"))}
               >
                 Lost&Found
               </h1>
             </div>
-            <p className="text-sm opacity-80 leading-relaxed">
+            <p className="text-sm text-purple-100 opacity-80 leading-relaxed">
               Helping students reunite with their lost belongings since 2023.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold mb-4">Quick Links</h3>
+            <h3 className="font-semibold text-purple-200 mb-4">Quick Links</h3>
             <ul className="space-y-2">
               {[
                 { name: 'Home', href: '#home' },
@@ -40,7 +40,7 @@ function Footer() {
                 <li key={link.name}>
                   <a
                     href={link.href}
-                    className="text-sm opacity-80 hover:opacity-100 transition"
+                    className="text-sm text-purple-100 opacity-80 hover:opacity-100 transition"
                   >
                     {link.name}
                   </a>
@@ -51,12 +51,12 @@ function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="font-semibold mb-4">Support</h3>
+            <h3 className="font-semibold text-purple-200 mb-4">Support</h3>
             <ul className="space-y-2">
               {['FAQ', 'Privacy Policy', 'Terms of Service', 'Contact Us'].map((label) => (
                 <li key={label}>
                   <button
-                    className="text-sm opacity-80 hover:opacity-100 transition"
+                    className="text-sm text-purple-100 opacity-80 hover:opacity-100 transition"
                     onClick={() => alert(`${label} section coming soon.`)}
                   >
                     {label}
@@ -68,28 +68,28 @@ function Footer() {
 
           {/* Newsletter + Social */}
           <div>
-            <h3 className="font-semibold mb-4">Connect With Us</h3>
+            <h3 className="font-semibold text-purple-200 mb-4">Connect With Us</h3>
             <div className="flex space-x-4 mb-4">
               <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white bg-opacity-10 rounded-full flex items-center justify-center hover:bg-opacity-20 transition"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition"
                 aria-label="Facebook"
               >
-                <Facebook className="w-5 h-5" />
+                <Facebook className="w-5 h-5 text-white" />
               </a>
               <a
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white bg-opacity-10 rounded-full flex items-center justify-center hover:bg-opacity-20 transition"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition"
                 aria-label="Twitter"
               >
-                <Twitter className="w-5 h-5" />
+                <Twitter className="w-5 h-5 text-white" />
               </a>
             </div>
-            <p className="text-sm opacity-80">Subscribe to notifications</p>
+            <p className="text-sm text-purple-100 opacity-80">Subscribe to notifications</p>
             <form
               className="flex mt-2"
               onSubmit={(e) => {
@@ -100,13 +100,13 @@ function Footer() {
               <input
                 type="email"
                 required
-                className="bg-white bg-opacity-20 border-0 rounded-l-lg px-4 py-2 text-white placeholder-white placeholder-opacity-70 focus:outline-none w-full"
+                className="bg-white/20 border border-white/10 rounded-l-lg px-4 py-2 text-white placeholder-white placeholder-opacity-70 focus:outline-none w-full"
                 placeholder="Your email"
                 aria-label="Email input"
               />
               <button
                 type="submit"
-                className="bg-white text-purple-700 px-4 py-2 rounded-r-lg font-medium"
+                className="bg-purple-400 text-white px-4 py-2 rounded-r-lg hover:bg-purple-500 transition"
                 aria-label="Subscribe"
               >
                 <Mail size={16} />
@@ -115,7 +115,7 @@ function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white border-opacity-20 mt-10 pt-6 text-center text-sm opacity-70">
+        <div className="border-t border-white/10 mt-10 pt-6 text-center text-sm text-purple-100 opacity-70">
           <p>© 2023 CampusFind. All rights reserved.</p>
         </div>
       </div>

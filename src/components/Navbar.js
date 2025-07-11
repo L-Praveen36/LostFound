@@ -27,7 +27,6 @@ function Navbar({ onShowAdminSignIn }) {
     window.location.reload();
   }, []);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -46,7 +45,7 @@ function Navbar({ onShowAdminSignIn }) {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md z-50 relative dark:from-blue-800 dark:to-gray-500">
+    <nav className="bg-gradient-to-r from-[#1a1330] via-[#2c1a4e] to-[#1a1330] text-white shadow-md z-50 relative">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -65,7 +64,7 @@ function Navbar({ onShowAdminSignIn }) {
           {/* Desktop Links */}
           <div className="hidden md:flex space-x-6">
             {NAV_LINKS.map(({ text, href }) => (
-              <a key={text} href={href} className="hover:text-gray-200 transition">
+              <a key={text} href={href} className="hover:text-purple-300 transition">
                 {text}
               </a>
             ))}
@@ -102,21 +101,21 @@ function Navbar({ onShowAdminSignIn }) {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute right-0 mt-2 bg-white text-black rounded-lg shadow-lg w-40 z-50 overflow-hidden"
+                      className="absolute right-0 mt-2 rounded-lg w-40 z-50 overflow-hidden backdrop-blur-lg bg-white/10 border border-white/10 text-white"
                     >
                       <p
                         onClick={() => {
                           setIsDropdownOpen(false);
                           setShowProfileModal(true);
                         }}
-                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        className="px-4 py-2 hover:bg-white/10 cursor-pointer"
                       >
                         My Profile
                       </p>
-                      <p className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Help</p>
+                      <p className="px-4 py-2 hover:bg-white/10 cursor-pointer">Help</p>
                       <p
                         onClick={handleSignOut}
-                        className="px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
+                        className="px-4 py-2 text-red-400 hover:bg-white/10 cursor-pointer"
                       >
                         Sign Out
                       </p>
@@ -144,7 +143,7 @@ function Navbar({ onShowAdminSignIn }) {
                   key={text}
                   href={href}
                   onClick={() => setMenuOpen(false)}
-                  className="block hover:text-gray-200 transition"
+                  className="block hover:text-purple-300 transition"
                 >
                   {text}
                 </a>
@@ -155,7 +154,7 @@ function Navbar({ onShowAdminSignIn }) {
                   setMenuOpen(false);
                   handleAdminClick();
                 }}
-                className="text-left hover:text-gray-200 transition"
+                className="text-left hover:text-purple-300 transition"
               >
                 Admin
               </button>
@@ -166,27 +165,27 @@ function Navbar({ onShowAdminSignIn }) {
                     setMenuOpen(false);
                     setShowSignInModal(true);
                   }}
-                  className="text-left hover:text-gray-200 transition"
+                  className="text-left hover:text-purple-300 transition"
                 >
                   Sign In
                 </button>
               ) : (
                 <div className="mt-4 text-center">
                   <img src={user.photoURL || 'https://via.placeholder.com/40'} className="w-10 h-10 rounded-full mx-auto" alt="User" />
-                  <div className="mt-2 bg-white text-black rounded-lg shadow text-center">
+                  <div className="mt-2 rounded-lg backdrop-blur-lg bg-white/10 text-white">
                     <p
                       onClick={() => {
                         setMenuOpen(false);
                         setShowProfileModal(true);
                       }}
-                      className="py-2 hover:bg-gray-100 cursor-pointer"
+                      className="py-2 hover:bg-white/10 cursor-pointer"
                     >
                       My Profile
                     </p>
-                    <p className="py-2 hover:bg-gray-100 cursor-pointer">Help</p>
+                    <p className="py-2 hover:bg-white/10 cursor-pointer">Help</p>
                     <p
                       onClick={handleSignOut}
-                      className="py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
+                      className="py-2 text-red-400 hover:bg-white/10 cursor-pointer"
                     >
                       Sign Out
                     </p>

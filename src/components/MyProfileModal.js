@@ -1,4 +1,3 @@
-// components/MyProfileModal.js
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -62,13 +61,13 @@ function MyProfileModal({ onClose }) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="bg-white max-w-3xl w-full p-6 rounded-2xl shadow-xl overflow-y-auto max-h-[90vh] relative"
+          className="glass-card max-w-3xl w-full p-6 rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh] relative border border-white/10"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
@@ -76,12 +75,12 @@ function MyProfileModal({ onClose }) {
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl"
+            className="absolute top-4 right-4 text-white/80 hover:text-white text-2xl font-bold"
           >
             &times;
           </button>
 
-          <h2 className="text-2xl text-black font-bold mb-4">👤 My Profile</h2>
+          <h2 className="text-3xl text-white font-bold mb-6">👤 My Profile</h2>
 
           {user && (
             <div className="mb-6 flex items-center space-x-4">
@@ -89,52 +88,53 @@ function MyProfileModal({ onClose }) {
                 <img
                   src={user.photoURL}
                   alt="Profile"
-                  className="w-12 h-12 rounded-full object-cover"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-white/30"
                 />
               )}
-              <div >
-                <p className="text-amber-400"><strong>Name:</strong> {user.displayName || 'Not available'}</p>
-                <p className="text-amber-400"><strong>Email:</strong> {user.email}</p>
+              <div>
+                <p className="text-white/90"><strong className="text-purple-300">Name:</strong> {user.displayName || 'Not available'}</p>
+                <p className="text-white/90"><strong className="text-purple-300">Email:</strong> {user.email}</p>
               </div>
             </div>
           )}
 
-          <h3 className="text-lg text-black font-semibold mb-3">📦 My Submitted Items</h3>
+          <h3 className="text-xl text-white font-semibold mb-4">📦 My Submitted Items</h3>
 
           {loading ? (
-            <p className="text-gray-500">Loading your items...</p>
+            <p className="text-white/80">Loading your items...</p>
           ) : error ? (
-            <p className="text-red-500">{error}</p>
+            <p className="text-red-400">{error}</p>
           ) : userItems.length === 0 ? (
-            <p className="text-gray-600">
+            <p className="text-white/80">
               You haven’t submitted any items yet.{' '}
-              <a href="#report" className="text-purple-600 hover:underline">Submit one now</a>.
+              <a href="#report" className="text-purple-300 hover:underline">Submit one now</a>.
             </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {userItems.map(item => (
                 <article
                   key={item._id}
-                  className={`bg-gray-100 rounded-xl p-4 shadow ${item.resolved ? 'opacity-70' : ''}`}
+                  className={`bg-white/10 backdrop-blur-md text-white rounded-xl p-4 shadow-md border border-white/10 ${item.resolved ? 'opacity-60' : ''}`}
                 >
                   <div className="flex justify-between items-center mb-2">
                     <h4 className="font-semibold text-lg">{item.title || 'Untitled'}</h4>
                     <span className={`text-xs px-2 py-1 rounded-full 
-                      ${item.type === 'lost' ? 'bg-yellow-200 text-yellow-800' : 'bg-blue-200 text-blue-800'}`}>
+                      ${item.type === 'lost'
+                        ? 'bg-yellow-300 text-yellow-900'
+                        : 'bg-blue-300 text-blue-900'}`}>
                       {item.type}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-700 mb-2 line-clamp-2">{item.description || 'No description'}</p>
-                  <p className="text-xs text-gray-500">📍 {item.location || 'Unknown'}</p>
-                  <p className="text-xs text-gray-500">🗂 Status: {item.status}</p>
-                  <p className="text-xs text-gray-500">🎓 School ID: {item.studentId || 'Not provided'}</p>
-                  {item.resolved && (
-                    <p className="text-xs text-purple-600 font-semibold mt-1">✅ Resolved</p>
-                  )}
-                  {!item.resolved && (
+                  <p className="text-sm text-white/90 mb-2 line-clamp-2">{item.description || 'No description'}</p>
+                  <p className="text-xs text-white/70">📍 {item.location || 'Unknown'}</p>
+                  <p className="text-xs text-white/70">🗂 Status: {item.status}</p>
+                  <p className="text-xs text-white/70">🎓 School ID: {item.studentId || 'Not provided'}</p>
+                  {item.resolved ? (
+                    <p className="text-xs text-green-400 font-semibold mt-1">✅ Resolved</p>
+                  ) : (
                     <button
                       onClick={() => handleResolve(item._id)}
-                      className="mt-3 px-4 py-1 bg-purple-600 text-white text-sm rounded hover:bg-purple-700"
+                      className="mt-3 px-4 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-full transition"
                     >
                       Mark Resolved
                     </button>
