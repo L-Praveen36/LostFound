@@ -91,7 +91,7 @@ function SignInModal({ onClose }) {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 text-black focus:ring-2 focus:ring-purple-500"
             />
             <button
               onClick={handleEmailLinkSignIn}

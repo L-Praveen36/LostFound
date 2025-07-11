@@ -81,7 +81,7 @@ function MyProfileModal({ onClose }) {
             &times;
           </button>
 
-          <h2 className="text-2xl font-bold mb-4">👤 My Profile</h2>
+          <h2 className="text-2xl text-black font-bold mb-4">👤 My Profile</h2>
 
           {user && (
             <div className="mb-6 flex items-center space-x-4">
@@ -92,14 +92,14 @@ function MyProfileModal({ onClose }) {
                   className="w-12 h-12 rounded-full object-cover"
                 />
               )}
-              <div className="text-2xl font-bold mb-2">
-                <p><strong>Name:</strong> {user.displayName || 'Not available'}</p>
-                <p><strong>Email:</strong> {user.email}</p>
+              <div >
+                <p className="text-amber-400"><strong>Name:</strong> {user.displayName || 'Not available'}</p>
+                <p className="text-amber-400"><strong>Email:</strong> {user.email}</p>
               </div>
             </div>
           )}
 
-          <h3 className="text-lg font-semibold mb-3">📦 My Submitted Items</h3>
+          <h3 className="text-lg text-black font-semibold mb-3">📦 My Submitted Items</h3>
 
           {loading ? (
             <p className="text-gray-500">Loading your items...</p>
