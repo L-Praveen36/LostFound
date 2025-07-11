@@ -22,6 +22,7 @@ function App() {
 
   // 🧾 Modal state
   const [showSignIn, setShowSignIn] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [showAdminSignIn, setShowAdminSignIn] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(() => !!sessionStorage.getItem('adminToken'));
   const [showQr, setShowQr] = useState(false);
