@@ -64,7 +64,8 @@ function App() {
   };
 
   return (
-  <div className="relative z-0 font-sans min-h-screen text-white bg-gradient-to-br from-white/10 via-white/5 to-white/0 backdrop-blur-sm">
+  <div className="relative font-sans min-h-screen text-white">
+
 
     <Navbar
       onAdminLogin={handleAdminLogin}
