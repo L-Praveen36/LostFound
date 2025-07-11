@@ -103,7 +103,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
   return (
     <section id="report" className="py-20 text-white">
       <ToastContainer position="top-right" autoClose={5000} />
-      <div className="container mx-auto px-4">
+      <div className="bg-gradient-to-r from-[#1a1330] via-[#2c1a4e] to-[#1a1330] text-white shadow-md z-50 relative">
         <h2 className="text-4xl font-bold text-center mb-12">Report Lost or Found Item</h2>
 
        <div className="glass-card max-w-3xl mx-auto p-8 rounded-2xl">
