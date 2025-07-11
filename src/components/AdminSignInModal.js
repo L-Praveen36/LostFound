@@ -33,7 +33,8 @@ function AdminSignInModal({ onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-0">
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+
       <div className="glass-card w-full max-w-md p-6 rounded-2xl shadow-2xl relative border border-white border-opacity-20 bg-white bg-opacity-10 backdrop-blur-xl">
         <button
           onClick={onClose}
