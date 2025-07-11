@@ -153,14 +153,14 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
                   value={formData.category}
                   onChange={handleInput}
                   required
-                  className="input bg-transparent"
+                  className="input"
                 >
                   <option value="">Select Category</option>
-                  <option>Electronics</option>
-                  <option>Accessories</option>
-                  <option>Books</option>
-                  <option>Clothing</option>
-                  <option>Other</option>
+                  <option className='text-black'>Electronics</option>
+                  <option className='text-black'>Accessories</option>
+                  <option className='text-black'>Books</option>
+                  <option className='text-black'>Clothing</option>
+                  <option className='text-black'>Other</option>
                 </select>
               </div>
             </div>
