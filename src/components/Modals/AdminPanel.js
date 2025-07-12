@@ -189,21 +189,8 @@ const AdminPanel = ({ onClose }) => {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold text-white">🛡️ Admin Panel</h2>
             <div className="flex items-center gap-4">
-              <button
-                onClick={onClose}
-                className="px-4 py-2 bg-white bg-opacity-10 text-white rounded-full hover:bg-opacity-20"
-              >
-                Close
-              </button>
-              <button
-                onClick={() => {
-                  sessionStorage.removeItem('adminToken');
-                  window.location.reload();
-                }}
-                className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
-              >
-                Logout
-              </button>
+              <button onClick={onClose} className="px-4 py-2 bg-white bg-opacity-10 text-white rounded-full hover:bg-opacity-20">Close</button>
+              <button onClick={() => { sessionStorage.removeItem('adminToken'); window.location.reload(); }} className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600">Logout</button>
             </div>
           </div>
 
@@ -258,7 +245,6 @@ const AdminPanel = ({ onClose }) => {
                         {item.status}
                       </span>
                     </p>
-
                     {item.type === 'lost' && (
                       <div className="flex items-center gap-2 mt-2">
                         <input
@@ -269,13 +255,11 @@ const AdminPanel = ({ onClose }) => {
                         <label>Found by Security</label>
                       </div>
                     )}
-
                     {item.resolved && (
                       <p className="text-purple-300 font-semibold mt-2">
                         ✅ Resolved {item.resolvedBy ? `by ${item.resolvedBy}` : ''}
                       </p>
                     )}
-
                     {item.resolved && item.claimedInfo && (
                       <div className="mt-3 p-3 bg-purple-100 bg-opacity-10 border border-purple-200 rounded-lg text-sm text-purple-100">
                         <p className="font-semibold mb-1">📦 Claimed By:</p>
