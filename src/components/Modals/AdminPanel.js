@@ -165,22 +165,24 @@ const AdminPanel = ({ onClose }) => {
     return classes[status] || 'bg-gray-100 text-gray-700';
   };
 
-  const filteredItems = items.filter(item => {
-    const matchFilter =
-      filter === 'all' ||
-      (filter === 'pending' && item.status === 'pending') ||
-      (filter === 'approved' && item.status === 'approved') ||
-      (filter === 'rejected' && item.status === 'rejected') ||
-      (filter === 'resolved' && item.resolved);
+  const filteredItems = items
+    .filter(item => {
+      const matchFilter =
+        filter === 'all' ||
+        (filter === 'pending' && item.status === 'approved' && !item.resolved) ||
+        (filter === 'approved' && item.status === 'approved') ||
+        (filter === 'rejected' && item.status === 'rejected') ||
+        (filter === 'resolved' && item.resolved);
 
-    const matchSearch =
-      item.title?.toLowerCase().includes(search.toLowerCase()) ||
-      item.description?.toLowerCase().includes(search.toLowerCase()) ||
-      item.location?.toLowerCase().includes(search.toLowerCase()) ||
-      item.userEmail?.toLowerCase().includes(search.toLowerCase());
+      const matchSearch =
+        item.title?.toLowerCase().includes(search.toLowerCase()) ||
+        item.description?.toLowerCase().includes(search.toLowerCase()) ||
+        item.location?.toLowerCase().includes(search.toLowerCase()) ||
+        item.userEmail?.toLowerCase().includes(search.toLowerCase());
 
-    return matchFilter && matchSearch;
-  });
+      return matchFilter && matchSearch;
+    })
+    .sort((a, b) => new Date(b.date || b.submittedAt) - new Date(a.date || a.submittedAt));
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
