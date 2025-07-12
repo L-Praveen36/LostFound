@@ -28,7 +28,7 @@ const AdminPanel = ({ onClose }) => {
       }
 
       const data = await response.json();
-      data.sort((a, b) => new Date(b.date || b.submittedAt) - new Date(a.date || a.submittedAt));
+      data.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
       setItems(data);
       setLoading(false);
     } catch (error) {
@@ -182,7 +182,7 @@ const AdminPanel = ({ onClose }) => {
 
       return matchFilter && matchSearch;
     })
-    .sort((a, b) => new Date(b.date || b.submittedAt) - new Date(a.date || a.submittedAt));
+    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
