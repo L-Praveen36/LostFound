@@ -5,6 +5,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 const AdminPanel = ({ onClose }) => {
   const token = sessionStorage.getItem('adminToken');
   const [search, setSearch] = useState('');
+  const [searchDate, setSearchDate] = useState('');
   const [items, setItems] = useState([]);
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -172,13 +173,15 @@ const AdminPanel = ({ onClose }) => {
         (filter === 'pending' && item.status === 'approved' && !item.resolved) ||
         (filter === 'approved' && item.status === 'approved') ||
         (filter === 'rejected' && item.status === 'rejected') ||
-        (filter === 'resolved' && item.resolved);
+        (filter === 'resolved' && item.resolved) ||
+        (filter === 'security' && item.foundBySecurity);
 
       const matchSearch =
-        item.title?.toLowerCase().includes(search.toLowerCase()) ||
-        item.description?.toLowerCase().includes(search.toLowerCase()) ||
-        item.location?.toLowerCase().includes(search.toLowerCase()) ||
-        item.userEmail?.toLowerCase().includes(search.toLowerCase());
+        (!search || item.title?.toLowerCase().includes(search.toLowerCase()) ||
+          item.description?.toLowerCase().includes(search.toLowerCase()) ||
+          item.location?.toLowerCase().includes(search.toLowerCase()) ||
+          item.userEmail?.toLowerCase().includes(search.toLowerCase())) &&
+        (!searchDate || new Date(item.submittedAt).toISOString().slice(0, 10) === searchDate);
 
       return matchFilter && matchSearch;
     })
@@ -191,13 +194,26 @@ const AdminPanel = ({ onClose }) => {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold text-white">🛡️ Admin Panel</h2>
             <div className="flex items-center gap-4">
-              <button onClick={onClose} className="px-4 py-2 bg-white bg-opacity-10 text-white rounded-full hover:bg-opacity-20">Close</button>
-              <button onClick={() => { sessionStorage.removeItem('adminToken'); window.location.reload(); }} className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600">Logout</button>
+              <button
+                onClick={onClose}
+                className="px-4 py-2 bg-white bg-opacity-10 text-white rounded-full hover:bg-opacity-20"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  sessionStorage.removeItem('adminToken');
+                  window.location.reload();
+                }}
+                className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+              >
+                Logout
+              </button>
             </div>
           </div>
 
           <div className="mb-4 flex flex-wrap gap-2">
-            {['all', 'pending', 'approved', 'rejected', 'resolved'].map(status => (
+            {['all', 'pending', 'approved', 'rejected', 'resolved', 'security'].map(status => (
               <button
                 key={status}
                 onClick={() => setFilter(status)}
@@ -208,13 +224,21 @@ const AdminPanel = ({ onClose }) => {
             ))}
           </div>
 
-          <input
-            type="text"
-            placeholder="Search items..."
-            className="input mb-6 w-full px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-70 focus:outline-none"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <input
+              type="text"
+              placeholder="Search by title, location, email..."
+              className="w-full md:w-2/3 px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-70 focus:outline-none"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <input
+              type="date"
+              className="w-full md:w-1/3 px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-70 focus:outline-none"
+              value={searchDate}
+              onChange={(e) => setSearchDate(e.target.value)}
+            />
+          </div>
 
           {loading ? (
             <Skeleton count={5} height={120} className="mb-4" />
@@ -247,21 +271,25 @@ const AdminPanel = ({ onClose }) => {
                         {item.status}
                       </span>
                     </p>
+
                     {item.type === 'lost' && (
                       <div className="flex items-center gap-2 mt-2">
                         <input
                           type="checkbox"
                           checked={item.foundBySecurity}
+                          disabled={item.resolved}
                           onChange={() => handleFoundBySecurity(item._id, !item.foundBySecurity)}
                         />
                         <label>Found by Security</label>
                       </div>
                     )}
+
                     {item.resolved && (
                       <p className="text-purple-300 font-semibold mt-2">
                         ✅ Resolved {item.resolvedBy ? `by ${item.resolvedBy}` : ''}
                       </p>
                     )}
+
                     {item.resolved && item.claimedInfo && (
                       <div className="mt-3 p-3 bg-purple-100 bg-opacity-10 border border-purple-200 rounded-lg text-sm text-purple-100">
                         <p className="font-semibold mb-1">📦 Claimed By:</p>
