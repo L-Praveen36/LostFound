@@ -67,8 +67,9 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
     payload.append('submittedBy', formData.submittedBy);
     payload.append('userEmail', formData.userEmail);
     payload.append('phone', formData.phone);
-    if (formData.contactInfo) payload.append('contactInfo', formData.contactInfo);
-    if (formData.studentId) payload.append('studentId', formData.studentId);
+payload.append('contactInfo', formData.contactInfo || '');
+payload.append('studentId', formData.studentId || '');
+
     selectedImages.forEach((file) => payload.append('images', file));
 
     try {

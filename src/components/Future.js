@@ -46,7 +46,7 @@ function Future() {
                 {[
                   "Visual similarity matching",
                   "Color and pattern recognition",
-                  "Push notifications for matches",
+                  
                 ].map((text, index) => (
                   <li key={index} className="flex items-start">
                     <div className="w-8 h-8 bg-purple-400 bg-opacity-20 rounded-full flex items-center justify-center mt-1">
