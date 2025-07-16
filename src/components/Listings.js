@@ -89,7 +89,7 @@ function Listings() {
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
           
-   <div className="flex flex-col md:flex-row gap-4 mb-6">
+   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <input
               type="text"
               placeholder="Search by title, location, email..."
