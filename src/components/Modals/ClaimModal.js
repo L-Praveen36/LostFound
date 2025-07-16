@@ -68,13 +68,13 @@ function ClaimModal({ visible, onClose, item }) {
 
         <h3 className="text-2xl font-semibold mb-6 text-center">Claim This Item</h3>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 ">
           <div>
-            <label className="block text-sm font-medium mb-1">Roll Number</label>
+            <label className="block text-sm font-medium mb-1 ">Roll Number</label>
             <input
               ref={inputRef}
               name="rollNo"
-              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500"
+              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 text-black"
               placeholder="e.g. 21CS123"
               value={form.rollNo}
               onChange={handleChange}
@@ -86,7 +86,7 @@ function ClaimModal({ visible, onClose, item }) {
             <label className="block text-sm font-medium mb-1">Full Name</label>
             <input
               name="name"
-              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500"
+              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 text-black"
               placeholder="Your name"
               value={form.name}
               onChange={handleChange}
@@ -99,7 +99,7 @@ function ClaimModal({ visible, onClose, item }) {
             <input
               name="email"
               type="email"
-              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500"
+              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 text-black"
               placeholder="yourid@college.edu"
               value={form.email}
               onChange={handleChange}
