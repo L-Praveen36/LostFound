@@ -88,7 +88,7 @@ function Listings() {
         </h2>
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
-          <div className="flex flex-col md:flex-row gap-4 mb-4">
+          
   <input
     type="text"
     placeholder="Search by title, location..."
@@ -102,7 +102,7 @@ function Listings() {
     value={searchDate}
     onChange={(e) => setSearchDate(e.target.value)}
   />
-</div>
+
 
           <div className="flex flex-wrap gap-2">
             {FILTER_TYPES.map(type => (
@@ -187,6 +187,16 @@ function Listings() {
 
                       {!item.resolved && item.status === 'approved' && (
                         <div className="flex flex-wrap gap-2 mt-4">
+                           {item.userEmail && (
+                            <button
+                              onClick={() =>
+                                window.dispatchEvent(new CustomEvent('openContactModal', { detail: item }))
+                              }
+                              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full transition"
+                            >
+                              Contact Finder
+                            </button>
+                          )}
                           {item.type === 'lost' && item.foundBySecurity && (
                             <>
                               <button
@@ -202,16 +212,7 @@ function Listings() {
                               </p>
                             </>
                           )}
-                          {item.userEmail && (
-                            <button
-                              onClick={() =>
-                                window.dispatchEvent(new CustomEvent('openContactModal', { detail: item }))
-                              }
-                              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full transition"
-                            >
-                              Contact Finder
-                            </button>
-                          )}
+                         
                         </div>
                       )}
                     </div>
