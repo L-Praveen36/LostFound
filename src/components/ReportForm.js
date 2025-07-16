@@ -111,7 +111,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
     <button
       className={`px-4 py-2 font-medium border-b-4 transition duration-200 ${
         type === 'lost'
-          ? 'border-black text-white'
+          ? 'border-blue-300 text-white'
           : 'border-transparent text-white/50 hover:text-white hover:border-white/30'
       }`}
       onClick={() => setType('lost')}
@@ -121,7 +121,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
     <button
       className={`px-4 py-2 font-medium border-b-4 transition duration-200 ${
         type === 'found'
-          ? 'border-black text-white'
+          ? 'border-blue-300 text-white'
           : 'border-transparent text-white/50 hover:text-white hover:border-white/30'
       }`}
       onClick={() => setType('found')}

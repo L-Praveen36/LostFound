@@ -92,13 +92,13 @@ function Listings() {
   <input
     type="text"
     placeholder="Search by title, location..."
-    className="w-full md:w-2/3 px-4 py-2 rounded-lg border border-gray-300"
+    className="w-full md:w-2/3 px-4 py-2 rounded-lg border text-gray-700 border-gray-400"
     value={search}
     onChange={(e) => setSearch(e.target.value)}
   />
   <input
     type="date"
-    className="w-full md:w-1/3 px-4 py-2 rounded-lg border border-gray-300"
+    className="w-full md:w-1/3 px-4 py-2 rounded-lg border text-gray-700 border-gray-400"
     value={searchDate}
     onChange={(e) => setSearchDate(e.target.value)}
   />
