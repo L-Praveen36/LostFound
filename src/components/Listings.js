@@ -1,18 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react';
 
-// Constants
 const FILTER_TYPES = ['all', 'lost', 'found', 'resolved'];
 
-// Utility: Format date
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = d.toLocaleString('default', { month: 'short' });
-  const year = d.getFullYear();
-  return `${day}-${month}-${year}`;
+  return isNaN(d) ? 'N/A' : d.toLocaleDateString('en-GB', {
+    day: '2-digit', month: 'short', year: 'numeric'
+  });
 };
 
-// Reusable Chip
 const Chip = ({ text, colorClass }) => (
   <span className={`px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}>
     {text}
@@ -23,6 +19,7 @@ function Listings() {
   const [items, setItems] = useState([]);
   const [typeFilter, setTypeFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [searchDate, setSearchDate] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -54,32 +51,32 @@ function Listings() {
     return () => clearTimeout(timeout);
   }, [search]);
 
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (e.key === 'Escape') setZoomImage(null);
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, []);
-
   const filtered = useMemo(() => {
-    let filteredItems = [...items];
-    if (typeFilter === 'lost') filteredItems = filteredItems.filter(i => i.type === 'lost');
-    else if (typeFilter === 'found') filteredItems = filteredItems.filter(i => i.type === 'found');
-    else if (typeFilter === 'resolved') filteredItems = filteredItems.filter(i => i.resolved);
+  let filteredItems = [...items];
 
-    if (debouncedSearch) {
-      const q = debouncedSearch.toLowerCase();
-      filteredItems = filteredItems.filter(i =>
-        i.title?.toLowerCase().includes(q) ||
-        i.description?.toLowerCase().includes(q) ||
-        i.location?.toLowerCase().includes(q) ||
-        i.category?.toLowerCase().includes(q) ||
-        new Date(i.date || i.submittedAt).toLocaleDateString().includes(q)
-      );
-    }
-    return filteredItems;
-  }, [items, typeFilter, debouncedSearch]);
+  if (typeFilter === 'lost') filteredItems = filteredItems.filter(i => i.type === 'lost');
+  else if (typeFilter === 'found') filteredItems = filteredItems.filter(i => i.type === 'found');
+  else if (typeFilter === 'resolved') filteredItems = filteredItems.filter(i => i.resolved);
+
+  if (debouncedSearch) {
+    const q = debouncedSearch.toLowerCase();
+    filteredItems = filteredItems.filter(i =>
+      i.title?.toLowerCase().includes(q) ||
+      i.description?.toLowerCase().includes(q) ||
+      i.location?.toLowerCase().includes(q) ||
+      i.category?.toLowerCase().includes(q)
+    );
+  }
+
+  if (searchDate) {
+    filteredItems = filteredItems.filter(i =>
+      new Date(i.submittedAt).toISOString().slice(0, 10) === searchDate
+    );
+  }
+
+  return filteredItems.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+}, [items, typeFilter, debouncedSearch, searchDate]);
+
 
   const handleLoadMore = () => setVisibleCount(v => v + 6);
 
@@ -90,15 +87,23 @@ function Listings() {
           Browse Lost & Found Items
         </h2>
 
-        {/* Search & Filter */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
-          <input
-            type="text"
-            placeholder="🔍 Search title, location, category, date..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-2/3 px-5 py-3 rounded-full bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-red-400"
-          />
+          <div className="flex flex-col md:flex-row gap-4 mb-4">
+  <input
+    type="text"
+    placeholder="Search by title, location..."
+    className="w-full md:w-2/3 px-4 py-2 rounded-lg border border-gray-300"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+  <input
+    type="date"
+    className="w-full md:w-1/3 px-4 py-2 rounded-lg border border-gray-300"
+    value={searchDate}
+    onChange={(e) => setSearchDate(e.target.value)}
+  />
+</div>
+
           <div className="flex flex-wrap gap-2">
             {FILTER_TYPES.map(type => (
               <button
@@ -119,7 +124,6 @@ function Listings() {
           </div>
         </div>
 
-        {/* Listings */}
         {loading ? (
           <p className="text-center text-purple-300">Loading items...</p>
         ) : error ? (
@@ -148,11 +152,9 @@ function Listings() {
                         alt={item.title || 'Lost/Found item'}
                         className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-110"
                       />
-                      <div
-                        className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold shadow ${
+                      <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold shadow ${
                           item.type === 'lost' ? 'bg-yellow-500 text-black' : 'bg-green-300 text-green-900'
-                        }`}
-                      >
+                        }`}>
                         {item.type}
                       </div>
                       {item.resolved && (
@@ -165,8 +167,11 @@ function Listings() {
                     <div className="mt-4 space-y-2">
                       <div className="flex justify-between items-center">
                         <h3 className="text-lg font-bold">{item.title}</h3>
-                        <span className="text-xs text-white/60">{formatDate(item.date || item.submittedAt)}</span>
+                        <span className="text-xs text-white/60">
+                          {formatDate(item.submittedAt)}
+                        </span>
                       </div>
+
                       <p className="text-sm text-white/80 line-clamp-3">{item.description}</p>
 
                       <div className="flex flex-wrap gap-2 mt-2">
@@ -174,17 +179,28 @@ function Listings() {
                         <Chip text={item.location} colorClass="bg-blue-100 text-blue-900" />
                       </div>
 
+                      {item.resolved && item.resolvedAt && (
+                        <p className="text-xs text-green-300 mt-1">
+                          📅 Resolved on: {formatDate(item.resolvedAt)}
+                        </p>
+                      )}
+
                       {!item.resolved && item.status === 'approved' && (
                         <div className="flex flex-wrap gap-2 mt-4">
                           {item.type === 'lost' && item.foundBySecurity && (
-                            <button
-                              onClick={() =>
-                                window.dispatchEvent(new CustomEvent('openClaimModal', { detail: item }))
-                              }
-                              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full transition"
-                            >
-                              Claim This Item
-                            </button>
+                            <>
+                              <button
+                                onClick={() =>
+                                  window.dispatchEvent(new CustomEvent('openClaimModal', { detail: item }))
+                                }
+                                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full transition"
+                              >
+                                Claim This Item
+                              </button>
+                              <p className="text-yellow-300 text-xs mt-1 ml-1">
+                                📢 Reach security office for this item
+                              </p>
+                            </>
                           )}
                           {item.userEmail && (
                             <button
@@ -218,17 +234,12 @@ function Listings() {
         )}
       </div>
 
-      {/* Zoom Image Modal */}
       {zoomImage && (
         <div
           className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
           onClick={() => setZoomImage(null)}
         >
-          <img
-            src={zoomImage}
-            alt="Zoomed"
-            className="max-w-full max-h-full object-contain p-4"
-          />
+          <img src={zoomImage} alt="Zoomed" className="max-w-full max-h-full object-contain p-4" />
         </div>
       )}
     </section>

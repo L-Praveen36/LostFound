@@ -112,35 +112,46 @@ function MyProfileModal({ onClose }) {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {userItems.map(item => (
-                <article
-                  key={item._id}
-                  className={`bg-white/10 backdrop-blur-md text-white rounded-xl p-4 shadow-md border border-white/10 ${item.resolved ? 'opacity-60' : ''}`}
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-semibold text-lg">{item.title || 'Untitled'}</h4>
-                    <span className={`text-xs px-2 py-1 rounded-full 
-                      ${item.type === 'lost'
-                        ? 'bg-yellow-300 text-yellow-900'
-                        : 'bg-blue-300 text-blue-900'}`}>
-                      {item.type}
-                    </span>
-                  </div>
-                  <p className="text-sm text-white/90 mb-2 line-clamp-2">{item.description || 'No description'}</p>
-                  <p className="text-xs text-white/70">📍 {item.location || 'Unknown'}</p>
-                  <p className="text-xs text-white/70">🗂 Status: {item.status}</p>
-                  <p className="text-xs text-white/70">🎓 School ID: {item.studentId || 'Not provided'}</p>
-                  {item.resolved ? (
-                    <p className="text-xs text-green-400 font-semibold mt-1">✅ Resolved</p>
-                  ) : (
-                    <button
-                      onClick={() => handleResolve(item._id)}
-                      className="mt-3 px-4 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-full transition"
-                    >
-                      Mark Resolved
-                    </button>
-                  )}
-                </article>
-              ))}
+  <article
+    key={item._id}
+    className={`bg-white/10 backdrop-blur-md text-white rounded-xl p-4 shadow-md border border-white/10 ${item.resolved ? 'opacity-60' : ''}`}
+  >
+    <div className="flex justify-between items-center mb-2">
+      <h4 className="font-semibold text-lg">{item.title || 'Untitled'}</h4>
+      <span className={`text-xs px-2 py-1 rounded-full 
+        ${item.type === 'lost'
+          ? 'bg-yellow-300 text-yellow-900'
+          : 'bg-blue-300 text-blue-900'}`}>
+        {item.type}
+      </span>
+    </div>
+
+    <p className="text-sm text-white/90 mb-2 line-clamp-2">{item.description || 'No description'}</p>
+    <p className="text-xs text-white/70">📍 {item.location || 'Unknown'}</p>
+    <p className="text-xs text-white/70">🗂 Status: {item.status}</p>
+    <p className="text-xs text-white/70">🎓 School ID: {item.studentId || 'Not provided'}</p>
+
+    {/* Show claim message for security-found items */}
+    {!item.resolved && item.status === 'approved' && item.foundBySecurity && (
+      <p className="text-sm text-yellow-400 mt-2">📢 Reach security office for this item</p>
+    )}
+
+    {/* Show resolved info */}
+    {item.resolved ? (
+      <p className="text-xs text-green-400 font-semibold mt-1">
+        ✅ Resolved on {new Date(item.resolvedAt).toLocaleDateString()}
+      </p>
+    ) : (
+      <button
+        onClick={() => handleResolve(item._id)}
+        className="mt-3 px-4 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-full transition"
+      >
+        Mark Resolved
+      </button>
+    )}
+  </article>
+))}
+
             </div>
           )}
         </motion.div>

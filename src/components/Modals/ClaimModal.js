@@ -6,7 +6,6 @@ function ClaimModal({ visible, onClose, item }) {
   const [message, setMessage] = useState('');
   const inputRef = useRef(null);
 
-  // Focus on the first input when modal appears
   useEffect(() => {
     if (visible) {
       setTimeout(() => inputRef.current?.focus(), 100);
@@ -36,7 +35,7 @@ function ClaimModal({ visible, onClose, item }) {
         throw new Error(err.message || 'Failed to claim item');
       }
 
-      setMessage('✅ Successfully claimed! This item will be reviewed.');
+      setMessage('✅ Successfully claimed! Reach security office for collection.');
       setTimeout(() => {
         onClose();
         window.location.reload();

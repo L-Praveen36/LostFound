@@ -267,6 +267,10 @@ const AdminPanel = ({ onClose }) => {
                     <p><strong>School ID:</strong> {item.schoolId || 'N/A'}</p>
                     <p>
                       <strong>Status:</strong>{' '}
+                      {item.resolved && item.resolvedAt && (
+  <p><strong>Date Resolved:</strong> {formatDateDMY(item.resolvedAt)}</p>
+)}
+
                       <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadge(item.status)}`}>
                         {item.status}
                       </span>
