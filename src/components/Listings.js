@@ -89,21 +89,21 @@ function Listings() {
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
           
-   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+   
             <input
               type="text"
               placeholder="Search by title, location, email..."
-              className="w-full md:w-2/3 px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-70 focus:outline-none"
+              className="w-full md:w-2/4 px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-70 focus:outline-none"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <input
               type="date"
-              className="w-full md:w-1/3 px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-70 focus:outline-none"
+              className="w-full md:w-1/4 px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-70 focus:outline-none"
               value={searchDate}
               onChange={(e) => setSearchDate(e.target.value)}
             />
-          </div>
+          
 
           <div className="flex flex-wrap gap-2">
             {FILTER_TYPES.map(type => (
