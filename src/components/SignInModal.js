@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '../firebase'; // Adjust path if needed
+import { auth } from '../firebase'; // Adjust the path if needed
 
 function SignInModal({ onClose, onSuccess }) {
   const [mode, setMode] = useState('otp'); // 'otp' or 'google'
@@ -34,8 +34,11 @@ function SignInModal({ onClose, onSuccess }) {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      saveUserLocally(user);
-      onSuccess(user.accessToken || '');
+
+      const token = await user.getIdToken(); // ✅ Get proper token
+      saveUserLocally({ ...user, token });
+
+      onSuccess(token);
       onClose();
     } catch (err) {
       console.error(err);
