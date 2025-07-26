@@ -76,7 +76,9 @@ function SignInModal({ onClose, onSuccess }) {
     e.preventDefault();
     setError('');
     setLoading(true);
-
+   
+    console.log('Sending OTP verification:', { email, otp }); // Debug log
+    
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/verify-otp`, {
         method: 'POST',
