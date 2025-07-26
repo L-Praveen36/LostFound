@@ -1,129 +1,144 @@
 import React, { useState } from 'react';
-import { auth, googleProvider } from '../firebase';
-import {
-  sendSignInLinkToEmail,
-  signInWithPopup,
-} from 'firebase/auth';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
-function SignInModal({ onClose }) {
+function SignInModal({ onClose, onSuccess }) {
   const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
+  const [otp, setOtp] = useState('');
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const saveUserLocally = (user) => {
-    const userData = {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName || user.email?.split('@')[0],
-      photoURL: user.photoURL,
-    };
-    localStorage.setItem('user', JSON.stringify(userData));
+  const maskedEmail = (email) => {
+    const [user, domain] = email.split('@');
+    return user[0] + '***' + user.slice(-1) + '@' + domain;
   };
 
-  const handleEmailLinkSignIn = async () => {
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
     setError('');
-    if (!email) {
-      setError('Please enter your email.');
-      return;
-    }
     setLoading(true);
+
     try {
-      const actionCodeSettings = {
-        url: 'https://lostfound-api.netlify.app',
-        handleCodeInApp: true,
-      };
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      localStorage.setItem('emailForSignIn', email);
-      alert('📩 A sign-in link has been sent to your email.');
-      onClose();
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setStep(2);
+      } else {
+        setError(data.message || 'Something went wrong');
+      }
     } catch (err) {
-      console.error('Email link error:', err);
-      setError(err.message || 'Failed to send sign-in link.');
+      setError('Network error');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleAuth = async () => {
-  setError('');
-  setLoading(true);
-  try {
-    const result = await signInWithPopup(auth, googleProvider);
-    const user = result.user;
-    saveUserLocally(user);
-    onClose();
-  } catch (err) {
-    console.error('Google auth error:', err);
-    if (err.code === 'auth/popup-closed-by-user') {
-      setError('Popup closed before sign-in. Please try again.');
-    } else if (err.code === 'auth/cancelled-popup-request') {
-      setError('Multiple popups detected. Please wait...');
-    } else {
-      setError('Google Sign-In failed. Try again later.');
-    }
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        // ✅ Save token and user info
+        localStorage.setItem('token', data.token);
+        saveUserLocally({ email, token: data.token });
+
+        onSuccess(data.token);
+        onClose();
+      } else {
+        setError(data.message || 'Invalid OTP');
+      }
+    } catch (err) {
+      setError('Network error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveUserLocally = (user) => {
+    const userData = {
+      uid: user.email,
+      email: user.email,
+      displayName: user.email.split('@')[0],
+      photoURL: null,
+      token: user.token,
+    };
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
 
   return (
-    <AnimatePresence>
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
       <motion.div
-        className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md"
       >
-        <motion.div
-          className="glass-card p-8 w-full max-w-md rounded-2xl shadow-2xl relative border border-white border-opacity-20 bg-white bg-opacity-10 backdrop-blur-xl"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-        >
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-white hover:text-red-400 text-xl"
-          >
-            &times;
-          </button>
-          <h2 className="text-2xl font-bold mb-6 text-center text-white">🔐 Sign In</h2>
+        <h2 className="text-xl font-bold mb-4 text-center">
+          {step === 1 ? 'Login with Email' : `Enter OTP sent to ${maskedEmail(email)}`}
+        </h2>
 
-          <div className="space-y-4">
-            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+        {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
 
+        {step === 1 ? (
+          <form onSubmit={handleSendOtp}>
             <input
               type="email"
-              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              placeholder="you@example.com"
+              required
+              className="w-full border rounded px-4 py-2 mb-4"
             />
-
             <button
-              onClick={handleEmailLinkSignIn}
+              type="submit"
               disabled={loading}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-full transition font-semibold"
+              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
             >
-              {loading ? 'Sending Link...' : 'Sign In with Email'}
+              {loading ? 'Sending...' : 'Send OTP'}
             </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerifyOtp}>
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              placeholder="Enter OTP"
+              required
+              className="w-full border rounded px-4 py-2 mb-4"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+            >
+              {loading ? 'Verifying...' : 'Verify OTP'}
+            </button>
+          </form>
+        )}
 
-            <div className="text-center text-white opacity-70">or</div>
-
-           <button
-  onClick={handleGoogleAuth}
-  disabled={loading}
-  className={`w-full bg-white bg-opacity-20 text-white py-3 rounded-full border border-white border-opacity-30 hover:bg-white hover:bg-opacity-30 transition font-medium ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
->
-  {loading ? 'Signing In...' : 'Sign In with Google'}
-</button>
-
-          </div>
-        </motion.div>
+        <button
+          onClick={onClose}
+          className="mt-4 w-full text-gray-500 hover:text-gray-700 text-sm"
+        >
+          Cancel
+        </button>
       </motion.div>
-    </AnimatePresence>
+    </div>
   );
 }
 
