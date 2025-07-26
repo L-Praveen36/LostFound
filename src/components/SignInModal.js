@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { auth } from '../firebase'; // Adjust path if needed
 
 function SignInModal({ onClose, onSuccess }) {
+  const [mode, setMode] = useState('otp'); // 'otp' or 'google'
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1);
@@ -13,11 +16,39 @@ function SignInModal({ onClose, onSuccess }) {
     return user[0] + '***' + user.slice(-1) + '@' + domain;
   };
 
+  const saveUserLocally = (user) => {
+    const userData = {
+      uid: user.uid || user.email,
+      email: user.email,
+      displayName: user.displayName || user.email?.split('@')[0],
+      photoURL: user.photoURL || null,
+      token: user.token || null,
+    };
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      saveUserLocally(user);
+      onSuccess(user.accessToken || '');
+      onClose();
+    } catch (err) {
+      console.error(err);
+      setError('Google sign-in failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/send-otp`, {
         method: 'POST',
@@ -52,10 +83,8 @@ function SignInModal({ onClose, onSuccess }) {
 
       const data = await res.json();
       if (res.ok) {
-        // ✅ Save token and user info
         localStorage.setItem('token', data.token);
         saveUserLocally({ email, token: data.token });
-
         onSuccess(data.token);
         onClose();
       } else {
@@ -68,72 +97,98 @@ function SignInModal({ onClose, onSuccess }) {
     }
   };
 
-  const saveUserLocally = (user) => {
-    const userData = {
-      uid: user.email,
-      email: user.email,
-      displayName: user.email.split('@')[0],
-      photoURL: null,
-      token: user.token,
-    };
-    localStorage.setItem('user', JSON.stringify(userData));
-  };
-
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md"
+        className="backdrop-blur-md bg-white bg-opacity-10 border border-white border-opacity-20 rounded-2xl p-8 w-full max-w-md shadow-2xl"
       >
-        <h2 className="text-xl font-bold mb-4 text-center">
-          {step === 1 ? 'Login with Email' : `Enter OTP sent to ${maskedEmail(email)}`}
-        </h2>
+        <h2 className="text-2xl font-bold mb-4 text-center text-white">Sign In</h2>
 
-        {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
+        {/* Mode Switch */}
+        <div className="flex justify-center space-x-4 mb-6">
+          <button
+            className={`px-4 py-2 rounded-full ${mode === 'otp'
+              ? 'bg-purple-600 text-white'
+              : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'}`}
+            onClick={() => setMode('otp')}
+          >
+            Email OTP
+          </button>
+          <button
+            className={`px-4 py-2 rounded-full ${mode === 'google'
+              ? 'bg-purple-600 text-white'
+              : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'}`}
+            onClick={() => setMode('google')}
+          >
+            Google
+          </button>
+        </div>
 
-        {step === 1 ? (
-          <form onSubmit={handleSendOtp}>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-              className="w-full border rounded px-4 py-2 mb-4"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-            >
-              {loading ? 'Sending...' : 'Send OTP'}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleVerifyOtp}>
-            <input
-              type="text"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              placeholder="Enter OTP"
-              required
-              className="w-full border rounded px-4 py-2 mb-4"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
-            >
-              {loading ? 'Verifying...' : 'Verify OTP'}
-            </button>
-          </form>
+        {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
+
+        {/* Google Sign-In */}
+        {mode === 'google' && (
+          <button
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-full transition font-semibold"
+          >
+            {loading ? 'Signing in...' : 'Continue with Google'}
+          </button>
+        )}
+
+        {/* OTP Sign-In */}
+        {mode === 'otp' && (
+          <div>
+            {step === 1 ? (
+              <form onSubmit={handleSendOtp}>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  className="w-full px-4 py-3 mb-4 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-full"
+                >
+                  {loading ? 'Sending OTP...' : 'Send OTP'}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyOtp}>
+                <p className="text-sm text-white text-center mb-2">
+                  Enter the OTP sent to {maskedEmail(email)}
+                </p>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="Enter OTP"
+                  required
+                  className="w-full px-4 py-3 mb-4 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-full"
+                >
+                  {loading ? 'Verifying...' : 'Verify OTP'}
+                </button>
+              </form>
+            )}
+          </div>
         )}
 
         <button
           onClick={onClose}
-          className="mt-4 w-full text-gray-500 hover:text-gray-700 text-sm"
+          className="mt-6 w-full text-white text-sm hover:underline"
         >
           Cancel
         </button>
