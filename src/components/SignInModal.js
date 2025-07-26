@@ -53,7 +53,7 @@ function SignInModal({ onClose, onSuccess }) {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/send-otp`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -78,7 +78,7 @@ function SignInModal({ onClose, onSuccess }) {
     setLoading(true);
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/verify-otp`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),
