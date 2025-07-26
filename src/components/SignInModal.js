@@ -46,17 +46,27 @@ function SignInModal({ onClose }) {
   };
 
   const handleGoogleAuth = async () => {
-    setError('');
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      saveUserLocally(user);
-      onClose();
-    } catch (err) {
-      console.error('Google auth error:', err);
-      setError('Google Sign-In failed.');
+  setError('');
+  setLoading(true);
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+    saveUserLocally(user);
+    onClose();
+  } catch (err) {
+    console.error('Google auth error:', err);
+    if (err.code === 'auth/popup-closed-by-user') {
+      setError('Popup closed before sign-in. Please try again.');
+    } else if (err.code === 'auth/cancelled-popup-request') {
+      setError('Multiple popups detected. Please wait...');
+    } else {
+      setError('Google Sign-In failed. Try again later.');
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <AnimatePresence>
@@ -102,12 +112,14 @@ function SignInModal({ onClose }) {
 
             <div className="text-center text-white opacity-70">or</div>
 
-            <button
-              onClick={handleGoogleAuth}
-              className="w-full bg-white bg-opacity-20 text-white py-3 rounded-full border border-white border-opacity-30 hover:bg-white hover:bg-opacity-30 transition font-medium"
-            >
-              Sign In with Google
-            </button>
+           <button
+  onClick={handleGoogleAuth}
+  disabled={loading}
+  className={`w-full bg-white bg-opacity-20 text-white py-3 rounded-full border border-white border-opacity-30 hover:bg-white hover:bg-opacity-30 transition font-medium ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+>
+  {loading ? 'Signing In...' : 'Sign In with Google'}
+</button>
+
           </div>
         </motion.div>
       </motion.div>
