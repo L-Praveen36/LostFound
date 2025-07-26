@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../firebase'; // Adjust the path if needed
 
-function SignInModal({ onClose, onSuccess }) {
+function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
+
   const [mode, setMode] = useState('otp'); // 'otp' or 'google'
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
