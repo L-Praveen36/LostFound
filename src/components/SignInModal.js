@@ -78,28 +78,31 @@ function SignInModal({ onClose, onSuccess }) {
     setLoading(true);
    
     console.log('Sending OTP verification:', { email, otp }); // Debug log
-    
-    try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp }),
-      });
+    console.log('API URL:', process.env.REACT_APP_API_URL);
 
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('token', data.token);
-        saveUserLocally({ email, token: data.token });
-        onSuccess(data.token);
-        onClose();
-      } else {
-        setError(data.message || 'Invalid OTP');
-      }
-    } catch (err) {
-      setError('Network error');
-    } finally {
-      setLoading(false);
-    }
+    try {
+  const url = `${process.env.REACT_APP_API_URL}/api/auth/verify-otp`;
+  console.log('Sending OTP verification to:', url);
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, otp }),
+  });
+
+  const data = await res.json();
+  if (res.ok) {
+    localStorage.setItem('token', data.token);
+    saveUserLocally({ email, token: data.token });
+    onSuccess(data.token);
+    onClose();
+  } else {
+    console.error('OTP verify failed:', data);
+    setError(data.message || 'Invalid OTP');
+  }
+} catch (err) {
+  console.error('Verify OTP error:', err);
+  setError('Network error');
+}
   };
 
   return (
