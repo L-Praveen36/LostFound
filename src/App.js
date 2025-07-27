@@ -18,7 +18,7 @@ import QrModal from './components/Modals/QrModal';
 import { useAuth } from './AuthContext';
 
 function App() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
 
   // 🧾 Modal state
   const [showSignIn, setShowSignIn] = useState(false);
@@ -62,6 +62,12 @@ function App() {
     setShowAdminSignIn(false);
     setShowAdminPanel(true);
   };
+   
+  const handleUserLogin = (token) => {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  if (storedUser) setUser(storedUser); // ✅ This will now work
+  setShowSignIn(false);
+};
 
   return (
   <div className="relative font-sans min-h-screen text-white">
@@ -94,7 +100,12 @@ function App() {
     )}
 
     {/* 🔐 User */}
-    {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
+    {showSignIn && (
+  <SignInModal
+    onClose={() => setShowSignIn(false)}
+    onSuccess={handleUserLogin} // ✅ use the function
+  />
+)}
 
     {/* 🧾 Item modals */}
     {selectedClaimItem && (
