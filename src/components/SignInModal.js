@@ -1,109 +1,98 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '../firebase'; // Adjust the path if needed
+import {
+  auth,
+  googleProvider,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
+} from '../firebase';
+import { signInWithPopup } from 'firebase/auth';
 
 function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
-
-  const [mode, setMode] = useState('otp'); // 'otp' or 'google'
+  const [mode, setMode] = useState('email'); // 'email' or 'google'
   const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [step, setStep] = useState(1);
+  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const maskedEmail = (email) => {
-    const [user, domain] = email.split('@');
-    return user[0] + '***' + user.slice(-1) + '@' + domain;
-  };
+  // Handle automatic sign-in if redirected via email link
+  useEffect(() => {
+    const url = window.location.href;
+    if (isSignInWithEmailLink(auth, url)) {
+      const storedEmail = window.localStorage.getItem('emailForSignIn');
+      const promptEmail = !storedEmail ? window.prompt('Please enter your email') : storedEmail;
 
-  const saveUserLocally = (user) => {
-    const userData = {
-      uid: user.uid || user.email,
-      email: user.email,
-      displayName: user.displayName || user.email?.split('@')[0],
-      photoURL: user.photoURL || null,
-      token: user.token || null,
-    };
-    localStorage.setItem('user', JSON.stringify(userData));
-  };
+      if (!promptEmail) return;
+
+      signInWithEmailLink(auth, promptEmail, url)
+        .then(async (result) => {
+          const user = result.user;
+          const token = await user.getIdToken();
+          const userData = {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName || user.email.split('@')[0],
+            photoURL: user.photoURL,
+            token,
+          };
+          localStorage.setItem('user', JSON.stringify(userData));
+          window.localStorage.removeItem('emailForSignIn');
+          onSuccess(userData);
+          onClose();
+        })
+        .catch((error) => {
+          console.error('Email link sign-in error:', error);
+          setError('Failed to sign in with email link.');
+        });
+    }
+  }, [onClose, onSuccess]);
 
   const handleGoogleSignIn = async () => {
     setError('');
     setLoading(true);
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-
-      const token = await user.getIdToken(); // ✅ Get proper token
-      saveUserLocally({ ...user, token });
-
-      onSuccess(token);
+      const token = await user.getIdToken();
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        token,
+      };
+      localStorage.setItem('user', JSON.stringify(userData));
+      onSuccess(userData);
       onClose();
     } catch (err) {
-      console.error(err);
+      console.error('Google sign-in error:', err);
       setError('Google sign-in failed');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSendOtp = async (e) => {
+  const handleSendLink = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/send-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
+      const actionCodeSettings = {
+  url: 'https://lostfound-api.netlify.app',  // ✅ Static root URL — NOT window.location.href
+  handleCodeInApp: true,
+};
 
-      const data = await res.json();
-      if (res.ok) {
-        setStep(2);
-      } else {
-        setError(data.message || 'Something went wrong');
-      }
+
+      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      window.localStorage.setItem('emailForSignIn', email);
+      setMessage(`Sign-in link sent to ${email}`);
     } catch (err) {
-      setError('Network error');
+      console.error('Send sign-in link error:', err);
+      setError('Failed to send sign-in link');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-   
-    console.log('Sending OTP verification:', { email, otp }); // Debug log
-    console.log('API URL:', process.env.REACT_APP_API_URL);
-
-    try {
-  const url = `${process.env.REACT_APP_API_URL}/api/auth/verify-otp`;
-  console.log('Sending OTP verification to:', url);
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, otp }),
-  });
-
-  const data = await res.json();
-  if (res.ok) {
-    localStorage.setItem('token', data.token);
-    saveUserLocally({ email, token: data.token });
-    onSuccess(data.token);
-    onClose();
-  } else {
-    console.error('OTP verify failed:', data);
-    setError(data.message || 'Invalid OTP');
-  }
-} catch (err) {
-  console.error('Verify OTP error:', err);
-  setError('Network error');
-}
   };
 
   return (
@@ -116,20 +105,15 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
       >
         <h2 className="text-2xl font-bold mb-4 text-center text-white">Sign In</h2>
 
-        {/* Mode Switch */}
         <div className="flex justify-center space-x-4 mb-6">
           <button
-            className={`px-4 py-2 rounded-full ${mode === 'otp'
-              ? 'bg-purple-600 text-white'
-              : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'}`}
-            onClick={() => setMode('otp')}
+            className={`px-4 py-2 rounded-full ${mode === 'email' ? 'bg-purple-600' : 'bg-white bg-opacity-20'} text-white`}
+            onClick={() => setMode('email')}
           >
-            Email OTP
+            Email Link
           </button>
           <button
-            className={`px-4 py-2 rounded-full ${mode === 'google'
-              ? 'bg-purple-600 text-white'
-              : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'}`}
+            className={`px-4 py-2 rounded-full ${mode === 'google' ? 'bg-purple-600' : 'bg-white bg-opacity-20'} text-white`}
             onClick={() => setMode('google')}
           >
             Google
@@ -137,6 +121,7 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
         </div>
 
         {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
+        {message && <p className="text-green-400 text-sm text-center mb-4">{message}</p>}
 
         {/* Google Sign-In */}
         {mode === 'google' && (
@@ -149,50 +134,25 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
           </button>
         )}
 
-        {/* OTP Sign-In */}
-        {mode === 'otp' && (
-          <div>
-            {step === 1 ? (
-              <form onSubmit={handleSendOtp}>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  required
-                  className="w-full px-4 py-3 mb-4 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-full"
-                >
-                  {loading ? 'Sending OTP...' : 'Send OTP'}
-                </button>
-              </form>
-            ) : (
-              <form onSubmit={handleVerifyOtp}>
-                <p className="text-sm text-white text-center mb-2">
-                  Enter the OTP sent to {maskedEmail(email)}
-                </p>
-                <input
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  placeholder="Enter OTP"
-                  required
-                  className="w-full px-4 py-3 mb-4 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-green-400"
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-full"
-                >
-                  {loading ? 'Verifying...' : 'Verify OTP'}
-                </button>
-              </form>
-            )}
-          </div>
+        {/* Email Link Sign-In */}
+        {mode === 'email' && (
+          <form onSubmit={handleSendLink}>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+              className="w-full px-4 py-3 mb-4 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-full"
+            >
+              {loading ? 'Sending link...' : 'Send Sign-In Link'}
+            </button>
+          </form>
         )}
 
         <button
