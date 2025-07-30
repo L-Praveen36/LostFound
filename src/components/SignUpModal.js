@@ -27,7 +27,16 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
     setError("");
     setLoading(true);
     try {
-      await axios.post("/api/auth/send-otp", { email: formData.email });
+      const user = auth.currentUser;
+      const token = user ? await user.getIdToken() : null;
+
+      await axios.post(
+        "/api/auth/send-otp",
+        { email: formData.email },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
+      );
       setStep("otp");
     } catch (err) {
       console.error(err);
@@ -47,7 +56,6 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
       });
 
       if (res.status === 200) {
-        // 🔄 Upload profile picture if present
         let photoURL = "";
 
         if (formData.profileFile) {
@@ -61,7 +69,6 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
           photoURL = formData.profilePic;
         }
 
-        // ✅ Create Firebase user
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           formData.email,
