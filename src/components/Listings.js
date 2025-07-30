@@ -22,7 +22,8 @@ function Listings() {
   const [searchDate, setSearchDate] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const [error, setError] = useState(null);
+
   const [zoomImage, setZoomImage] = useState(null);
   const [visibleCount, setVisibleCount] = useState(6);
 
@@ -124,6 +125,18 @@ function Listings() {
         ))}
       </div>
     </div>
+     {loading && (
+  <div className="flex justify-center my-6">
+    <div className="w-8 h-8 border-4 border-dashed rounded-full animate-spin border-[#ff4d4f]"></div>
+  </div>
+)}
+
+{error && (
+  <p className="text-center text-red-500 dark:text-red-400 text-lg mb-6">
+    ❌ {error}
+  </p>
+)}
+
 
     {/* Cards */}
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
