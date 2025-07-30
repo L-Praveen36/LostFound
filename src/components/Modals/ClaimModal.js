@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-function ClaimModal({ visible, onClose, item }) {
+function ClaimModal({ visible, onClose, item, theme = 'dark' }) {
   const [form, setForm] = useState({ rollNo: '', name: '', email: '' });
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
@@ -51,16 +51,26 @@ function ClaimModal({ visible, onClose, item }) {
     if (e.key === 'Escape') onClose();
   };
 
+  const isDark = theme === 'dark';
+
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade"
       onKeyDown={handleEscape}
       tabIndex={-1}
     >
-      <div className="glass-card max-w-md w-full p-8 rounded-2xl relative shadow-xl">
+      <div
+        className={`w-full max-w-md p-8 rounded-2xl relative shadow-xl ${
+          isDark
+            ? 'glass-card text-white'
+            : 'bg-white text-gray-800 border border-gray-300'
+        }`}
+      >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+          className={`absolute top-4 right-4 text-xl font-bold ${
+            isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-700'
+          }`}
           aria-label="Close modal"
         >
           &times;
@@ -68,13 +78,15 @@ function ClaimModal({ visible, onClose, item }) {
 
         <h3 className="text-2xl font-semibold mb-6 text-center">Claim This Item</h3>
 
-        <form onSubmit={handleSubmit} className="space-y-4 ">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1 ">Roll Number</label>
+            <label className="block text-sm font-medium mb-1">Roll Number</label>
             <input
               ref={inputRef}
               name="rollNo"
-              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 text-black"
+              className={`w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                isDark ? 'bg-white text-black' : 'text-black'
+              }`}
               placeholder="e.g. 21CS123"
               value={form.rollNo}
               onChange={handleChange}
@@ -86,7 +98,9 @@ function ClaimModal({ visible, onClose, item }) {
             <label className="block text-sm font-medium mb-1">Full Name</label>
             <input
               name="name"
-              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 text-black"
+              className={`w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                isDark ? 'bg-white text-black' : 'text-black'
+              }`}
               placeholder="Your name"
               value={form.name}
               onChange={handleChange}
@@ -99,7 +113,9 @@ function ClaimModal({ visible, onClose, item }) {
             <input
               name="email"
               type="email"
-              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 text-black"
+              className={`w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                isDark ? 'bg-white text-black' : 'text-black'
+              }`}
               placeholder="yourid@college.edu"
               value={form.email}
               onChange={handleChange}
@@ -108,7 +124,11 @@ function ClaimModal({ visible, onClose, item }) {
           </div>
 
           {message && (
-            <div className={`text-center text-sm font-medium ${message.startsWith('✅') ? 'text-green-600' : 'text-red-600'}`}>
+            <div
+              className={`text-center text-sm font-medium ${
+                message.startsWith('✅') ? 'text-green-600' : 'text-red-600'
+              }`}
+            >
               {message}
             </div>
           )}
@@ -117,7 +137,11 @@ function ClaimModal({ visible, onClose, item }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border rounded-full hover:bg-gray-100 transition"
+              className={`px-4 py-2 border rounded-full transition ${
+                isDark
+                  ? 'border-gray-400 text-white hover:bg-white hover:text-black'
+                  : 'border-gray-400 text-gray-700 hover:bg-gray-100'
+              }`}
               disabled={submitting}
             >
               Cancel

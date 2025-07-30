@@ -87,7 +87,10 @@ function Hero() {
   }, []);
 
   return (
-    <section id="home" className="relative bg-gradient-to-br from-[#1a1330] via-[#0d0b1f] to-[#1a1330] text-white overflow-hidden min-h-screen flex items-center">
+    <section
+      id="home"
+      className="relative bg-white/80 dark:bg-gradient-to-br dark:from-[#1a1330] dark:via-[#0d0b1f] dark:to-[#1a1330] text-gray-900 dark:text-white overflow-hidden min-h-screen flex items-center transition-colors"
+    >
       <div
         ref={containerRef}
         id="canvas-container"
@@ -101,19 +104,24 @@ function Hero() {
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight drop-shadow-xl">
               Lost Something on Campus?
             </h1>
-            <p className="text-xl mb-8 opacity-90 max-w-lg">
+            <p className="text-xl mb-8 opacity-90 max-w-lg text-gray-700 dark:text-purple-100">
               Our smart lost & found system helps students reunite with their belongings faster than ever before.
             </p>
+
+            {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+              {/* Primary Action - Violet */}
               <a
                 href="#listings"
-                className="px-8 py-3 rounded-full font-medium border-2 border-white text-white hover:bg-white hover:text-purple-700 transition backdrop-blur-lg bg-white/10"
+                className="px-8 py-3 rounded-full font-semibold bg-violet-600 hover:bg-violet-700 text-white transition shadow-lg backdrop-blur-md"
               >
                 Browse Found Items
               </a>
+
+              {/* Secondary Action - Emerald */}
               <a
                 href="#report"
-                className="px-8 py-3 rounded-full font-medium border-2 border-white text-white hover:bg-white hover:text-purple-700 transition backdrop-blur-lg bg-white/10"
+                className="px-8 py-3 rounded-full font-semibold bg-emerald-500 hover:bg-emerald-600 text-white transition shadow-lg backdrop-blur-md"
               >
                 Report Lost Item
               </a>
@@ -123,7 +131,7 @@ function Hero() {
           {/* Right Side */}
           <div className="md:w-1/2 flex justify-center">
             <div className="relative w-full max-w-md">
-              <div className="glass-card p-6 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
+              <div className="glass-card p-6 rounded-3xl bg-white/50 dark:bg-white/10 backdrop-blur-xl border border-white/30 shadow-xl transition">
                 <lottie-player
                   src="https://assets1.lottiefiles.com/packages/lf20_5tkzkblw.json"
                   background="transparent"
@@ -133,8 +141,12 @@ function Hero() {
                   autoplay
                 ></lottie-player>
                 <div className="text-center mt-4">
-                  <h3 className="text-xl font-semibold">🎉 Recent Reunions</h3>
-                  <p className="text-sm text-purple-200">87 items returned this week!</p>
+                  <h3 className="text-xl font-semibold text-purple-700 dark:text-purple-300">
+                    🎉 Recent Reunions
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-purple-200">
+                    87 items returned this week!
+                  </p>
                 </div>
               </div>
             </div>

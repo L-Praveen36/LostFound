@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from '../AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function ReportForm({ isSignedIn, onRequireSignIn }) {
   const { user } = useAuth();
@@ -67,16 +67,13 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
     payload.append('submittedBy', formData.submittedBy);
     payload.append('userEmail', formData.userEmail);
     payload.append('phone', formData.phone);
-payload.append('contactInfo', formData.contactInfo || '');
-payload.append('studentId', formData.studentId || '');
-
-    selectedImages.forEach((file) => payload.append('images', file));
+    payload.append('contactInfo', formData.contactInfo || '');
+    payload.append('studentId', formData.studentId || '');
+    selectedImages.forEach(file => payload.append('images', file));
 
     try {
       await axios.post('https://lostfound-api.onrender.com/api/items', payload);
       toast.success("✅ Item submitted successfully!");
-
-      // Reset
       setFormData({
         title: '',
         description: '',
@@ -102,41 +99,44 @@ payload.append('studentId', formData.studentId || '');
   const locationOptions = ['Library', 'Cafeteria', 'Dormitories', 'Sports Complex', 'Lecture Halls', 'Other'];
 
   return (
-    <section id="report" className="py-20 text-white">
+    <section id="report" className="py-20 text-gray-800 dark:text-white transition-colors">
       <ToastContainer position="top-right" autoClose={5000} />
-      <div className="bg-gradient-to-r from-[#1a1330] via-[#2c1a4e] to-[#1a1330] text-white shadow-md z-50 relative">
-        <h2 className="text-4xl font-bold text-center mb-12">Report Lost or Found Item</h2>
+      <div className="bg-white/70 dark:bg-white/10 backdrop-blur-md shadow-lg rounded-xl mx-auto max-w-5xl px-6 py-12">
+        <h2 className="text-4xl font-bold text-center mb-12 text-purple-700 dark:text-purple-300">
+          Report Lost or Found Item
+        </h2>
 
-       <div className="glass-card max-w-3xl mx-auto p-8 rounded-2xl">
-  <div className="flex border-b border-white/20 mb-8 space-x-4">
-    <button
-      className={`px-4 py-2 font-medium border-b-4 transition duration-200 ${
-        type === 'lost'
-          ? 'border-blue-300 text-white'
-          : 'border-transparent text-white/50 hover:text-white hover:border-white/30'
-      }`}
-      onClick={() => setType('lost')}
-    >
-      Lost Item
-    </button>
-    <button
-      className={`px-4 py-2 font-medium border-b-4 transition duration-200 ${
-        type === 'found'
-          ? 'border-blue-300 text-white'
-          : 'border-transparent text-white/50 hover:text-white hover:border-white/30'
-      }`}
-      onClick={() => setType('found')}
-    >
-      Found Item
-    </button>
-  </div>
-
+        <div className="max-w-3xl mx-auto">
+          <div className="flex border-b border-white/20 mb-8 space-x-4 justify-center">
+            <button
+              type="button"
+              className={`px-4 py-2 font-medium border-b-4 transition ${
+                type === 'lost'
+                  ? 'border-blue-400 text-blue-600 dark:text-blue-300'
+                  : 'border-transparent text-gray-500 dark:text-white/40 hover:text-purple-500'
+              }`}
+              onClick={() => setType('lost')}
+            >
+              Lost Item
+            </button>
+            <button
+              type="button"
+              className={`px-4 py-2 font-medium border-b-4 transition ${
+                type === 'found'
+                  ? 'border-green-400 text-green-600 dark:text-green-300'
+                  : 'border-transparent text-gray-500 dark:text-white/40 hover:text-purple-500'
+              }`}
+              onClick={() => setType('found')}
+            >
+              Found Item
+            </button>
+          </div>
 
           <form onSubmit={handleSubmit}>
             {/* Title & Category */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block mb-2">Item Name</label>
+                <label className="block mb-2 font-semibold">Item Name</label>
                 <input
                   type="text"
                   name="title"
@@ -147,8 +147,8 @@ payload.append('studentId', formData.studentId || '');
                   placeholder="e.g. iPhone 12, Backpack"
                 />
               </div>
-              <div >
-                <label className="block mb-2 ">Category</label>
+              <div>
+                <label className="block mb-2 font-semibold">Category</label>
                 <select
                   name="category"
                   value={formData.category}
@@ -157,25 +157,29 @@ payload.append('studentId', formData.studentId || '');
                   className="input"
                 >
                   <option value="">Select Category</option>
-                  <option className='text-black'>Electronics</option>
-                  <option className='text-black'>Accessories</option>
-                  <option className='text-black'>Books</option>
-                  <option className='text-black'>Clothing</option>
-                  <option className='text-black'>Other</option>
+                  <option>Electronics</option>
+                  <option>Accessories</option>
+                  <option>Books</option>
+                  <option>Clothing</option>
+                  <option>Other</option>
                 </select>
               </div>
             </div>
 
             {/* Location */}
             <div className="mb-6">
-              <label className="block mb-2">Location</label>
+              <label className="block mb-2 font-semibold">Location</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-2">
                 {locationOptions.map(loc => (
                   <button
                     key={loc}
                     type="button"
                     onClick={() => setLocation(loc)}
-                    className={`px-4 py-2 rounded-lg border border-white/10 ${location === loc ? 'bg-purple-300/10 text-purple-200' : 'hover:bg-white/10'}`}
+                    className={`px-4 py-2 rounded-lg border ${
+                      location === loc
+                        ? 'bg-purple-600/20 text-purple-700 dark:text-purple-200'
+                        : 'border-white/20 bg-white/10 text-gray-700 dark:text-white/70 hover:bg-purple-100/10'
+                    }`}
                   >
                     {loc}
                   </button>
@@ -195,7 +199,7 @@ payload.append('studentId', formData.studentId || '');
 
             {/* Date */}
             <div className="mb-6">
-              <label className="block mb-2">Date Lost/Found</label>
+              <label className="block mb-2 font-semibold">Date Lost/Found</label>
               <input
                 type="date"
                 max={new Date().toISOString().split("T")[0]}
@@ -207,7 +211,7 @@ payload.append('studentId', formData.studentId || '');
 
             {/* Description */}
             <div className="mb-6">
-              <label className="block mb-2">Description</label>
+              <label className="block mb-2 font-semibold">Description</label>
               <textarea
                 name="description"
                 value={formData.description}
@@ -220,7 +224,7 @@ payload.append('studentId', formData.studentId || '');
 
             {/* Upload */}
             <div className="mb-6">
-              <label className="block mb-2">Upload Photos (optional, &lt;2MB each)</label>
+              <label className="block mb-2 font-semibold">Upload Photos (optional)</label>
               <input
                 type="file"
                 multiple
@@ -230,7 +234,9 @@ payload.append('studentId', formData.studentId || '');
                 className="input"
               />
               {selectedImages.length > 0 && (
-                <p className="text-sm text-purple-200 mt-2">{selectedImages.length} image(s) selected</p>
+                <p className="text-sm text-purple-600 dark:text-purple-300 mt-2">
+                  {selectedImages.length} image(s) selected
+                </p>
               )}
             </div>
 
@@ -289,12 +295,12 @@ payload.append('studentId', formData.studentId || '');
             <div className="text-center">
               <button
                 type="submit"
-                className="btn-primary px-8 py-3 flex items-center justify-center gap-2"
                 disabled={submitting}
+                className="px-8 py-3 rounded-full bg-[#ff4d4f] text-white font-semibold hover:bg-red-600 transition flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <>
-                    <svg className="animate-spin w-5 h-5 text-purple-200" viewBox="0 0 24 24">
+                    <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
                     </svg>

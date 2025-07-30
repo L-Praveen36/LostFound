@@ -159,11 +159,11 @@ const AdminPanel = ({ onClose }) => {
 
   const getStatusBadge = (status) => {
     const classes = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      approved: 'bg-green-100 text-green-800',
-      rejected: 'bg-red-100 text-red-800'
+      pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-200/20 dark:text-yellow-300',
+      approved: 'bg-green-100 text-green-800 dark:bg-green-200/20 dark:text-green-300',
+      rejected: 'bg-red-100 text-red-800 dark:bg-red-200/20 dark:text-red-300'
     };
-    return classes[status] || 'bg-gray-100 text-gray-700';
+    return classes[status] || 'bg-gray-100 text-gray-700 dark:bg-gray-200/20 dark:text-gray-300';
   };
 
   const filteredItems = items
@@ -188,15 +188,15 @@ const AdminPanel = ({ onClose }) => {
     .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-white/80 dark:bg-black/50 z-50 overflow-y-auto">
       <div className="min-h-screen px-4 py-8 max-w-7xl mx-auto">
-        <div className="glass-card rounded-2xl p-6">
+        <div className="rounded-2xl p-6 bg-white dark:bg-white/10 shadow-lg border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-bold text-white">🛡️ Admin Panel</h2>
+            <h2 className="text-3xl font-bold">🛡️ Admin Panel</h2>
             <div className="flex items-center gap-4">
               <button
                 onClick={onClose}
-                className="px-4 py-2 bg-white bg-opacity-10 text-white rounded-full hover:bg-opacity-20"
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
               >
                 Close
               </button>
@@ -217,7 +217,11 @@ const AdminPanel = ({ onClose }) => {
               <button
                 key={status}
                 onClick={() => setFilter(status)}
-                className={`px-4 py-2 rounded-full text-sm font-medium capitalize ${filter === status ? 'bg-purple-600 text-white' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}
+                className={`px-4 py-2 rounded-full text-sm font-medium capitalize ${
+                  filter === status
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-200 text-gray-900 hover:bg-gray-300 dark:bg-white/10 dark:text-white dark:hover:bg-white/20'
+                }`}
               >
                 {status}
               </button>
@@ -228,13 +232,13 @@ const AdminPanel = ({ onClose }) => {
             <input
               type="text"
               placeholder="Search by title, location, email..."
-              className="w-full md:w-2/3 px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-70 focus:outline-none"
+              className="w-full md:w-2/3 px-4 py-2 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-600 focus:outline-none dark:bg-white/10 dark:text-white dark:placeholder-white/60"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <input
               type="date"
-              className="w-full md:w-1/3 px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-70 focus:outline-none"
+              className="w-full md:w-1/3 px-4 py-2 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-600 focus:outline-none dark:bg-white/10 dark:text-white"
               value={searchDate}
               onChange={(e) => setSearchDate(e.target.value)}
             />
@@ -245,18 +249,23 @@ const AdminPanel = ({ onClose }) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredItems.map(item => (
-                <div key={item._id} className={`glass-card p-4 rounded-xl ${highlightedId === item._id ? 'ring-2 ring-purple-500' : ''}`}>
+                <div
+                  key={item._id}
+                  className={`p-4 rounded-xl border border-gray-300 dark:border-white/20 bg-white dark:bg-white/10 shadow ${
+                    highlightedId === item._id ? 'ring-2 ring-purple-500' : ''
+                  }`}
+                >
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-                      <p className="text-sm text-white/80">{item.description}</p>
+                      <h3 className="text-lg font-semibold">{item.title}</h3>
+                      <p className="text-sm text-gray-600 dark:text-white/80">{item.description}</p>
                     </div>
                     {item.imageUrl ? (
                       <img src={item.imageUrl} alt="" className="w-20 h-20 rounded-lg object-cover ml-4" />
                     ) : <Skeleton width={80} height={80} />}
                   </div>
 
-                  <div className="text-sm text-white/80 space-y-1">
+                  <div className="text-sm text-gray-700 dark:text-white/80 space-y-1">
                     <p><strong>Location:</strong> {item.location}</p>
                     <p><strong>Date:</strong> {formatDateDMY(item.date || item.submittedAt)}</p>
                     <p><strong>Type:</strong> {item.type}</p>
@@ -265,16 +274,15 @@ const AdminPanel = ({ onClose }) => {
                     <p><strong>Email:</strong> {item.userEmail || 'N/A'}</p>
                     <p><strong>Phone:</strong> {item.phone || 'N/A'}</p>
                     <p><strong>School ID:</strong> {item.schoolId || 'N/A'}</p>
-                    <p>
-                      <strong>Status:</strong>{' '}
-                      {item.resolved && item.resolvedAt && (
-  <p><strong>Date Resolved:</strong> {formatDateDMY(item.resolvedAt)}</p>
-)}
-
+                    <p><strong>Status:</strong>{' '}
                       <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadge(item.status)}`}>
                         {item.status}
                       </span>
                     </p>
+
+                    {item.resolved && item.resolvedAt && (
+                      <p><strong>Date Resolved:</strong> {formatDateDMY(item.resolvedAt)}</p>
+                    )}
 
                     {item.type === 'lost' && (
                       <div className="flex items-center gap-2 mt-2">
@@ -289,19 +297,19 @@ const AdminPanel = ({ onClose }) => {
                     )}
 
                     {item.resolved && (
-                      <p className="text-purple-300 font-semibold mt-2">
+                      <p className="text-purple-600 dark:text-purple-300 font-semibold mt-2">
                         ✅ Resolved {item.resolvedBy ? `by ${item.resolvedBy}` : ''}
                       </p>
                     )}
 
                     {item.resolved && item.claimedInfo && (
-                      <div className="mt-3 p-3 bg-purple-100 bg-opacity-10 border border-purple-200 rounded-lg text-sm text-purple-100">
+                      <div className="mt-3 p-3 bg-purple-100 dark:bg-purple-200/10 border border-purple-200 dark:border-purple-400/30 rounded-lg text-sm text-purple-900 dark:text-purple-100">
                         <p className="font-semibold mb-1">📦 Claimed By:</p>
                         <p><strong>👤 Name:</strong> {item.claimedInfo.name || 'N/A'}</p>
                         <p><strong>🎓 Roll No:</strong> {item.claimedInfo.rollNo || 'N/A'}</p>
                         <p><strong>📧 Email:</strong>{' '}
                           {item.claimedInfo.email ? (
-                            <a href={`mailto:${item.claimedInfo.email}`} className="text-blue-300 underline">
+                            <a href={`mailto:${item.claimedInfo.email}`} className="text-blue-600 dark:text-blue-300 underline">
                               {item.claimedInfo.email}
                             </a>
                           ) : 'N/A'}
@@ -320,7 +328,7 @@ const AdminPanel = ({ onClose }) => {
                     {item.status === 'approved' && !item.resolved && (
                       <button onClick={() => resolveItem(item._id)} className="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700">Mark Resolved</button>
                     )}
-                    <button onClick={() => handleDelete(item._id)} className="px-4 py-2 bg-white bg-opacity-10 text-white rounded-full hover:bg-opacity-20">Delete</button>
+                    <button onClick={() => handleDelete(item._id)} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 dark:bg-white/10 dark:text-white dark:hover:bg-white/20">Delete</button>
                   </div>
                 </div>
               ))}

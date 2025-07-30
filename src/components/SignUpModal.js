@@ -12,7 +12,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const API = process.env.REACT_APP_API_URL;
 
 function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
-  const [step, setStep] = useState("form"); // 'form' → 'otp' → 'done'
+  const [step, setStep] = useState("form");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -58,7 +58,6 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
       });
 
       if (res.status === 200) {
-        // 🔄 Upload profile picture first
         let photoURL = "";
 
         if (formData.profileFile) {
@@ -72,7 +71,6 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
           photoURL = formData.profilePic;
         }
 
-        // ✅ Create Firebase user
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           formData.email,
@@ -121,11 +119,11 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="backdrop-blur-md bg-white bg-opacity-10 border border-white border-opacity-20 rounded-2xl p-8 w-full max-w-md shadow-2xl"
+        className="backdrop-blur-md bg-white/60 border border-white/30 rounded-2xl p-8 w-full max-w-md shadow-2xl"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center text-white">Sign Up</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Sign Up</h2>
 
-        {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
+        {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
 
         {step === "form" && (
           <>
@@ -136,7 +134,7 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none"
+              className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-70 text-gray-800 placeholder-gray-600 focus:outline-none"
             />
             <input
               type="email"
@@ -145,7 +143,7 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none"
+              className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-70 text-gray-800 placeholder-gray-600 focus:outline-none"
             />
             <input
               type="password"
@@ -154,7 +152,7 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none"
+              className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-70 text-gray-800 placeholder-gray-600 focus:outline-none"
             />
             <input
               type="file"
@@ -162,7 +160,7 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
               onChange={(e) =>
                 setFormData({ ...formData, profileFile: e.target.files[0] })
               }
-              className="w-full px-4 py-2 mb-4 bg-white bg-opacity-20 text-white rounded-lg"
+              className="w-full px-4 py-2 mb-4 bg-white bg-opacity-70 text-gray-800 rounded-lg"
             />
 
             <button
@@ -182,7 +180,7 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
               placeholder="Enter OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              className="w-full px-4 py-3 mb-4 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none"
+              className="w-full px-4 py-3 mb-4 rounded-lg bg-white bg-opacity-70 text-gray-800 placeholder-gray-600 focus:outline-none"
             />
             <button
               onClick={handleVerifyOtp}
@@ -195,14 +193,14 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
         )}
 
         {step === "done" && (
-          <p className="text-green-400 text-center">
+          <p className="text-green-500 text-center">
             ✅ Account created successfully!
           </p>
         )}
 
         <button
           onClick={onClose}
-          className="mt-6 w-full text-white text-sm hover:underline"
+          className="mt-6 w-full text-gray-700 text-sm hover:underline"
         >
           Cancel
         </button>

@@ -15,13 +15,11 @@ import SignInModal from './components/SignInModal';
 import AdminSignInModal from './components/AdminSignInModal';
 import QrModal from './components/Modals/QrModal';
 
-
 import { useAuth } from './AuthContext';
 
 function App() {
   const { user, setUser } = useAuth();
 
-  // 🧾 Modal state
   const [showSignIn, setShowSignIn] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showAdminSignIn, setShowAdminSignIn] = useState(false);
@@ -31,16 +29,13 @@ function App() {
   const [selectedClaimItem, setSelectedClaimItem] = useState(null);
   const [selectedContactItem, setSelectedContactItem] = useState(null);
 
-  // 🔔 Listen for custom modal open events
   useEffect(() => {
     const handleOpenClaim = (e) => {
       user ? setSelectedClaimItem(e.detail) : setShowSignIn(true);
     };
-
     const handleOpenContact = (e) => {
       user ? setSelectedContactItem(e.detail) : setShowSignIn(true);
     };
-
     const handleOpenAdminPanel = () => setShowAdminPanel(true);
     const handleOpenQr = () => setShowQr(true);
 
@@ -57,80 +52,79 @@ function App() {
     };
   }, [user]);
 
-  // ✅ Admin sign-in success
   const handleAdminLogin = (token) => {
     sessionStorage.setItem('adminToken', token);
     setShowAdminSignIn(false);
     setShowAdminPanel(true);
   };
-   
-  const handleUserLogin = (token) => {
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  if (storedUser) setUser(storedUser); // ✅ This will now work
-  setShowSignIn(false);
-};
+
+  const handleUserLogin = () => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) setUser(storedUser);
+    setShowSignIn(false);
+  };
 
   return (
-  <div className="relative font-sans min-h-screen text-white">
-
-
-    <Navbar
-      onAdminLogin={handleAdminLogin}
-      onShowSignIn={() => setShowSignIn(true)}
-      onShowAdminSignIn={() => setShowAdminSignIn(true)}
-    />
-
-    <Hero />
-    <Listings />
-    <ReportForm
-      isSignedIn={!!user}
-      onRequireSignIn={() => setShowSignIn(true)}
-    />
-    <Stats />
-    <HowItWorks />
-    <Future />
-    <Footer />
-
-    {/* 🔐 Admin */}
-    {showAdminPanel && <AdminPanel onClose={() => setShowAdminPanel(false)} />}
-    {showAdminSignIn && (
-      <AdminSignInModal
-        onClose={() => setShowAdminSignIn(false)}
-        onSuccess={handleAdminLogin}
+    <div className="min-h-screen font-sans text-gray-900 dark:text-white bg-white/70 dark:bg-[#0d0b1f] transition-colors duration-300">
+      {/* 🎛 Navbar */}
+      <Navbar
+        onAdminLogin={handleAdminLogin}
+        onShowSignIn={() => setShowSignIn(true)}
+        onShowAdminSignIn={() => setShowAdminSignIn(true)}
       />
-    )}
 
-    {/* 🔐 User */}
-    {showSignIn && (
-  <SignInModal
-    onClose={() => setShowSignIn(false)}
-    onSuccess={handleUserLogin} // ✅ use the function
-  />
-)}
-
-    {/* 🧾 Item modals */}
-    {selectedClaimItem && (
-      <ClaimModal
-        visible={true}
-        item={selectedClaimItem}
-        onClose={() => setSelectedClaimItem(null)}
+      {/* 🔻 Sections */}
+      <Hero />
+      <Listings />
+      <ReportForm
+        isSignedIn={!!user}
+        onRequireSignIn={() => setShowSignIn(true)}
       />
-    )}
-    {selectedContactItem && (
-      <ContactModal
-        visible={true}
-        item={selectedContactItem}
-        onClose={() => setSelectedContactItem(null)}
-      />
-    )}
+      <Stats />
+      <HowItWorks />
+      <Future />
+      <Footer />
 
-    {/* 📱 QR Modal */}
-    {showQr && <QrModal onClose={() => setShowQr(false)} />}
+      {/* 🔐 Admin */}
+      {showAdminPanel && <AdminPanel onClose={() => setShowAdminPanel(false)} />}
+      {showAdminSignIn && (
+        <AdminSignInModal
+          onClose={() => setShowAdminSignIn(false)}
+          onSuccess={handleAdminLogin}
+        />
+      )}
 
+      {/* 👤 User SignIn */}
+      {showSignIn && (
+        <SignInModal
+          onClose={() => setShowSignIn(false)}
+          onSuccess={handleUserLogin}
+        />
+      )}
+
+      {/* 📦 Item Actions */}
+      {selectedClaimItem && (
+        <ClaimModal
+          visible={true}
+          item={selectedClaimItem}
+          onClose={() => setSelectedClaimItem(null)}
+        />
+      )}
+      {selectedContactItem && (
+        <ContactModal
+          visible={true}
+          item={selectedContactItem}
+          onClose={() => setSelectedContactItem(null)}
+        />
+      )}
+
+      {/* 📱 QR Modal */}
+      {showQr && <QrModal onClose={() => setShowQr(false)} />}
+
+      {/* 🧑‍💼 Profile */}
       {showProfile && <MyProfileModal onClose={() => setShowProfile(false)} />}
-
-  </div>
-);
+    </div>
+  );
 }
 
 export default App;

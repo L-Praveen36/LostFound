@@ -2,46 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 🌌 Global Galaxy Theme Background */
+/* 🌌 Global Theme Setup */
 body {
-  @apply font-sans text-white;
-  background-image: 
-    linear-gradient(to bottom right, rgba(24, 6, 59, 0.95), rgba(46, 16, 101, 0.95)),
-    url('https://images.unsplash.com/photo-1535468120506-4f1d9d8d3ac1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-blend-mode: overlay;
+  @apply font-sans text-gray-900 dark:text-white transition-colors duration-500;
+  @apply bg-gray-100 dark:bg-[#1a1330]; /* Light: soft gray, Dark: galaxy tone */
 }
 
 /* 💠 Glassmorphism Card */
 .glass-card {
-  @apply bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-lg rounded-xl p-4 text-white transition hover:shadow-xl;
+  @apply backdrop-blur-lg border rounded-xl p-4 transition hover:shadow-xl;
+  @apply bg-white/60 dark:bg-white/10 border-white/50 dark:border-white/20 text-gray-900 dark:text-white;
 }
 
-/* 🧊 Glassmorphism Modal Wrapper */
+/* 🧊 Glassmorphism Modal */
 .glass-modal {
-  @apply bg-white bg-opacity-10 backdrop-blur-xl border border-white border-opacity-30 shadow-2xl rounded-2xl p-6 text-white;
+  @apply backdrop-blur-xl border rounded-2xl p-6 shadow-2xl;
+  @apply bg-white/70 dark:bg-white/10 border-white/50 dark:border-white/30 text-gray-900 dark:text-white;
 }
 
 /* 🧾 Input Field */
 .input {
-  @apply w-full px-4 py-3 rounded-lg bg-white/10 text-white placeholder-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500;
+  @apply w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-purple-500;
+  @apply bg-white/60 dark:bg-white/10 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-white/50 border-gray-300 dark:border-white/20;
 }
 
-/* 🔘 Button Base */
+/* 🔘 Buttons */
 .btn {
   @apply px-4 py-2 rounded-full font-medium transition duration-200;
 }
 
 /* 🌈 Button Variants */
 .btn-primary {
-  @apply btn bg-purple-600 text-white hover:bg-purple-700;
+  @apply btn text-white bg-purple-600 hover:bg-purple-700;
 }
 
 .btn-secondary {
-  @apply btn bg-white/10 text-white border border-white/20 hover:bg-white/20;
+  @apply btn border text-gray-900 dark:text-white border-gray-300 dark:border-white/20 bg-white/30 dark:bg-white/10 hover:bg-white/50 dark:hover:bg-white/20;
 }
 
 /* 🪐 Floating Animation */
@@ -57,7 +53,8 @@ body {
 
 /* 🏷️ Category Chip */
 .category-chip {
-  @apply px-3 py-1 rounded-full text-sm transition-transform hover:scale-105 bg-white/10 text-white border border-white/20;
+  @apply px-3 py-1 rounded-full text-sm transition-transform hover:scale-105;
+  @apply bg-white/30 dark:bg-white/10 border border-gray-300 dark:border-white/20 text-gray-800 dark:text-white;
 }
 
 /* 🛡️ Status Badge */

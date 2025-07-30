@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -9,7 +10,7 @@ import { signInWithPopup } from "firebase/auth";
 import SignUpModal from "./SignUpModal";
 
 function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
-  const [mode, setMode] = useState("email"); // 'email' or 'google'
+  const [mode, setMode] = useState("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -67,7 +68,6 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
     }
   };
 
-  // 👇 If user clicked "Sign Up", render that modal instead
   if (showSignUp) {
     return (
       <SignUpModal
@@ -82,35 +82,35 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-center items-center">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="backdrop-blur-md bg-white bg-opacity-10 border border-white border-opacity-20 rounded-2xl p-8 w-full max-w-md shadow-2xl"
+        className="glass-card bg-white/60 backdrop-blur-lg border border-white/30 text-gray-800 rounded-2xl p-8 w-full max-w-md shadow-xl"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center text-white">Sign In</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Sign In</h2>
 
         <div className="flex justify-center space-x-4 mb-6">
           <button
-            className={`px-4 py-2 rounded-full ${
-              mode === "email" ? "bg-purple-600" : "bg-white bg-opacity-20"
-            } text-white`}
+            className={`px-4 py-2 rounded-full text-sm font-medium shadow-sm transition ${
+              mode === "email" ? "bg-purple-600 text-white" : "bg-white/30 text-gray-800 hover:bg-white/50"
+            }`}
             onClick={() => setMode("email")}
           >
             Email & Password
           </button>
           <button
-            className={`px-4 py-2 rounded-full ${
-              mode === "google" ? "bg-purple-600" : "bg-white bg-opacity-20"
-            } text-white`}
+            className={`px-4 py-2 rounded-full text-sm font-medium shadow-sm transition ${
+              mode === "google" ? "bg-purple-600 text-white" : "bg-white/30 text-gray-800 hover:bg-white/50"
+            }`}
             onClick={() => setMode("google")}
           >
             Google
           </button>
         </div>
 
-        {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
+        {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
 
         {mode === "google" && (
           <button
@@ -130,7 +130,7 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="w-full px-4 py-3 mb-4 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none"
+              className="input bg-white/80 placeholder-gray-500"
             />
             <input
               type="password"
@@ -138,7 +138,7 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Your Password"
               required
-              className="w-full px-4 py-3 mb-4 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none"
+              className="input bg-white/80 placeholder-gray-500"
             />
             <button
               type="submit"
@@ -150,11 +150,11 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
           </form>
         )}
 
-        <p className="text-sm text-white mt-4 text-center">
-          Don’t have an account?{" "}
+        <p className="text-sm mt-4 text-center">
+          Don’t have an account?{' '}
           <button
             onClick={() => setShowSignUp(true)}
-            className="text-blue-400 hover:underline"
+            className="text-blue-600 hover:underline"
           >
             Sign up here
           </button>
@@ -162,7 +162,7 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
 
         <button
           onClick={onClose}
-          className="mt-6 w-full text-white text-sm hover:underline"
+          className="mt-6 w-full text-sm text-gray-600 hover:underline"
         >
           Cancel
         </button>

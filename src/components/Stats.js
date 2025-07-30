@@ -24,7 +24,7 @@ const cardVariants = {
 
 function Stats() {
   return (
-    <section className="py-16 bg-gradient-to-r from-[#1a1330] via-[#2c1a4e] to-[#1a1330] text-white">
+    <section className="py-16 bg-white/60 backdrop-blur-md">
       <div className="container mx-auto px-4">
         <motion.div
           className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center"
@@ -36,11 +36,11 @@ function Stats() {
           {stats.map((stat, i) => (
             <motion.div
               key={i}
-              className="glass-card p-6 rounded-2xl shadow hover:shadow-xl transition border border-white/10"
+              className="p-6 rounded-2xl shadow hover:shadow-xl transition border border-white/30 bg-white/50 backdrop-blur-md"
               variants={cardVariants}
             >
-              <h3 className="text-4xl font-bold text-purple-400 mb-2">{stat.value}</h3>
-              <p className="text-white/80">{stat.label}</p>
+              <h3 className="text-4xl font-bold text-purple-600 mb-2">{stat.value}</h3>
+              <p className="text-gray-800">{stat.label}</p>
             </motion.div>
           ))}
         </motion.div>

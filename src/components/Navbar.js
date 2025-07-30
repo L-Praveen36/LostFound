@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../firebase';
 import { useAuth } from '../AuthContext';
 import SignInModal from './SignInModal';
-
+import { ThemeContext } from '../ThemeContext';
 import MyProfileModal from './MyProfileModal';
 
 const NAV_LINKS = [
@@ -18,7 +18,7 @@ function Navbar({ onShowAdminSignIn }) {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+   const { darkMode, setDarkMode } = useContext(ThemeContext);
   const { user } = useAuth();
   const dropdownRef = useRef();
 
@@ -125,6 +125,13 @@ function Navbar({ onShowAdminSignIn }) {
                 </AnimatePresence>
               </div>
             )}
+            <button
+  onClick={() => setDarkMode(prev => !prev)}
+  className="px-3 py-2 rounded-full border border-white hover:bg-white hover:text-purple-700 transition"
+>
+  {darkMode ? '🌞 Light' : '🌙 Dark'}
+</button>
+
           </div>
 
           {/* Mobile menu icon */}
@@ -192,7 +199,17 @@ function Navbar({ onShowAdminSignIn }) {
                     </p>
                   </div>
                 </div>
-              )}
+              )} 
+              <button
+  onClick={() => {
+    setMenuOpen(false);
+    setDarkMode(prev => !prev);
+  }}
+  className="text-left hover:text-purple-300 transition"
+>
+  {darkMode ? '🌞 Light Mode' : '🌙 Dark Mode'}
+</button>
+
             </div>
           </div>
         )}
