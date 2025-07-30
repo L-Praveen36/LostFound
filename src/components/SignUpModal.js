@@ -9,6 +9,8 @@ import {
 import { storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
+const API = process.env.REACT_APP_API_URL;
+
 function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
   const [step, setStep] = useState("form"); // 'form' → 'otp' → 'done'
   const [formData, setFormData] = useState({
@@ -31,7 +33,7 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
       const token = user ? await user.getIdToken() : null;
 
       await axios.post(
-        "/api/auth/send-otp",
+        `${API}/api/auth/send-otp`,
         { email: formData.email },
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -50,12 +52,13 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
     setError("");
     setLoading(true);
     try {
-      const res = await axios.post("/api/auth/verify-otp", {
+      const res = await axios.post(`${API}/api/auth/verify-otp`, {
         email: formData.email,
         otp,
       });
 
       if (res.status === 200) {
+        // 🔄 Upload profile picture first
         let photoURL = "";
 
         if (formData.profileFile) {
@@ -69,6 +72,7 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
           photoURL = formData.profilePic;
         }
 
+        // ✅ Create Firebase user
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           formData.email,
