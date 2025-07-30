@@ -1,11 +1,13 @@
-// firebase.js
+// frontend/src/firebase.js
+import { getStorage } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
   GoogleAuthProvider,
-  sendSignInLinkToEmail,
-  isSignInWithEmailLink,
-  signInWithEmailLink
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile
 } from "firebase/auth";
 
 // ✅ Firebase config
@@ -21,15 +23,18 @@ const firebaseConfig = {
 
 // ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+auth.useDeviceLanguage();
 
-// ✅ Export auth & providers
-export const auth = getAuth(app);
-auth.useDeviceLanguage(); // Automatically use user’s browser language
-export const googleProvider = new GoogleAuthProvider();
-
-// ✅ Export for passwordless email link sign-in
+// ✅ Google Auth Provider
+const googleProvider = new GoogleAuthProvider();
+export const storage = getStorage(); // after your firebase `app` is initialized
+// ✅ Export core auth utilities
 export {
-  sendSignInLinkToEmail,
-  isSignInWithEmailLink,
-  signInWithEmailLink
+  auth,
+  googleProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
 };

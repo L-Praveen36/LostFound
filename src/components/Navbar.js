@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../firebase';
 import { useAuth } from '../AuthContext';
 import SignInModal from './SignInModal';
+
 import MyProfileModal from './MyProfileModal';
 
 const NAV_LINKS = [

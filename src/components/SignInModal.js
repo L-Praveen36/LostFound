@@ -1,55 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 import {
   auth,
   googleProvider,
-  sendSignInLinkToEmail,
-  isSignInWithEmailLink,
-  signInWithEmailLink,
-} from '../firebase';
-import { signInWithPopup } from 'firebase/auth';
+  signInWithEmailAndPassword,
+} from "../firebase";
+import { signInWithPopup } from "firebase/auth";
 
 function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
-  const [mode, setMode] = useState('email'); // 'email' or 'google'
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [mode, setMode] = useState("email"); // 'email' or 'google'
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  // Handle automatic sign-in if redirected via email link
-  useEffect(() => {
-    const url = window.location.href;
-    if (isSignInWithEmailLink(auth, url)) {
-      const storedEmail = window.localStorage.getItem('emailForSignIn');
-      const promptEmail = !storedEmail ? window.prompt('Please enter your email') : storedEmail;
-
-      if (!promptEmail) return;
-
-      signInWithEmailLink(auth, promptEmail, url)
-        .then(async (result) => {
-          const user = result.user;
-          const token = await user.getIdToken();
-          const userData = {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName || user.email.split('@')[0],
-            photoURL: user.photoURL,
-            token,
-          };
-          localStorage.setItem('user', JSON.stringify(userData));
-          window.localStorage.removeItem('emailForSignIn');
-          onSuccess(userData);
-          onClose();
-        })
-        .catch((error) => {
-          console.error('Email link sign-in error:', error);
-          setError('Failed to sign in with email link.');
-        });
-    }
-  }, [onClose, onSuccess]);
+  const [error, setError] = useState("");
 
   const handleGoogleSignIn = async () => {
-    setError('');
+    setError("");
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
@@ -62,34 +28,38 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
         photoURL: user.photoURL,
         token,
       };
-      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem("user", JSON.stringify(userData));
       onSuccess(userData);
       onClose();
     } catch (err) {
-      console.error('Google sign-in error:', err);
-      setError('Google sign-in failed');
+      console.error("Google sign-in error:", err);
+      setError("Google sign-in failed");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSendLink = async (e) => {
+  const handleEmailPasswordLogin = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
     try {
-      const actionCodeSettings = {
-  url: 'https://lostfound-api.netlify.app',  // ✅ Static root URL — NOT window.location.href
-  handleCodeInApp: true,
-};
-
-
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      window.localStorage.setItem('emailForSignIn', email);
-      setMessage(`Sign-in link sent to ${email}`);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const user = result.user;
+      const token = await user.getIdToken();
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        token,
+      };
+      localStorage.setItem("user", JSON.stringify(userData));
+      onSuccess(userData);
+      onClose();
     } catch (err) {
-      console.error('Send sign-in link error:', err);
-      setError('Failed to send sign-in link');
+      console.error("Email/password login error:", err);
+      setError("Invalid email or password");
     } finally {
       setLoading(false);
     }
@@ -107,36 +77,35 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
 
         <div className="flex justify-center space-x-4 mb-6">
           <button
-            className={`px-4 py-2 rounded-full ${mode === 'email' ? 'bg-purple-600' : 'bg-white bg-opacity-20'} text-white`}
-            onClick={() => setMode('email')}
+            className={`px-4 py-2 rounded-full ${mode === "email" ? "bg-purple-600" : "bg-white bg-opacity-20"} text-white`}
+            onClick={() => setMode("email")}
           >
-            Email Link
+            Email & Password
           </button>
           <button
-            className={`px-4 py-2 rounded-full ${mode === 'google' ? 'bg-purple-600' : 'bg-white bg-opacity-20'} text-white`}
-            onClick={() => setMode('google')}
+            className={`px-4 py-2 rounded-full ${mode === "google" ? "bg-purple-600" : "bg-white bg-opacity-20"} text-white`}
+            onClick={() => setMode("google")}
           >
             Google
           </button>
         </div>
 
         {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
-        {message && <p className="text-green-400 text-sm text-center mb-4">{message}</p>}
 
         {/* Google Sign-In */}
-        {mode === 'google' && (
+        {mode === "google" && (
           <button
             onClick={handleGoogleSignIn}
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-full transition font-semibold"
           >
-            {loading ? 'Signing in...' : 'Continue with Google'}
+            {loading ? "Signing in..." : "Continue with Google"}
           </button>
         )}
 
-        {/* Email Link Sign-In */}
-        {mode === 'email' && (
-          <form onSubmit={handleSendLink}>
+        {/* Email/Password Sign-In */}
+        {mode === "email" && (
+          <form onSubmit={handleEmailPasswordLogin}>
             <input
               type="email"
               value={email}
@@ -145,12 +114,20 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
               required
               className="w-full px-4 py-3 mb-4 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none"
             />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Your Password"
+              required
+              className="w-full px-4 py-3 mb-4 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 focus:outline-none"
+            />
             <button
               type="submit"
               disabled={loading}
               className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-full"
             >
-              {loading ? 'Sending link...' : 'Send Sign-In Link'}
+              {loading ? "Signing in..." : "Login"}
             </button>
           </form>
         )}
