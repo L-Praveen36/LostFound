@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
 } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
+import SignUpModal from "./SignUpModal";
 
 function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
   const [mode, setMode] = useState("email"); // 'email' or 'google'
@@ -13,6 +14,7 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showSignUp, setShowSignUp] = useState(false);
 
   const handleGoogleSignIn = async () => {
     setError("");
@@ -65,6 +67,20 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
     }
   };
 
+  // 👇 If user clicked "Sign Up", render that modal instead
+  if (showSignUp) {
+    return (
+      <SignUpModal
+        onClose={() => setShowSignUp(false)}
+        onSuccess={(userData) => {
+          onSuccess(userData);
+          setShowSignUp(false);
+          onClose();
+        }}
+      />
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
       <motion.div
@@ -77,13 +93,17 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
 
         <div className="flex justify-center space-x-4 mb-6">
           <button
-            className={`px-4 py-2 rounded-full ${mode === "email" ? "bg-purple-600" : "bg-white bg-opacity-20"} text-white`}
+            className={`px-4 py-2 rounded-full ${
+              mode === "email" ? "bg-purple-600" : "bg-white bg-opacity-20"
+            } text-white`}
             onClick={() => setMode("email")}
           >
             Email & Password
           </button>
           <button
-            className={`px-4 py-2 rounded-full ${mode === "google" ? "bg-purple-600" : "bg-white bg-opacity-20"} text-white`}
+            className={`px-4 py-2 rounded-full ${
+              mode === "google" ? "bg-purple-600" : "bg-white bg-opacity-20"
+            } text-white`}
             onClick={() => setMode("google")}
           >
             Google
@@ -92,7 +112,6 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
 
         {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
 
-        {/* Google Sign-In */}
         {mode === "google" && (
           <button
             onClick={handleGoogleSignIn}
@@ -103,7 +122,6 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
           </button>
         )}
 
-        {/* Email/Password Sign-In */}
         {mode === "email" && (
           <form onSubmit={handleEmailPasswordLogin}>
             <input
@@ -131,6 +149,16 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
             </button>
           </form>
         )}
+
+        <p className="text-sm text-white mt-4 text-center">
+          Don’t have an account?{" "}
+          <button
+            onClick={() => setShowSignUp(true)}
+            className="text-blue-400 hover:underline"
+          >
+            Sign up here
+          </button>
+        </p>
 
         <button
           onClick={onClose}
