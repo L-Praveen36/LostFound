@@ -25,7 +25,7 @@ function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="py-20 bg-white/80 dark:bg-gradient-to-br dark:from-[#1a1330] dark:via-[#0d0b1f] dark:to-[#1a1330] text-gray-900 dark:text-white transition-colors"
+      className="py-20 bg-[#75E6DA]/80 dark:bg-gradient-to-br dark:from-[#1a1330] dark:via-[#0d0b1f] dark:to-[#1a1330] text-gray-900 dark:text-white transition-colors"
     >
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 drop-shadow-md">

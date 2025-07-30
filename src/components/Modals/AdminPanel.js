@@ -190,7 +190,8 @@ const AdminPanel = ({ onClose }) => {
   return (
     <div className="fixed inset-0 bg-white/80 dark:bg-black/50 z-50 overflow-y-auto">
       <div className="min-h-screen px-4 py-8 max-w-7xl mx-auto">
-        <div className="rounded-2xl p-6 bg-white dark:bg-white/10 shadow-lg border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white">
+        <div className="rounded-2xl p-6 bg-white dark:bg-gray-900/40 backdrop-blur-md shadow-lg border border-gray-300 dark:border-white/30 text-gray-900 dark:text-white">
+
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">🛡️ Admin Panel</h2>
             <div className="flex items-center gap-4">

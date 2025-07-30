@@ -84,7 +84,7 @@ const [error, setError] = useState(null);
   return (
     <section
   id="listings"
-  className="py-20 bg-white/90 dark:bg-gradient-to-br dark:from-[#0d0b1f] dark:to-[#1a1330] text-gray-900 dark:text-white transition-colors duration-300"
+  className="py-20 bg-[#75E6DA]/80 dark:bg-gradient-to-br dark:from-[#0d0b1f] dark:to-[#1a1330] text-gray-900 dark:text-white transition-colors duration-300"
 >
   <div className="container mx-auto px-4">
     <h2 className="text-4xl font-extrabold text-center mb-10 text-[#ff4d4f] dark:text-[#ff4d4f]">

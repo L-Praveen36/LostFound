@@ -18,7 +18,7 @@ function Navbar({ onShowAdminSignIn }) {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-   const { darkMode, setDarkMode } = useContext(ThemeContext);
+  const { darkMode, setDarkMode } = useContext(ThemeContext);
   const { user } = useAuth();
   const dropdownRef = useRef();
 
@@ -50,7 +50,10 @@ function Navbar({ onShowAdminSignIn }) {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => window.dispatchEvent(new Event('openQrModal'))}>
+          <div
+            className="flex items-center space-x-2 cursor-pointer"
+            onClick={() => window.dispatchEvent(new Event('openQrModal'))}
+          >
             <lottie-player
               src="https://assets3.lottiefiles.com/packages/lf20_5tkzkblw.json"
               background="transparent"
@@ -62,7 +65,7 @@ function Navbar({ onShowAdminSignIn }) {
             <h1 className="text-xl font-bold">Lost&Found</h1>
           </div>
 
-          {/* Desktop Links */}
+          {/* Desktop Nav */}
           <div className="hidden md:flex space-x-6">
             {NAV_LINKS.map(({ text, href }) => (
               <a key={text} href={href} className="hover:text-purple-300 transition">
@@ -71,7 +74,7 @@ function Navbar({ onShowAdminSignIn }) {
             ))}
           </div>
 
-          {/* Desktop Right */}
+          {/* Desktop Right Side */}
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={handleAdminClick}
@@ -125,17 +128,22 @@ function Navbar({ onShowAdminSignIn }) {
                 </AnimatePresence>
               </div>
             )}
-            <button
-  onClick={() => setDarkMode(prev => !prev)}
-  className="px-3 py-2 rounded-full border border-white hover:bg-white hover:text-purple-700 transition"
->
-  {darkMode ? '🌞 Light' : '🌙 Dark'}
-</button>
 
+            {/* 🌙 / 🌞 Desktop Toggle */}
+            <button
+              onClick={() => setDarkMode(prev => !prev)}
+              className="p-2 rounded-full hover:bg-white/10 transition"
+              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {darkMode ? '🌞' : '🌙'}
+            </button>
           </div>
 
           {/* Mobile menu icon */}
-          <button className="md:hidden focus:outline-none" onClick={() => setMenuOpen(!menuOpen)}>
+          <button
+            className="md:hidden focus:outline-none"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
             <svg className="h-6 w-6" viewBox="0 0 24 24" stroke="currentColor" fill="none">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -179,18 +187,22 @@ function Navbar({ onShowAdminSignIn }) {
                 </button>
               ) : (
                 <div className="mt-4 text-center">
-                  <img src={user.photoURL || 'https://via.placeholder.com/40'} className="w-10 h-10 rounded-full mx-auto" alt="User" />
+                  <img
+                    src={user.photoURL || 'https://via.placeholder.com/40'}
+                    className="w-10 h-10 rounded-full mx-auto"
+                    alt="User"
+                  />
                   <div className="mt-2 rounded-lg backdrop-blur-lg bg-white/10 text-white">
                     <p
                       onClick={() => {
                         setMenuOpen(false);
                         setShowProfileModal(true);
                       }}
-                      className="py-2 hover:bg-white/10 cursor-pointer"
+                      className="py-2 text-black hover:bg-white/10 cursor-pointer"
                     >
                       My Profile
                     </p>
-                    <p className="py-2 hover:bg-white/10 cursor-pointer">Help</p>
+                    <p className="py-2 text-black hover:bg-white/10 cursor-pointer">Help</p>
                     <p
                       onClick={handleSignOut}
                       className="py-2 text-red-400 hover:bg-white/10 cursor-pointer"
@@ -199,17 +211,18 @@ function Navbar({ onShowAdminSignIn }) {
                     </p>
                   </div>
                 </div>
-              )} 
-              <button
-  onClick={() => {
-    setMenuOpen(false);
-    setDarkMode(prev => !prev);
-  }}
-  className="text-left hover:text-purple-300 transition"
->
-  {darkMode ? '🌞 Light Mode' : '🌙 Dark Mode'}
-</button>
+              )}
 
+              {/* 🌙 / 🌞 Mobile Toggle with label */}
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  setDarkMode(prev => !prev);
+                }}
+                className="text-left hover:text-purple-300 transition"
+              >
+                {darkMode ? '🌞 Light Mode' : '🌙 Dark Mode'}
+              </button>
             </div>
           </div>
         )}
