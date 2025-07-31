@@ -2,10 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const stats = [
-  { label: 'Items Found', value: '1,240+' },
-  { label: 'Items Returned', value: '980+' },
+  { label: 'Items Found', value: '240+' },
+  { label: 'Items Returned', value: '180+' },
   { label: 'Hours Average', value: '24' },
-  { label: 'Satisfaction Rate', value: '99%' },
+  { label: 'Satisfaction Rate', value: '75%' },
 ];
 
 const containerVariants = {

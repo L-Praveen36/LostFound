@@ -23,8 +23,16 @@ function Footer() {
               </h1>
             </div>
             <p className="text-sm text-gray-600 dark:text-purple-100 opacity-80 leading-relaxed">
-              Helping students reunite with their lost belongings since 2023.
+              Helping students reunite with their lost belongings since 2024.
             </p>
+            {/* QR Icon or Image Trigger */}
+  <img
+    src="/assets/campusfind_qr_poster.png"
+    alt="QR Code"
+    className="w-10 h-10 cursor-pointer hover:scale-105 transition rounded shadow"
+    onClick={() => window.dispatchEvent(new Event("openQrModal"))}
+  />
+
           </div>
 
           {/* Quick Links */}
