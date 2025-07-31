@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Eye, EyeOff } from 'lucide-react';
 import { motion } from "framer-motion";
@@ -27,44 +27,76 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    let timer;
+    if (resendCooldown > 0) {
+      timer = setInterval(() => {
+        setResendCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   const handleSendOtp = async () => {
-  setError("");
-  setLoading(true);
-  try {
-    const checkRes = await axios.post(`${API}/api/auth/check-email`, { email: formData.email });
-    if (checkRes.data.exists) {
-      if (checkRes.data.provider === "google") {
-        setError("Email is linked to Google. Please sign in using Google.");
-        setLoading(false);
-        return;
-      } else {
-        setError("Email already registered. Please sign in.");
-        setLoading(false);
-        return;
+    setError("");
+    setLoading(true);
+    try {
+      const checkRes = await axios.post(`${API}/api/auth/check-email`, { email: formData.email });
+      if (checkRes.data.exists) {
+        if (checkRes.data.provider === "google") {
+          setError("Email is linked to Google. Please sign in using Google.");
+          setLoading(false);
+          return;
+        } else {
+          setError("Email already registered. Please sign in.");
+          setLoading(false);
+          return;
+        }
       }
+
+      const user = auth.currentUser;
+      const token = user ? await user.getIdToken() : null;
+
+      await axios.post(
+        `${API}/api/auth/send-otp`,
+        { email: formData.email },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
+      );
+
+      setStep("otp");
+      setShowOtpInput(true);
+      setResendCooldown(30);
+    } catch (err) {
+      setError("Failed to send OTP");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const user = auth.currentUser;
-    const token = user ? await user.getIdToken() : null;
+  const handleResendOtp = async () => {
+    try {
+      setResendCooldown(30);
+      const res = await fetch(`${API}/api/auth/resend-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email }),
+      });
 
-    await axios.post(
-      `${API}/api/auth/send-otp`,
-      { email: formData.email },
-      {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      const data = await res.json();
+      if (res.ok) {
+        alert("OTP resent successfully.");
+      } else {
+        alert(data.message || "Failed to resend OTP.");
       }
-    );
-
-    setStep("otp");
-  } catch (err) {
-    console.error(err);
-    setError("Failed to send OTP");
-  } finally {
-    setLoading(false);
-  }
-};
-
+    } catch (err) {
+      alert("Something went wrong.");
+    }
+  };
 
   const handleVerifyOtp = async () => {
     setError("");
@@ -117,7 +149,6 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
         setError("Invalid OTP");
       }
     } catch (err) {
-      console.error(err);
       setError("OTP verification or account creation failed.");
     } finally {
       setLoading(false);
@@ -163,33 +194,36 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
               required
               className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-70 text-gray-800 placeholder-gray-600 focus:outline-none"
             />
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Your Password"
-                  required
-                  className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-70 text-gray-800 placeholder-gray-600 focus:outline-none"
-            />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setFormData((prev) => ({ ...prev, password: e.target.value }));
+                }}
+                placeholder="Your Password"
+                required
+                className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-70 text-gray-800 placeholder-gray-600 focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
             <div className="mb-6">
               <label className="block mb-2 font-semibold">Upload Photos (optional)</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) =>
-                setFormData({ ...formData, profileFile: e.target.files[0] })
-              }
-              className="w-full px-4 py-2 mb-4 bg-white bg-opacity-70 text-gray-800 rounded-lg"
-            />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setFormData({ ...formData, profileFile: e.target.files[0] })
+                }
+                className="w-full px-4 py-2 mb-4 bg-white bg-opacity-70 text-gray-800 rounded-lg"
+              />
             </div>
 
             <button
@@ -218,6 +252,20 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
             >
               {loading ? "Verifying..." : "Verify & Create Account"}
             </button>
+
+            {showOtpInput && (
+              <div className="mt-2 text-center">
+                <button
+                  className="text-blue-600 font-medium disabled:text-gray-400"
+                  disabled={resendCooldown > 0}
+                  onClick={handleResendOtp}
+                >
+                  {resendCooldown > 0
+                    ? `Resend OTP in ${resendCooldown}s`
+                    : "Resend OTP"}
+                </button>
+              </div>
+            )}
           </>
         )}
 

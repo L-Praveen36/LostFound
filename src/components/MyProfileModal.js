@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react';
+import { auth } from "../firebase";
+
 
 function MyProfileModal({ onClose }) {
   const { user } = useAuth();
@@ -62,29 +64,36 @@ function MyProfileModal({ onClose }) {
   };
 
   const handleCreatePassword = async () => {
-    try {
-      const token = await user.getIdToken();
-      const res = await fetch(`https://lostfound-api.onrender.com/api/auth/create-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ newPassword }),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        alert("✅ Password set successfully. You can now log in with email.");
-        setNewPassword("");
-      } else {
-        alert(data.message || "Failed to create password.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error creating password.");
+  try {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      alert("User not authenticated");
+      return;
     }
-  };
+
+    const token = await currentUser.getIdToken();
+
+    const res = await fetch("https://lostfound-api.onrender.com/api/auth/create-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ newPassword }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert("✅ Password set successfully. You can now log in with email.");
+      setNewPassword("");
+    } else {
+      alert(data.message || "Failed to create password.");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Error creating password.");
+  }
+};
 
   return (
     <AnimatePresence>
