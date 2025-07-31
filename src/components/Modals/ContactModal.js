@@ -39,7 +39,7 @@ function ContactModal({ visible, onClose, item }) {
         </button>
 
         <h3 className="text-2xl font-semibold mb-6 text-center text-gray-900 dark:text-white">
-          Contact Finder
+          Contact 
         </h3>
 
         {isEmail ? (
