@@ -54,14 +54,11 @@ function Navbar({ onShowAdminSignIn }) {
             className="flex items-center space-x-2 cursor-pointer"
             onClick={() => window.dispatchEvent(new Event('openQrModal'))}
           >
-            <lottie-player
-              src="https://assets3.lottiefiles.com/packages/lf20_5tkzkblw.json"
-              background="transparent"
-              speed="1"
-              style={{ width: '40px', height: '40px' }}
-              loop
-              autoPlay
-            />
+             <img
+    src="/logo.png"
+    alt="Lost&Found Logo"
+    className="w-10 h-10 object-contain"
+  />
             <h1 className="text-xl font-bold">Lost&Found</h1>
           </div>
 

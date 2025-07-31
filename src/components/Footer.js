@@ -10,11 +10,11 @@ function Footer() {
           {/* Logo + Intro */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: `<lottie-player src="https://assets3.lottiefiles.com/packages/lf20_5tkzkblw.json" background="transparent" speed="1" style="width: 30px; height: 30px;" loop autoplay></lottie-player>`
-                }}
-              />
+               <img
+    src="/logo.png"
+    alt="Lost&Found Logo"
+    className="w-10 h-10 object-contain"
+  />
               <h1
                 className="text-xl font-bold cursor-pointer text-purple-600 dark:text-purple-300 hover:text-black dark:hover:text-white transition"
                 onClick={() => window.dispatchEvent(new Event("openQrModal"))}

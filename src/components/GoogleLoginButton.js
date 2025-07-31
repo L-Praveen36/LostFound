@@ -8,7 +8,8 @@ function GoogleLoginButton({ onSuccess }) {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      const token = await user.getIdToken();
+      const token = user.token;
+
 
       const res = await fetch(`${API}/api/auth/check-email`, {
         method: "POST",
