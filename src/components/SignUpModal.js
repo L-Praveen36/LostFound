@@ -26,27 +26,42 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
   const [error, setError] = useState("");
 
   const handleSendOtp = async () => {
-    setError("");
-    setLoading(true);
-    try {
-      const user = auth.currentUser;
-      const token = user ? await user.getIdToken() : null;
-
-      await axios.post(
-        `${API}/api/auth/send-otp`,
-        { email: formData.email },
-        {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        }
-      );
-      setStep("otp");
-    } catch (err) {
-      console.error(err);
-      setError("Failed to send OTP");
-    } finally {
-      setLoading(false);
+  setError("");
+  setLoading(true);
+  try {
+    const checkRes = await axios.post(`${API}/api/auth/check-email`, { email: formData.email });
+    if (checkRes.data.exists) {
+      if (checkRes.data.provider === "google") {
+        setError("Email is linked to Google. Please sign in using Google.");
+        setLoading(false);
+        return;
+      } else {
+        setError("Email already registered. Please sign in.");
+        setLoading(false);
+        return;
+      }
     }
-  };
+
+    const user = auth.currentUser;
+    const token = user ? await user.getIdToken() : null;
+
+    await axios.post(
+      `${API}/api/auth/send-otp`,
+      { email: formData.email },
+      {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      }
+    );
+
+    setStep("otp");
+  } catch (err) {
+    console.error(err);
+    setError("Failed to send OTP");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleVerifyOtp = async () => {
     setError("");

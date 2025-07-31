@@ -7,6 +7,7 @@ function MyProfileModal({ onClose }) {
   const [userItems, setUserItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [newPassword, setNewPassword] = useState("");
 
   useEffect(() => {
     if (!user?.email) return;
@@ -58,6 +59,31 @@ function MyProfileModal({ onClose }) {
     }
   };
 
+  const handleCreatePassword = async () => {
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`https://lostfound-api.onrender.com/api/auth/create-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ newPassword }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert("✅ Password set successfully. You can now log in with email.");
+        setNewPassword("");
+      } else {
+        alert(data.message || "Failed to create password.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error creating password.");
+    }
+  };
+
   return (
     <AnimatePresence>
       <motion.div
@@ -98,7 +124,25 @@ function MyProfileModal({ onClose }) {
             </div>
           )}
 
-          <h3 className="text-xl font-semibold mb-4 text-purple-700 dark:text-purple-300">📦 My Submitted Items</h3>
+          {/* 🔐 Create/Change Password Section */}
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-2 text-purple-700 dark:text-purple-300">🔐 Create/Change Password</h3>
+            <input
+              type="password"
+              placeholder="New Password"
+              className="w-full px-4 py-2 mb-3 rounded-lg border dark:bg-white/20 dark:border-white/30 dark:text-white"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <button
+              onClick={handleCreatePassword}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full"
+            >
+              Save Password
+            </button>
+          </div>
+
+          <h3 className="text-xl font-semibold mt-8 mb-4 text-purple-700 dark:text-purple-300">📦 My Submitted Items</h3>
 
           {loading ? (
             <p>Loading your items...</p>

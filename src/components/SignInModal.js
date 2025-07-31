@@ -61,9 +61,24 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
       onSuccess(userData);
       onClose();
     } catch (err) {
-      console.error("Email/password login error:", err);
+  console.error("Email/password login error:", err);
+  try {
+    const checkRes = await fetch(`${API}/api/auth/check-email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await checkRes.json();
+    if (data.exists && data.provider === "google") {
+      setError("This account was created using Google. Please sign in with Google.");
+    } else {
       setError("Invalid email or password");
-    } finally {
+    }
+  } catch (checkErr) {
+    setError("Login failed");
+  }
+}
+ finally {
       setLoading(false);
     }
   };
