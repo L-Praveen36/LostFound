@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Eye, EyeOff } from 'lucide-react';
 import { motion } from "framer-motion";
 import {
   auth,
@@ -24,6 +25,8 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState("");
 
   const handleSendOtp = async () => {
   setError("");
@@ -154,21 +157,31 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
             <input
               type="email"
               name="email"
-              placeholder="you@example.com"
+              placeholder="your@gmail.com"
               value={formData.email}
               onChange={handleChange}
               required
               className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-70 text-gray-800 placeholder-gray-600 focus:outline-none"
             />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-70 text-gray-800 placeholder-gray-600 focus:outline-none"
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Your Password"
+                  required
+                  className="w-full px-4 py-3 mb-3 rounded-lg bg-white bg-opacity-70 text-gray-800 placeholder-gray-600 focus:outline-none"
             />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            <div className="mb-6">
+              <label className="block mb-2 font-semibold">Upload Photos (optional)</label>
             <input
               type="file"
               accept="image/*"
@@ -177,6 +190,7 @@ function SignUpModal({ onClose = () => {}, onSuccess = () => {} }) {
               }
               className="w-full px-4 py-2 mb-4 bg-white bg-opacity-70 text-gray-800 rounded-lg"
             />
+            </div>
 
             <button
               onClick={handleSendOtp}

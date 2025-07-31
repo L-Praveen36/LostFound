@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Eye, EyeOff } from 'lucide-react'; // ⬅️ Use Lucide or any icon lib
 
 function AdminSignInModal({ onClose, onSuccess }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
+  const [showPassword, setShowPassword] = useState(false);
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
@@ -55,14 +56,23 @@ function AdminSignInModal({ onClose, onSuccess }) {
             required
             className="w-full px-4 py-3 rounded-lg bg-white/30 dark:bg-white/20 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-white focus:outline-none focus:ring-2 focus:ring-purple-400"
           />
+          <div className="relative">
           <input
-            type="password"
+             type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
             className="w-full px-4 py-3 rounded-lg bg-white/30 dark:bg-white/20 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-white focus:outline-none focus:ring-2 focus:ring-purple-400"
           />
+          <button
+    type="button"
+    onClick={() => setShowPassword(prev => !prev)}
+    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600 dark:text-white/70"
+  >
+    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+  </button>
+</div>
           {error && <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>}
           <button
             type="submit"

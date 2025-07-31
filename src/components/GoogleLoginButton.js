@@ -28,9 +28,10 @@ function GoogleLoginButton({ onSuccess }) {
         localStorage.setItem("user", JSON.stringify(userData));
         onSuccess(userData);
 
-        if (!data.hasPassword && window.confirm("Want to create a password for email login?")) {
-          window.location.href = "/profile"; // Or trigger modal for password set
-        }
+        if (!data.hasPassword) {
+  toast.info("You can create a password for email login under Profile.");
+}
+
       }
     } catch (err) {
       console.error("Google sign-in error", err);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Eye, EyeOff } from 'lucide-react';
 
 function MyProfileModal({ onClose }) {
   const { user } = useAuth();
@@ -8,6 +9,7 @@ function MyProfileModal({ onClose }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [newPassword, setNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!user?.email) return;
@@ -127,13 +129,23 @@ function MyProfileModal({ onClose }) {
           {/* 🔐 Create/Change Password Section */}
           <div className="mt-6">
             <h3 className="text-lg font-semibold mb-2 text-purple-700 dark:text-purple-300">🔐 Create/Change Password</h3>
-            <input
-              type="password"
-              placeholder="New Password"
-              className="w-full px-4 py-2 mb-3 rounded-lg border dark:bg-white/20 dark:border-white/30 dark:text-white"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
+            <div className="relative">
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="New Password"
+    className="w-full px-4 py-2 pr-10 rounded-lg border dark:bg-white/20 dark:border-white/30 dark:text-white"
+    value={newPassword}
+    onChange={(e) => setNewPassword(e.target.value)}
+  />
+  <button
+    type="button"
+    onClick={() => setShowPassword(prev => !prev)}
+    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600 dark:text-white/70"
+  >
+    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+  </button>
+</div>
+
             <button
               onClick={handleCreatePassword}
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full"

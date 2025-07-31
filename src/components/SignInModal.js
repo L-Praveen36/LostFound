@@ -8,6 +8,7 @@ import {
 } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
 import SignUpModal from "./SignUpModal";
+import { Eye, EyeOff } from "lucide-react"; // or any other icon lib
 
 function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
   const [mode, setMode] = useState("email");
@@ -16,6 +17,7 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showSignUp, setShowSignUp] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 const API = process.env.REACT_APP_API_URL;
 
   const handleGoogleSignIn = async () => {
@@ -144,18 +146,28 @@ const API = process.env.REACT_APP_API_URL;
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder="your@gmail.com"
               required
               className="input bg-white/80 placeholder-gray-500"
             />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Your Password"
-              required
-              className="input bg-white/80 placeholder-gray-500"
-            />
+            <div className="relative">
+  <input
+    type={showPassword ? "text" : "password"}
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    placeholder="Your Password"
+    required
+    className="input bg-white/80 placeholder-gray-500 pr-10"
+  />
+  <button
+    type="button"
+    onClick={() => setShowPassword((prev) => !prev)}
+    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600"
+  >
+    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+  </button>
+</div>
+
             <button
               type="submit"
               disabled={loading}
