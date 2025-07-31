@@ -16,6 +16,7 @@ function SignInModal({ onClose = () => {}, onSuccess = () => {} }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showSignUp, setShowSignUp] = useState(false);
+const API = process.env.REACT_APP_API_URL;
 
   const handleGoogleSignIn = async () => {
     setError("");
