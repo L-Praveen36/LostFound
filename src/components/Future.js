@@ -14,7 +14,7 @@ function Future() {
 
   return (
     <section
-      className="py-20 bg-[#75E6DA]/70 dark:bg-gradient-to-br dark:from-[#1a1330] dark:via-[#0e0b23] dark:to-[#1a1330] text-gray-900 dark:text-white transition-colors"
+      className="py-20 bg-[#a8f0f7]/70 dark:bg-gradient-to-br dark:from-[#1a1330] dark:via-[#0e0b23] dark:to-[#1a1330] text-gray-900 dark:text-white transition-colors"
       id="future"
     >
       <div className="container mx-auto px-4">

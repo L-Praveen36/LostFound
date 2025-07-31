@@ -24,7 +24,7 @@ const cardVariants = {
 
 function Stats() {
   return (
-    <section className="py-16 bg-[#75E6DA]/60 backdrop-blur-md">
+    <section className="py-16 bg-[#a8f0f7]/60 dark:bg-[#0f172a]/60 backdrop-blur-md">
       <div className="container mx-auto px-4">
         <motion.div
           className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center"

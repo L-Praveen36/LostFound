@@ -89,7 +89,7 @@ function Hero() {
   return (
     <section
       id="home"
-      className="relative bg-[#75E6DA]/80 dark:bg-gradient-to-br dark:from-[#1a1330] dark:via-[#0d0b1f] dark:to-[#1a1330] text-gray-900 dark:text-white overflow-hidden min-h-screen flex items-center transition-colors"
+      className="relative bg-[#a8f0f7]/80 dark:bg-gradient-to-br dark:from-[#1a1330] dark:via-[#0d0b1f] dark:to-[#1a1330] text-gray-900 dark:text-white overflow-hidden min-h-screen flex items-center transition-colors"
     >
       <div
         ref={containerRef}

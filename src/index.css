@@ -5,7 +5,7 @@
 /* 🌌 Global Theme Setup */
 body {
   @apply font-sans text-gray-900 dark:text-white transition-colors duration-500;
-  @apply bg-[#75E6DA] dark:bg-[#1a1330]; /* Light: soft gray, Dark: galaxy tone */
+  @apply bg-[#a8f0f7] dark:bg-[#1a1330]; /* Light: soft gray, Dark: galaxy tone */
 }
 
 /* 💠 Glassmorphism Card */

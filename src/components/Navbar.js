@@ -135,7 +135,7 @@ function Navbar({ onShowAdminSignIn }) {
               className="p-2 rounded-full hover:bg-white/10 transition"
               title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
-              {darkMode ? '🌞' : '🌙'}
+              {darkMode ? '🌞' : '🌚'}
             </button>
           </div>
 
@@ -221,7 +221,7 @@ function Navbar({ onShowAdminSignIn }) {
                 }}
                 className="text-left hover:text-purple-300 transition"
               >
-                {darkMode ? '🌞 Light Mode' : '🌙 Dark Mode'}
+                {darkMode ? '🌞 Light Mode' : '🌚 Dark Mode'}
               </button>
             </div>
           </div>

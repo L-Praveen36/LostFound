@@ -3,7 +3,7 @@ import { Mail, Facebook, Twitter } from 'lucide-react';
 
 function Footer() {
   return (
-    <footer className="bg-[#75E6DA]/60 dark:bg-[#0e0b23]/70 text-gray-800 dark:text-white py-16 border-t border-white/20 backdrop-blur-lg transition-colors">
+    <footer className="bg-[#a8f0f7]/60 dark:bg-[#0e0b23]/70 text-gray-800 dark:text-white py-16 border-t border-white/20 backdrop-blur-lg transition-colors">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
 
