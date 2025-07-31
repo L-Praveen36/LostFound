@@ -116,7 +116,7 @@ function ClaimModal({ visible, onClose, item, theme = 'dark' }) {
               className={`w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 ${
                 isDark ? 'bg-white text-black' : 'text-black'
               }`}
-              placeholder="yourid@college.edu"
+              placeholder="your@college gmail.com"
               value={form.email}
               onChange={handleChange}
               required
