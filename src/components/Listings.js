@@ -203,7 +203,7 @@ const [error, setError] = useState(null);
                       }
                       className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full transition"
                     >
-                      Contact Finder
+                      Contact 
                     </button>
                   )}
                   {item.type === 'lost' && item.foundBySecurity && (
