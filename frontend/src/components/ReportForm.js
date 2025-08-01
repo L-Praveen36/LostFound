@@ -72,7 +72,7 @@ function ReportForm({ isSignedIn, onRequireSignIn }) {
     selectedImages.forEach(file => payload.append('images', file));
 
     try {
-      await axios.post('https://lostfound-api.onrender.com/api/items', payload);
+      await axios.post('https://lostfound-zxoz.onrender.com/api/items', payload);
       toast.success("✅ Item submitted successfully!");
       setFormData({
         title: '',

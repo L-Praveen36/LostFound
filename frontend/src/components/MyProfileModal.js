@@ -18,7 +18,7 @@ function MyProfileModal({ onClose }) {
 
     const controller = new AbortController();
 
-    fetch(`https://lostfound-api.onrender.com/api/items?userEmail=${user.email}`, {
+    fetch(`https://lostfound-zxoz.onrender.com/api/items?userEmail=${user.email}`, {
       signal: controller.signal,
     })
       .then(res => {

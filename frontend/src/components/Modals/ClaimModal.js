@@ -24,7 +24,7 @@ function ClaimModal({ visible, onClose, item, theme = 'dark' }) {
     setMessage('');
 
     try {
-      const res = await fetch(`https://lostfound-api.onrender.com/api/items/${item._id}/claim`, {
+      const res = await fetch(`https://lostfound-zxoz.onrender.com/api/items/${item._id}/claim`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)

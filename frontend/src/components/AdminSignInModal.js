@@ -14,7 +14,7 @@ function AdminSignInModal({ onClose, onSuccess }) {
     setLoading(true);
 
     try {
-      const res = await axios.post('https://lostfound-api.onrender.com/api/admin/login', {
+      const res = await axios.post('https://lostfound-zxoz.onrender.com/api/admin/login', {
         username,
         password
       });

@@ -30,7 +30,7 @@ const [error, setError] = useState(null);
   useEffect(() => {
     const fetchItems = async (retries = 3) => {
       try {
-        const res = await fetch('https://lostfound-api.onrender.com/api/items');
+        const res = await fetch('https://lostfound-zxoz.onrender.com/api/items');
         if (!res.ok) throw new Error('Fetch failed');
         const data = await res.json();
         setItems(data);

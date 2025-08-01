@@ -19,7 +19,7 @@ const AdminPanel = ({ onClose }) => {
 
   const fetchItems = useCallback(async () => {
     try {
-      const response = await fetch('https://lostfound-api.onrender.com/api/admin/items', {
+      const response = await fetch('https://lostfound-zxoz.onrender.com/api/admin/items', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -45,7 +45,7 @@ const AdminPanel = ({ onClose }) => {
   const moderateItem = async (id, status) => {
     if (!window.confirm(`Are you sure you want to ${status} this item?`)) return;
     try {
-      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${id}/moderate`, {
+      const response = await fetch(`https://lostfound-zxoz.onrender.com/api/admin/items/${id}/moderate`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ const AdminPanel = ({ onClose }) => {
   const resolveItem = async (id) => {
     if (!window.confirm('Mark this item as resolved?')) return;
     try {
-      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${id}/resolve`, {
+      const response = await fetch(`https://lostfound-zxoz.onrender.com/api/admin/items/${id}/resolve`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ const AdminPanel = ({ onClose }) => {
 
   const handleFoundBySecurity = async (id, newValue) => {
     try {
-      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${id}/found-by-security`, {
+      const response = await fetch(`https://lostfound-zxoz.onrender.com/api/admin/items/${id}/found-by-security`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ const AdminPanel = ({ onClose }) => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
     try {
-      const response = await fetch(`https://lostfound-api.onrender.com/api/admin/items/${id}`, {
+      const response = await fetch(`https://lostfound-zxoz.onrender.com/api/admin/items/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
