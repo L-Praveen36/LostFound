@@ -20,7 +20,7 @@ const sendNotification = require("./utils/mailer");
 // ✅ FIXED
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://lostfound-api.netlify.app",  // your Netlify frontend domain
+  "https://lostfoundapi.netlify.app",  // your Netlify frontend domain
 ];
 
 
