@@ -98,13 +98,8 @@ body {
   @apply bg-purple-100 text-purple-800;
 }
 
-/* Force date picker white in dark mode */
-.dark input[type="date"] {
-  background-color: white !important;
-  color: black !important;
+/* Make the calendar icon white in dark mode */
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
 
-/* Optional: style the calendar dropdown arrow text */
-.dark input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0); /* makes icon dark */
-}

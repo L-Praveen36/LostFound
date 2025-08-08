@@ -29,26 +29,24 @@ function App() {
   const [selectedClaimItem, setSelectedClaimItem] = useState(null);
   const [selectedContactItem, setSelectedContactItem] = useState(null);
 
-  // 🌙 Theme Detection - Site-wide
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  // 🌙 Theme Detection - Listen only for system theme changes
+useEffect(() => {
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
 
-    const applyTheme = (e) => {
-      if (e.matches) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    };
+  const applyTheme = (e) => {
+    if (e.matches) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
 
-    // Initial theme check
-    applyTheme(mq);
+  // Only listen for theme changes — no initial check here
+  mq.addEventListener("change", applyTheme);
 
-    // Listen for system theme changes
-    mq.addEventListener("change", applyTheme);
+  return () => mq.removeEventListener("change", applyTheme);
+}, []);
 
-    return () => mq.removeEventListener("change", applyTheme);
-  }, []);
 
   useEffect(() => {
     const handleOpenClaim = (e) => {
