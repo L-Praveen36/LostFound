@@ -101,12 +101,15 @@ function Hero() {
         <div className="flex flex-col md:flex-row items-center">
           {/* Left Side */}
           <div className="md:w-1/2 mb-10 md:mb-0 text-center md:text-left">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight drop-shadow-xl">
-              Lost Something on Campus?
-            </h1>
-            <p className="text-xl mb-8 opacity-90 max-w-lg text-gray-700 dark:text-purple-100">
-              Our smart lost & found system helps students reunite with their belongings faster than ever before.
-            </p>
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight drop-shadow-xl opacity-0 slide-in">
+  Lost Something on Campus?
+</h1>
+
+<p className="text-xl mb-8 max-w-lg text-gray-700 dark:text-purple-100 opacity-0 slide-in-delay">
+  Our smart lost & found system helps students reunite with their belongings faster than ever before.
+</p>
+
+
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">

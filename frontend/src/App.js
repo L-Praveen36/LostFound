@@ -29,6 +29,27 @@ function App() {
   const [selectedClaimItem, setSelectedClaimItem] = useState(null);
   const [selectedContactItem, setSelectedContactItem] = useState(null);
 
+  // 🌙 Theme Detection - Site-wide
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const applyTheme = (e) => {
+      if (e.matches) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    };
+
+    // Initial theme check
+    applyTheme(mq);
+
+    // Listen for system theme changes
+    mq.addEventListener("change", applyTheme);
+
+    return () => mq.removeEventListener("change", applyTheme);
+  }, []);
+
   useEffect(() => {
     const handleOpenClaim = (e) => {
       user ? setSelectedClaimItem(e.detail) : setShowSignIn(true);

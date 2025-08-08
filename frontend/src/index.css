@@ -44,6 +44,26 @@ body {
 .floating {
   animation: float 3s ease-in-out infinite;
 }
+/* 🎯 Slide-In Animation */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.8s ease-out forwards;
+}
+
+.slide-in-delay {
+  animation: slideIn 0.8s ease-out forwards;
+  animation-delay: 0.3s;
+}
 
 @keyframes float {
   0% { transform: translateY(0); }
@@ -76,4 +96,15 @@ body {
 
 .status-resolved {
   @apply bg-purple-100 text-purple-800;
+}
+
+/* Force date picker white in dark mode */
+.dark input[type="date"] {
+  background-color: white !important;
+  color: black !important;
+}
+
+/* Optional: style the calendar dropdown arrow text */
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0); /* makes icon dark */
 }
