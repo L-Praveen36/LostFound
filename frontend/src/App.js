@@ -30,9 +30,9 @@ function App() {
   const [selectedContactItem, setSelectedContactItem] = useState(null);
 
   // 🌙 Theme Detection - Listen only for system theme changes
+// Listen for system theme changes after load
 useEffect(() => {
   const mq = window.matchMedia("(prefers-color-scheme: dark)");
-
   const applyTheme = (e) => {
     if (e.matches) {
       document.documentElement.classList.add("dark");
@@ -40,10 +40,7 @@ useEffect(() => {
       document.documentElement.classList.remove("dark");
     }
   };
-
-  // Only listen for theme changes — no initial check here
   mq.addEventListener("change", applyTheme);
-
   return () => mq.removeEventListener("change", applyTheme);
 }, []);
 
