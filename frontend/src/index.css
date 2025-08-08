@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  transition: none !important;
+}
+
+/* Re-enable transitions after load */
+html.loaded * {
+  transition: all 0.3s ease !important;
+}
+
 /* 🌌 Global Theme Setup */
 body {
   @apply font-sans text-gray-900 dark:text-white transition-colors duration-500;

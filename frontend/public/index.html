@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- 🌓 Detect and apply theme instantly -->
     <script>
-      // Detect and apply theme before CSS loads
       (function () {
-        const darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        let darkMode = false;
+
+        // Respect stored theme preference if it exists
+        const storedTheme = localStorage.getItem("theme");
+        if (storedTheme) {
+          darkMode = storedTheme === "dark";
+        } else {
+          // Fall back to system preference
+          darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        }
+
         if (darkMode) {
           document.documentElement.classList.add("dark");
         } else {
@@ -17,10 +27,7 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
+    <meta name="description" content="Web site created using create-react-app" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>Lost&Found</title>

@@ -29,21 +29,15 @@ function App() {
   const [selectedClaimItem, setSelectedClaimItem] = useState(null);
   const [selectedContactItem, setSelectedContactItem] = useState(null);
 
-  // 🌙 Theme Detection - Listen only for system theme changes
-// Listen for system theme changes after load
-useEffect(() => {
-  const mq = window.matchMedia("(prefers-color-scheme: dark)");
-  const applyTheme = (e) => {
-    if (e.matches) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  };
-  mq.addEventListener("change", applyTheme);
-  return () => mq.removeEventListener("change", applyTheme);
-}, []);
-
+  // 🌙 Listen for system theme changes only
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const applyTheme = (e) => {
+      document.documentElement.classList.toggle("dark", e.matches);
+    };
+    mq.addEventListener("change", applyTheme);
+    return () => mq.removeEventListener("change", applyTheme);
+  }, []);
 
   useEffect(() => {
     const handleOpenClaim = (e) => {
@@ -81,7 +75,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="min-h-screen font-sans text-gray-900 dark:text-white bg-white/70 dark:bg-[#0d0b1f] transition-colors duration-300">
+    <div className="min-h-screen font-sans text-gray-900 dark:text-white bg-white/70 dark:bg-[#0d0b1f]">
       {/* 🎛 Navbar */}
       <Navbar
         onAdminLogin={handleAdminLogin}
