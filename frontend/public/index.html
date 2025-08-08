@@ -4,18 +4,10 @@
     <!-- 🌓 Detect and apply theme instantly -->
     <script>
       (function () {
-        let darkMode = false;
-
-        // Respect stored theme preference if it exists
         const storedTheme = localStorage.getItem("theme");
-        if (storedTheme) {
-          darkMode = storedTheme === "dark";
-        } else {
-          // Fall back to system preference
-          darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        }
 
-        if (darkMode) {
+        // Default is light unless user saved dark
+        if (storedTheme === "dark") {
           document.documentElement.classList.add("dark");
         } else {
           document.documentElement.classList.remove("dark");
