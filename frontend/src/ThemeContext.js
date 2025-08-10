@@ -3,9 +3,10 @@ import React, { createContext, useEffect, useState } from 'react';
 export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
+  // ✅ Default to light unless localStorage explicitly says 'dark'
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('theme');
-    return saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    return saved === 'dark'; // No system preference fallback
   });
 
   useEffect(() => {
